@@ -38,11 +38,11 @@ Parametrizable parameters are
 
 ## Inferfaces
 Configuration:
-Windows 10
-Visual Studio 17
-CMake 3.10.2
-OSI 3.2.0
-Protobuf 3.11.4
+- Windows 10
+- Visual Studio 17
+- CMake 3.10.2
+- OSI 3.2.0
+- Protobuf 3.11.4
 
 ## Configuration and installation
 Settings:
