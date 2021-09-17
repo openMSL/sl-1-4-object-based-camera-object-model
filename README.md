@@ -13,6 +13,7 @@ For more detailed information see the official documentation.
 The actual logic of the model is packed in a so called strategy.
 The apply function of the strategy is called by the do_calc function of the OSMPFramework.
 The strategy itself is structured into four modules as shown in the image below.
+
 <img src="2020-11-25_08h21_52.png" width="800" />
 
 ### Modeling Approach, general info
@@ -83,5 +84,3 @@ list of relevant additional credits
 
 end of file---
 
-# remove from template when creating yours
-concrete example of such readme : https://gitlab.com/tuda-fzd/perception-sensor-modeling/object-based-generic-perception-object-model/-/blob/master/README.md
