@@ -67,11 +67,11 @@ When building and installing, the framework will build an fmu package, which can
 Testet with Ubuntu 16.04. Install the modules OSI and Protobuf. 
 
 ## Licensing
-The work created by Robert Bosch GmbH is licensed under the EUPL-1.2 and can be used/merged and distributed in other works covered by GPL-2.0, GPL-3.0, LGPL, AGPL, CeCILL, OSL, EPL, MPL and other licences listed as compatible in the EUPL Appendix. This applies to the other (combined) work, while the original project stays covered by the EUPL without re-licensing. Alternatively, the work in folder OSMPCameraSensor may be used under the terms of the MPL-2.0.
-The larger work, including the modifications to OSMP dummy sensor, is subject to the terms of MPL-2.0 (but this does not affect the coverage of the incorporated components by their respective licenses).
+The work created by Robert Bosch GmbH is licensed under the terms of the Mozilla Public License, v. 2.0
+
 
 ## Disclaimers
-
+This sensor model is very basic and not validated to provide a realistic sensor behaviour. The model shows generic behaviour and is thus not sensor specific.
 
 ## Acknowledgements and Credits
 This work received funding from the research project 
