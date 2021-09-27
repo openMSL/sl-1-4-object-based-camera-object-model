@@ -71,7 +71,7 @@ The work created by Robert Bosch GmbH is licensed under the terms of the Mozilla
 
 
 ## Disclaimers
-This sensor model is very basic and not validated to provide a realistic sensor behaviour. The model shows generic behaviour and is thus not sensor specific.
+This sensor model is very basic and not validated to provide a realistic sensor behaviour. The model shows generic behaviour and is thus not sensor specific. This is a prototype. Use at own risk. Aboslutely not warranty is given for functionality or statements made and we are not liable in case of any damage.
 
 ## Acknowledgements and Credits
 This work received funding from the research project 
