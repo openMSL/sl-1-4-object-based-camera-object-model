@@ -1,4 +1,4 @@
-# Object based camera object model 
+# SL 1-4 Object Based Camera Object Model 
 ## Model Description
 This model is a parameterizable object based video perception sensor and tracking model using the interface OSI. The model was developed in the project SetLevel by Bosch. 
 
