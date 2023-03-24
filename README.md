@@ -1,4 +1,4 @@
-# SL-1-0 Sensor Model Repository Template
+# SL 1-4 Object Based Camera Object Model
 
 < GitHub Action Badges of CI Pipeline.
 The pipeline is further described [here](https://github.com/openMSL/sensor_model_testing/blob/main/doc/test_architecture.md)
