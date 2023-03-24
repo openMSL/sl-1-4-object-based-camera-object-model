@@ -1,86 +1,115 @@
-# SL 1-4 Object Based Camera Object Model 
-## Model Description
-This model is a parameterizable object based video perception sensor and tracking model using the interface OSI. The model was developed in the project SetLevel by Bosch. 
+# SL-1-0 Sensor Model Repository Template
+
+< GitHub Action Badges of CI Pipeline. The pipeline is further described [here](https://github.com/openMSL/sensor_model_testing/blob/main/doc/test_architecture.md)>
+
+[![Credibility Assessment Level 0](../../actions/workflows/cl0.yml/badge.svg)](https://github.com/openMSL/sl-1-5-sensor-model-testing/blob/main/doc/test_architecture.md#cl-0-license-check)
+[![Credibility Assessment Level 1](../../actions/workflows/cl1.yml/badge.svg)](https://github.com/openMSL/sl-1-5-sensor-model-testing/blob/main/doc/test_architecture.md#cl-1-code-verification)
+[![Credibility Assessment Level 2](../../actions/workflows/cl2.yml/badge.svg)](https://github.com/openMSL/sl-1-5-sensor-model-testing/blob/main/doc/test_architecture.md#cl-2-qualitative-verification)
+
+Enter a short description of the model.
+What is the purpose of the model?
+What is the general modeling approach?
+What inputs does the model need and what outputs does it generate?
+<br><br>
+
+< Eye-catcher Image >
+<img src="doc/img/model_video.gif" width="800" />
 
 ## Modeling Approach
-### Modeling Framework / Model Overall Structure
 
-The "object based camera object model" is based on object lists and all modeling is performed on object level.
-The model output are object lists for OSI SenorData moving and stationary objects.
-The outer layer of the model is the OSI Sensor Model Packaging (OSMP).
-It specifies ways in which models  using the Open Simulation Interface (OSI) are to be packaged for their use in simulation environments using FMI 2.0.
-For more detailed information see the official documentation.
-The actual logic of the model is packed in a so called strategy.
-The apply function of the strategy is called by the do_calc function of the OSMPFramework.
-The strategy itself is structured into four modules as shown in the image below.
+Put details about the inner workings of the model here.
+Describe the modeling approach in detail.
+What is the structure of the model?
+What modules is it comprised of?
+What sensor effects are represented in the model and how are they modeled?
 
-<img src="2020-11-25_08h21_52.png" width="800" />
+## Parameterization
 
-### Modeling Approach, general info
-The first module in the figure above brings the received ground truth stationary and moving objects (potentially also traffic signs and traffic lights from sensor_view.global_ground_truth) into a common format.
-This enables iterations over all objects regardless of classification.
-Then they are transformed to the sensor coordinate system for the following calculations.
-In the last module, the tracked objects are transformed to the virtual sensor coordinate system (here: vehicle coordinate system) and the fields in the sensor data requested by the HADf are filled.
+What parameters are used internally?
+Which parameters can be set by the user?
+Each parameter should have a short description as shown in the following example.
 
-### Modeling of Specific Effects
-It includes typical sensor artifacts like 
-- soft FoV transitions
-- different detection ranges for different targets
-- occlusion effects depending on the sensor technology
-- existence probability 
-- tracker simulation 
-The detection of moving objects, stationary objects, traffic signs and traffic lights is implemented. 
+| Parameter                      | Description                                                         |
+| ------------------------------ | ------------------------------------------------------------------- |
+| `no_of_beams_vertical`         | Number of beams in vertical direction, e.g. layers, of the lidar    |
+| `no_of_beams_horizontal`       | Number of beams per layer of the lidar                              |
 
-## Model Parameterization
-Parametrizable parameters are 
-- FOV
-- mounting position 
-- view distance 
+## Interface
 
-## Inferfaces
-Configuration:
-- Windows 10
-- Visual Studio 17
-- CMake 3.10.2
-- OSI 3.2.0
-- Protobuf 3.11.4
+What interfaces are used as model input and model output?
+All required field of the interface shall be named in a list as shown in the following example.
 
-## Configuration and installation
-Settings:
+### Input: Required Fields in OSI3::SensorView
 
-OSI, Protobuf and the Modul have to be build with the same configuration:
+* `sensor_view.mounting_position`
+* `sensor_view.global_ground_truth.timestamp`
+* `sensor_view.global_ground_truth.host_vehicle_id`
+* `sensor_view.global_ground_truth.stationary_object.id`
+* `sensor_view.global_ground_truth.stationary_object.base.position`
+* `sensor_view.global_ground_truth.stationary_object.base.orientation`
+* `sensor_view.global_ground_truth.stationary_object.base.dimension`
 
-Debug/Release-Build
-Project-Properties >> C/C++ >> Code-Generation >> Runtime Library
-Multi-threaded Debug DLL (/MDd) for all solutions
+### Output: Fields in OSI3::SensorData Filled by the Sensor Model
 
+* `sensor_data.timestamp`
+* `sensor_data.moving_object.header.ground_truth_id`
+* `sensor_data.moving_object.header.tracking_id`
+* `sensor_data.moving_object.header.existence_probability`
+* `sensor_data.moving_object.header.measurement_state`
+* `sensor_data.moving_object.header.sensor_id`
+* `sensor_data.moving_object.base.position`
+* `sensor_data.moving_object.base.dimension`
 
-under Project-Properties >> VC++ Directories: set the correct include paths
-in CMake set Protobuf_INCLUDE_DIRS and Protobuf_LIBRARIES
+## Build Instructions
 
+What are the dependencies for building the model?
 
+Give step-by-step build instructions for supported operating systems.
+The following is an example for building a model as an FMU in Ubuntu.
 
-## Build Instructions in Windows 
-When building and installing, the framework will build an fmu package, which can be used with a simulation tool like CarMaker, dSpace ASM or others.
+### Build Model in Ubuntu 18.04 / 20.04
 
-## Build Instructions in Ubuntu 
-Testet with Ubuntu 16.04. Install the modules OSI and Protobuf. 
+1. Clone this repository **with submodules**:
 
-## Licensing
-The work created by Robert Bosch GmbH is licensed under the terms of the Mozilla Public License, v. 2.0
+    ```bash
+    git clone https://github.com/openMSL/your-model.git --recurse-submodules
+    ```
 
+2. Build the model by executing in the extracted project root directory:
 
-## Disclaimers
-This sensor model is very basic and not validated to provide a realistic sensor behaviour. The model shows generic behaviour and is thus not sensor specific. This is a prototype. Use at own risk. Aboslutely not warranty is given for functionality or statements made and we are not liable in case of any damage.
+    ```bash
+    mkdir cmake-build
+    cd cmake-build
+    # If FMU_INSTALL_DIR is not set, CMAKE_BINARY_DIR is used
+    cmake -DCMAKE_BUILD_TYPE=Release -DFMU_INSTALL_DIR:PATH=/tmp ..
+    make
+    ```
 
-## Acknowledgements and Credits
-This work received funding from the research project 
-"[SET Level](https://setlevel.de/)" of the [PEGASUS ](https://pegasus-family.de) project family, promoted by the German Federal Ministry for Economic Affairs and Energy based on a decision of the German Bundestag.
-| SET Level                                                                                                | PEGASUS Family                                                                                                       | BMWi                                                                                                                                                                                 |
-|----------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| <a href="https://setlevel.de"><img src="https://setlevel.de/assets/logo-setlevel.svg" width="100" /></a> | <a href="https://pegasus-family.de"><img src="https://setlevel.de/assets/logo-pegasus-family.svg" width="100" /></a> | <a href="https://www.bmwi.de/Redaktion/DE/Textsammlungen/Technologie/fahrzeug-und-systemtechnologien.html"><img src="https://setlevel.de/assets/logo-bmwi-en.svg" width="100" /></a> |
+3. Take FMU from `FMU_INSTALL_DIR`
 
-list of relevant additional credits
+## Credits
 
-end of file---
+Give credits to funding or third-party contributions.
+If the model is further described in a publication, it can also be named here.
 
+## References
+
+Throughout this readme file, references are to be used, e.g. when citing scientific literature while describing the modeling approach.
+This can be done by added a number in the text with a reference identifier, like so: [[1](#Rosenberger2020)</sup>, p. 192].
+For longer papers or book sections, please also give the page number, as shown in this example.
+
+Then add the full list of authors, title and journal or conference in this section.
+The IEEE citation style [[2](#IEEEStyle)</sup>] should be used.
+Here is the bibliography from the example above.
+
+<a name="Rosenberger2020">[1]</a>
+P. Rosenberger, M. F. Holder, N. Cianciaruso, P. Aust, J. F. Tamm-Morschel, C. Linnhoff, and H. Winner,
+“Sequential lidar sensor system simulation: A modular approach for simulation-based safety validation of automated driving,”
+Automotive and Engine Technology, vol. 5, no. 3-4, pp. 187–197, Dec. 2020.
+
+<a name="IEEEStyle">[2]</a>
+IEEEDataPort,
+"How to Cite References: IEEE Documentation Style,"
+[Online]. Available:
+[https://ieee-dataport.org/sites/default/files/analysis/27/IEEE%20Citation%20Guidelines.pdf](https://ieee-dataport.org/sites/default/files/analysis/27/IEEE%20Citation%20Guidelines.pdf).
+[Accessed Jan. 09, 2023]
