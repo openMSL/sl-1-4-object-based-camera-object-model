@@ -9,13 +9,13 @@ string(MD5 FMUGUID modelDescription.in.xml)
 configure_file(modelDescription.in.xml modelDescription.xml @ONLY)
 
 find_package(Protobuf 2.6.1 REQUIRED)
-add_library(COSMPCameraSensor SHARED COSMPCameraSensor.cpp COSMPCameraSensor.h)
-set_target_properties(COSMPCameraSensor PROPERTIES PREFIX "")
-target_compile_definitions(COSMPCameraSensor PRIVATE "FMU_SHARED_OBJECT")
+add_library(OSMPCameraSensor SHARED OSMPCameraSensor.cpp OSMPCameraSensor.h)
+set_target_properties(OSMPCameraSensor PROPERTIES PREFIX "")
+target_compile_definitions(OSMPCameraSensor PRIVATE "FMU_SHARED_OBJECT")
 if(LINK_WITH_SHARED_OSI)
-	target_link_libraries(COSMPCameraSensor open_simulation_interface)
+	target_link_libraries(OSMPCameraSensor open_simulation_interface)
 else()
-	target_link_libraries(COSMPCameraSensor open_simulation_interface_pic)
+	target_link_libraries(OSMPCameraSensor open_simulation_interface_pic)
 endif()
 
 if(WIN32)
@@ -38,13 +38,13 @@ elseif(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 	endif()
 endif()
 
-add_custom_command(TARGET COSMPCameraSensor
+add_custom_command(TARGET OSMPCameraSensor
 		POST_BUILD
 		COMMAND ${CMAKE_COMMAND} -E remove_directory "${CMAKE_CURRENT_BINARY_DIR}/buildfmu"
 		COMMAND ${CMAKE_COMMAND} -E make_directory "${CMAKE_CURRENT_BINARY_DIR}/buildfmu/sources"
 		COMMAND ${CMAKE_COMMAND} -E make_directory "${CMAKE_CURRENT_BINARY_DIR}/buildfmu/binaries/${FMI_BINARIES_PLATFORM}"
 		COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_BINARY_DIR}/modelDescription.xml" "${CMAKE_CURRENT_BINARY_DIR}/buildfmu"
-		COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_SOURCE_DIR}/COSMPCameraSensor.cpp" "${CMAKE_CURRENT_BINARY_DIR}/buildfmu/sources/"
-		COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_SOURCE_DIR}/COSMPCameraSensor.h" "${CMAKE_CURRENT_BINARY_DIR}/buildfmu/sources/"
-		COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:COSMPCameraSensor> $<$<PLATFORM_ID:Windows>:$<$<CONFIG:Debug>:$<TARGET_PDB_FILE:COSMPCameraSensor>>> "${CMAKE_CURRENT_BINARY_DIR}/buildfmu/binaries/${FMI_BINARIES_PLATFORM}"
-		COMMAND ${CMAKE_COMMAND} -E chdir "${CMAKE_CURRENT_BINARY_DIR}/buildfmu" ${CMAKE_COMMAND} -E tar "cfv" "${FMU_INSTALL_DIR}/COSMPCameraSensor.fmu" --format=zip "modelDescription.xml" "${CMAKE_CURRENT_BINARY_DIR}/buildfmu/sources" "${CMAKE_CURRENT_BINARY_DIR}/buildfmu/binaries/${FMI_BINARIES_PLATFORM}")
+		COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_SOURCE_DIR}/OSMPCameraSensor.cpp" "${CMAKE_CURRENT_BINARY_DIR}/buildfmu/sources/"
+		COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_SOURCE_DIR}/OSMPCameraSensor.h" "${CMAKE_CURRENT_BINARY_DIR}/buildfmu/sources/"
+		COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:COSMPCameraSensor> $<$<PLATFORM_ID:Windows>:$<$<CONFIG:Debug>:$<TARGET_PDB_FILE:OSMPCameraSensor>>> "${CMAKE_CURRENT_BINARY_DIR}/buildfmu/binaries/${FMI_BINARIES_PLATFORM}"
+		COMMAND ${CMAKE_COMMAND} -E chdir "${CMAKE_CURRENT_BINARY_DIR}/buildfmu" ${CMAKE_COMMAND} -E tar "cfv" "${FMU_INSTALL_DIR}/OSMPCameraSensor.fmu" --format=zip "modelDescription.xml" "${CMAKE_CURRENT_BINARY_DIR}/buildfmu/sources" "${CMAKE_CURRENT_BINARY_DIR}/buildfmu/binaries/${FMI_BINARIES_PLATFORM}")
