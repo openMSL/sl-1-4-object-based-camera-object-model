@@ -568,7 +568,7 @@ DEBUGBREAK();
 
 	osi3::SensorData currentOut;
 double time = current_communication_point + communication_step_size;
-    NormalLog("OSI", "Calculating Camera Sensor at %f for %f (step size %f)", currentCommunicationPoint, time, communicationStepSize);
+        NormalLog("OSI", "Calculating Camera Sensor at %f for %f (step size %f)", current_communication_point, time, communication_step_size);
 #ifndef COMPILE_VTD_2_2
 	// OSI standard..
 	osi3::SensorView currentIn;
