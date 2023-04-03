@@ -565,7 +565,7 @@ DEBUGBREAK();
 
 	osi3::SensorData currentOut;
 	double time = currentCommunicationPoint + communicationStepSize;
-	normal_log("OSI", "Calculating Camera Sensor at %f for %f (step size %f)", currentCommunicationPoint, time, communicationStepSize);
+    NormalLog("OSI", "Calculating Camera Sensor at %f for %f (step size %f)", currentCommunicationPoint, time, communicationStepSize);
 #ifndef COMPILE_VTD_2_2
 	// OSI standard..
 	osi3::SensorView currentIn;
@@ -586,10 +586,10 @@ DEBUGBREAK();
 		size_t nof_trafLights_obj = currentViewIn.global_ground_truth().traffic_light().size();   // number of traffic lights 
 		size_t nof_trafSign_obj = currentViewIn.global_ground_truth().traffic_sign().size();      // number of traffic signs 
 
-		normal_log("OSI", "Number of moving objects: %llu", nof_mov_obj);
-		normal_log("OSI", "Number of stationary objects: %llu", nof_stat_obj);
-		normal_log("OSI", "Number of traffic lights: %llu", nof_trafLights_obj);
-		normal_log("OSI", "Number of traffic signs: %llu", nof_trafSign_obj);
+		NormalLog("OSI", "Number of moving objects: %llu", nof_mov_obj);
+                NormalLog("OSI", "Number of stationary objects: %llu", nof_stat_obj);
+                NormalLog("OSI", "Number of traffic lights: %llu", nof_trafLights_obj);
+                NormalLog("OSI", "Number of traffic signs: %llu", nof_trafSign_obj);
 
 		//Center of the bounding box in environment coordinates 
 		//Position and Orientation 
@@ -620,11 +620,18 @@ DEBUGBREAK();
 		//double mpos_yaw = 0; double mpos_pitch = 0; double mpos_roll = 0;
 		double mpos_rot_x = 0; double mpos_rot_y = 0; double mpos_rot_z = 0; //sensor position in ego coordinate system after ego rotation orientation  
 
-		normal_log("DEBUG", "Sensor mounting postion and orientation: x %.2f, y %.2f, z %.2f, yaw %.2f, pitch %.2f, roll %.2f", mpos_x, mpos_y, mpos_z, mpos_yaw, mpos_pitch, mpos_roll);
+		NormalLog("DEBUG",
+                          "Sensor mounting postion and orientation: x %.2f, y %.2f, z %.2f, yaw %.2f, pitch %.2f, roll %.2f",
+                          mpos_x,
+                          mpos_y,
+                          mpos_z,
+                          mpos_yaw,
+                          mpos_pitch,
+                          mpos_roll);
 
 
 		osi3::Identifier ego_id = currentViewIn.global_ground_truth().host_vehicle_id();
-		normal_log("OSI", "Looking for EgoVehicle with ID: %llu", ego_id.value());
+                NormalLog("OSI", "Looking for EgoVehicle with ID: %llu", ego_id.value());
 
 		/*Calculating the position of the ego vehicle*/
 		/*Calculating the position of the Sensor position in environment coordinates*/
@@ -632,16 +639,16 @@ DEBUGBREAK();
 
 		for_each(currentViewIn.global_ground_truth().moving_object().begin(), currentViewIn.global_ground_truth().moving_object().end(),
 			[this, ego_id, &bbctr_Host_x, &bbctr_Host_y, &bbctr_Host_z, &ego_World_x, &ego_World_y, &ego_World_z, &ego_yaw, &ego_pitch, &ego_roll, &ego_vel_x, &ego_vel_y, &ego_vel_z, &origin_World_x, &origin_World_y, &origin_World_z, &origin_rot_x, &origin_rot_y, &origin_rot_z, &origin_Host_x, &origin_Host_y, &origin_Host_z, &mpos_x, &mpos_y, &mpos_z, &mpos_rot_x, &mpos_rot_y, &mpos_rot_z, &mpos_yaw, &mpos_pitch, &mpos_roll, &sens_World_x, &sens_World_y, &sens_World_z, &sensSV_x, &sensSV_y, &sensSV_z](const osi3::MovingObject& obj) {
-			normal_log("OSI", "MovingObject with ID %llu is EgoVehicle: %d", obj.id().value(), obj.id().value() == ego_id.value());
+                             NormalLog("OSI", "MovingObject with ID %llu is EgoVehicle: %d", obj.id().value(), obj.id().value() == ego_id.value());
 			if (obj.id().value() == ego_id.value()) {
-				normal_log("OSI", "Found EgoVehicle with ID: %llu", obj.id().value());
+                            NormalLog("OSI", "Found EgoVehicle with ID: %llu", obj.id().value());
 
 				ego_World_x = obj.base().position().x(); ego_World_y = obj.base().position().y(); ego_World_z = obj.base().position().z();
 				ego_yaw = obj.base().orientation().yaw(); ego_pitch = obj.base().orientation().pitch();	ego_roll = obj.base().orientation().roll();
 				
 				//ego_World_x = 1; ego_World_y = 1; ego_World_z = 1; ego_yaw = PI; ego_pitch = 0; ego_roll = 0;
 
-				normal_log("OSI", "Current EGO position and orientation: %f,%f,%f,%f,%f,%f", ego_World_x, ego_World_y, ego_World_z, ego_yaw, ego_pitch, ego_roll);
+				NormalLog("OSI", "Current EGO position and orientation: %f,%f,%f,%f,%f,%f", ego_World_x, ego_World_y, ego_World_z, ego_yaw, ego_pitch, ego_roll);
 				ego_vel_x = obj.base().velocity().x(); ego_vel_y = obj.base().velocity().y(); ego_vel_z = obj.base().velocity().z();
 
 
@@ -651,16 +658,16 @@ DEBUGBREAK();
 				//bbctr_Host_x = -2; bbctr_Host_y = -0.5; bbctr_Host_z = 0;
 				double h1 = 0, h2 = 0, h3 = 0;
 				//Position of the ego origin in world coordinates after rotation  
-				normal_log("OSI", "Current EGO bbcenter to rear vector: %f,%f,%f", bbctr_Host_x, bbctr_Host_y, bbctr_Host_z);
+				NormalLog("OSI", "Current EGO bbcenter to rear vector: %f,%f,%f", bbctr_Host_x, bbctr_Host_y, bbctr_Host_z);
 				rot2env(bbctr_Host_x, bbctr_Host_y, bbctr_Host_z, ego_yaw, ego_pitch, ego_roll, origin_rot_x, origin_rot_y, origin_rot_z); //rotate into coordinate system of environment
 				origin_World_x = origin_rot_x + ego_World_x;
 				origin_World_y = origin_rot_y + ego_World_y;
 				origin_World_z = origin_rot_z + ego_World_z;
-				normal_log("OSI", "Current EGO Origin Position in environment coordinates: %f,%f,%f", origin_World_x, origin_World_y, origin_World_z);
+                                NormalLog("OSI", "Current EGO Origin Position in environment coordinates: %f,%f,%f", origin_World_x, origin_World_y, origin_World_z);
 
 				
 				rot2veh(origin_World_x - ego_World_x, origin_World_y - ego_World_y, origin_World_z - ego_World_z, ego_yaw, ego_pitch, ego_roll, h1, h2, h3);
-				normal_log("OSI", "Current Host ORigin in Host coordinates: %f,%f,%f", h1, h2, h3);
+                                NormalLog("OSI", "Current Host ORigin in Host coordinates: %f,%f,%f", h1, h2, h3);
 				double sens_EGO_x = origin_Host_x + mpos_x;	// sensor x-position in ego coordinate system before ego-orientation rotation
 				double sens_EGO_y = origin_Host_y + mpos_y;	// sensor y-position in ego coordinate system before ego-orientation rotation
 				double sens_EGO_z = origin_Host_z + mpos_z;	// sensor z-position in ego coordinate system before ego-orientation rotation
@@ -672,8 +679,8 @@ DEBUGBREAK();
 				sens_World_x = ego_World_x + mpos_rot_x;
 				sens_World_y = ego_World_y + mpos_rot_y;
 				sens_World_z = ego_World_z + mpos_rot_z;
-				normal_log("OSI", "Current Sensor Coordinates in host coordinate system: x %f, y %f, z %f", sens_EGO_x, sens_EGO_y, sens_EGO_z);
-				normal_log("OSI", "Current Sensor Coordinates in environment coordinate system: x %f, y %f, z %f", sens_World_x, sens_World_y, sens_World_z);
+                                NormalLog("OSI", "Current Sensor Coordinates in host coordinate system: x %f, y %f, z %f", sens_EGO_x, sens_EGO_y, sens_EGO_z);
+                                NormalLog("OSI", "Current Sensor Coordinates in environment coordinate system: x %f, y %f, z %f", sens_World_x, sens_World_y, sens_World_z);
 
 				
 				//With sensor-rotation 
@@ -849,8 +856,12 @@ DEBUGBREAK();
 				trans_y = cc_y - sens_World_y;
 				trans_z = cc_z - sens_World_z;
 				// normal_log("DEBUG","trans_x: %.2f, trans_y: %.2f,trans_z: %.2f",trans_x,trans_y,trans_z);
-				normal_log("OSI", "Current Veh Position: %.2f,%.2f,%.2f (long name)", veh.base().position().x(), veh.base().position().y(), veh.base().position().z());//test, delme
-				normal_log("OSI", "Current Ego Position: %.2f,%.2f,%.2f", ego_World_x, ego_World_y, ego_World_z);
+                                NormalLog("OSI",
+                                          "Current Veh Position: %.2f,%.2f,%.2f (long name)",
+                                          veh.base().position().x(),
+                                          veh.base().position().y(),
+                                          veh.base().position().z());  // test, delme
+                                NormalLog("OSI", "Current Ego Position: %.2f,%.2f,%.2f", ego_World_x, ego_World_y, ego_World_z);
 				// rotatePoint(trans_x, trans_y, trans_z, ego_yaw, ego_pitch, ego_roll, rel_x, rel_y, rel_z); //rotate into coordinate system of ego vehicle
 				rot2veh(trans_x, trans_y, trans_z, ego_yaw, ego_pitch, ego_roll, rel_x, rel_y, rel_z); //rotate into coordinate system of ego vehicle
 				// distance[i] = sqrt(rel_x * rel_x + rel_y*rel_y + rel_z*rel_z); //same as with trans?
@@ -963,15 +974,19 @@ DEBUGBREAK();
 				double vehOrientationRoll = veh.base().orientation().roll();
 
 			
-				normal_log("DEBUG", "Detected object bb center to mitte Hinterachse in Welt koordinaten %f,%f,%f", trans_x, trans_y, trans_z);
-				normal_log("DEBUG", "Detected object Orientierung  %f,%f,%f", veh.base().orientation().yaw(), veh.base().orientation().pitch(), veh.base().orientation().roll());
+				NormalLog("DEBUG", "Detected object bb center to mitte Hinterachse in Welt koordinaten %f,%f,%f", trans_x, trans_y, trans_z);
+                                NormalLog("DEBUG",
+                                          "Detected object Orientierung  %f,%f,%f",
+                                          veh.base().orientation().yaw(),
+                                          veh.base().orientation().pitch(),
+                                          veh.base().orientation().roll());
 
 				double R1 = 0, R2 = 0, R3 = 0;
 				EulerWinkel(ego_yaw, ego_pitch, ego_roll, vehOrientationYaw, vehOrientationPitch, vehOrientationRoll, R1, R2, R3);
-				normal_log("DEBUG", "Detected object Orientierung zum Vehicle  %f,%f,%f", R1, R2, R3);
+                                NormalLog("DEBUG", "Detected object Orientierung zum Vehicle  %f,%f,%f", R1, R2, R3);
 				
 				rot2veh(trans_x, trans_y, trans_z, ego_yaw, ego_pitch, ego_roll, xxKoordinate, yyKoordinate, zzKoordinate);
-				normal_log("DEBUG", "Detected object in Vehicle Koordinaten %f,%f,%f", xxKoordinate, yyKoordinate, zzKoordinate);
+                                NormalLog("DEBUG", "Detected object in Vehicle Koordinaten %f,%f,%f", xxKoordinate, yyKoordinate, zzKoordinate);
 				
 				double distance = sqrt(trans_x*trans_x + trans_y * trans_y + trans_z * trans_z);
 				//Vector camera sensor, camera view direction 
@@ -993,9 +1008,14 @@ DEBUGBREAK();
 				double vx_sens, vy_sens, vz_sens; //velocity components in coordinate system of ego vehicle
 				rot2veh(delta_x, delta_y, delta_z, ego_yaw, ego_pitch, ego_roll, vx_sens, vy_sens, vz_sens); //rotate into coordinate system of ego vehicle
 
-				normal_log("OSI", "Velocity of moving object global coordinates: x %f ,y %f z %f \n", vx, vy, vz);
-				normal_log("OSI", "Velocity of moving object environment coordinates: x %f ,y %f z %f \n", vx_sens, vy_sens, vz_sens);
-				normal_log("DEBUG", "moving object information id %d and masked %d and distance %f and angke_to_mov_obj %f", veh.id().value(), masked[i + 1], distance, angle_to_mov_obj);
+				NormalLog("OSI", "Velocity of moving object global coordinates: x %f ,y %f z %f \n", vx, vy, vz);
+                                NormalLog("OSI", "Velocity of moving object environment coordinates: x %f ,y %f z %f \n", vx_sens, vy_sens, vz_sens);
+                                NormalLog("DEBUG",
+                                          "moving object information id %d and masked %d and distance %f and angke_to_mov_obj %f",
+                                          veh.id().value(),
+                                          masked[i + 1],
+                                          distance,
+                                          angle_to_mov_obj);
 				
 				if ((distance <= camera_range) && abs(angle_to_mov_obj) < camera_FOV) {
 					if (masked[i + 1] == 0) {// (abs(trans_x/distance) >0.766025)){//0.766025)) {
@@ -1010,9 +1030,9 @@ DEBUGBREAK();
 						if (existence_prob > 100) {
 							existence_prob = 100;
 						}
-						normal_log("DEBUG", "Randomnumber is %f", randomnumber);
+                                                NormalLog("DEBUG", "Randomnumber is %f", randomnumber);
 						double randomPos = randomnumber / 100;
-						normal_log("DEBUG", "Random number is %f", randomPos);
+                                                NormalLog("DEBUG", "Random number is %f", randomPos);
 						obj->mutable_header()->add_ground_truth_id()->CopyFrom(veh.id());
 						obj->mutable_header()->mutable_tracking_id()->set_value(i);
 						obj->mutable_header()->set_existence_probability(existence_prob / 100);
@@ -1046,20 +1066,47 @@ DEBUGBREAK();
 
 
 
-						normal_log("DEBUG", "Detected moving object %d minimal distance to Ego/Sensor %f", i, distance);
-						normal_log("DEBUG", "Detected moving object %d angle to Ego/Sensor %f", i, angle_to_mov_obj);
-						normal_log("DEBUG", "Detected moving object type %d", veh.type());
-						normal_log("DEBUG", "Detected moving object type %s", candidate->GetTypeName().c_str());
+						NormalLog("DEBUG", "Detected moving object %d minimal distance to Ego/Sensor %f", i, distance);
+                                                NormalLog("DEBUG", "Detected moving object %d angle to Ego/Sensor %f", i, angle_to_mov_obj);
+                                                NormalLog("DEBUG", "Detected moving object type %d", veh.type());
+                                                NormalLog("DEBUG", "Detected moving object type %s", candidate->GetTypeName().c_str());
 
 						//candidate->type()
-						normal_log("OSI", "Output Object %d[%llu] Probability %f Detected mov object position and orientation in environment coord: %f,%f,%f (%f,%f,%f)", i, veh.id().value(), obj->header().existence_probability(), veh.base().position().x(), veh.base().position().y(), veh.base().position().z(), veh.base().orientation().yaw(), veh.base().orientation().pitch(), veh.base().orientation().roll());
-						normal_log("OSI", "Output Object %d[%llu] Probability %f Detected mov object position in sensor coord: %f,%f,%f \n", i, veh.id().value(), obj->header().existence_probability(), obj->base().position().x(), obj->base().position().y(), obj->base().position().z());
+                                                NormalLog(
+                                                    "OSI",
+                                                    "Output Object %d[%llu] Probability %f Detected mov object position and orientation in environment coord: %f,%f,%f (%f,%f,%f)",
+                                                    i,
+                                                    veh.id().value(),
+                                                    obj->header().existence_probability(),
+                                                    veh.base().position().x(),
+                                                    veh.base().position().y(),
+                                                    veh.base().position().z(),
+                                                    veh.base().orientation().yaw(),
+                                                    veh.base().orientation().pitch(),
+                                                    veh.base().orientation().roll());
+                                                NormalLog("OSI",
+                                                          "Output Object %d[%llu] Probability %f Detected mov object position in sensor coord: %f,%f,%f \n",
+                                                          i,
+                                                          veh.id().value(),
+                                                          obj->header().existence_probability(),
+                                                          obj->base().position().x(),
+                                                          obj->base().position().y(),
+                                                          obj->base().position().z());
 
 					}
 				}
 				else {
-					normal_log("OSI", "Ignoring Vehicle %d[%llu] Outside Sensor Scope Relative Position - ego and GT Position: %f,%f,%f (%f,%f,%f)", i, veh.id().value(), veh.base().position().x() - ego_World_x, veh.base().position().y() - ego_World_y, veh.base().position().z() - ego_World_z, veh.base().position().x(), veh.base().position().y(), veh.base().position().z());
-					normal_log("OSI", "ENDE.......................................................................");
+                                    NormalLog("OSI",
+                                              "Ignoring Vehicle %d[%llu] Outside Sensor Scope Relative Position - ego and GT Position: %f,%f,%f (%f,%f,%f)",
+                                              i,
+                                              veh.id().value(),
+                                              veh.base().position().x() - ego_World_x,
+                                              veh.base().position().y() - ego_World_y,
+                                              veh.base().position().z() - ego_World_z,
+                                              veh.base().position().x(),
+                                              veh.base().position().y(),
+                                              veh.base().position().z());
+                                    NormalLog("OSI", "ENDE.......................................................................");
 					//normal_log("OSI", "Ignoring Vehicle %d[%llu] Outside Sensor Scope Object trans_x,trans_y,trans_z, distance to sensor,winkel %f,%f,%f (%f,%f,%f) ,%f,%f", i, veh.id().value(), trans_x, trans_y, trans_z, rel_x, rel_y, rel_z, distance,winkel);
 
 				}
@@ -1067,8 +1114,17 @@ DEBUGBREAK();
 			}
 			else
 			{
-				normal_log("OSI", "Ignoring EGO Vehicle %d[%llu] Relative Position: %f,%f,%f (%f,%f,%f)", i, veh.id().value(), veh.base().position().x() - ego_World_x, veh.base().position().y() - ego_World_y, veh.base().position().z() - ego_World_z, veh.base().position().x(), veh.base().position().y(), veh.base().position().z());
-				normal_log("OSI", "ENDE.......................................................................");
+                            NormalLog("OSI",
+                                      "Ignoring EGO Vehicle %d[%llu] Relative Position: %f,%f,%f (%f,%f,%f)",
+                                      i,
+                                      veh.id().value(),
+                                      veh.base().position().x() - ego_World_x,
+                                      veh.base().position().y() - ego_World_y,
+                                      veh.base().position().z() - ego_World_z,
+                                      veh.base().position().x(),
+                                      veh.base().position().y(),
+                                      veh.base().position().z());
+                            NormalLog("OSI", "ENDE.......................................................................");
 			}
 		});
 
@@ -1096,9 +1152,9 @@ DEBUGBREAK();
 
 			double R1 = 0, R2 = 0, R3 = 0;
 			EulerWinkel(ego_yaw, ego_pitch, ego_roll, stobjOrientationYaw, stobjOrientationPitch, stobjOrientationRoll, R1, R2, R3);
-			normal_log("DEBUG", "Detected object Orientierung zum Vehicle  %f,%f,%f", R1, R2, R3);
+                        NormalLog("DEBUG", "Detected object Orientierung zum Vehicle  %f,%f,%f", R1, R2, R3);
 			CalKoordNew(trans_x, trans_y, trans_z, ego_yaw, ego_pitch, ego_roll, xxKoordinate, yyKoordinate, zzKoordinate);
-			normal_log("OSI", "Stationary Object in Sensor-Coordinates: %f,%f,%f", xxKoordinate, yyKoordinate, zzKoordinate);
+                        NormalLog("OSI", "Stationary Object in Sensor-Coordinates: %f,%f,%f", xxKoordinate, yyKoordinate, zzKoordinate);
 
 
 			double distance = sqrt(trans_x*trans_x + trans_y * trans_y + trans_z * trans_z);
@@ -1108,7 +1164,7 @@ DEBUGBREAK();
 			double g3 = sensSV_z - sens_World_z;
 			//Angle between 
 			double angle_to_stat_obj = CalculateAngle(trans_x, trans_y, trans_z, g1, g2, g3);
-			normal_log("OSI", "Winkel Vektors Sensor-Richtungsvektor zum Sensor-Objekt: %f", angle_to_stat_obj);
+                        NormalLog("OSI", "Winkel Vektors Sensor-Richtungsvektor zum Sensor-Objekt: %f", angle_to_stat_obj);
 
 
 
@@ -1154,14 +1210,40 @@ DEBUGBREAK();
 				candidate->set_probability(1);
 
 
-				normal_log("DEBUG", "Detected stationary object %d minimal distance to Ego/Sensor %f", i, distance);
-				normal_log("DEBUG", "Detected stationary object %d angle to Ego/Sensor %f", i, angle_to_stat_obj);
-				normal_log("OSI", "Output Object %d[%llu] Probability %f Detected stat object position and orientation in environment coord: %f,%f,%f (%f,%f,%f)", i, stobj.id().value(), obj->header().existence_probability(), stobj.base().position().x(), stobj.base().position().y(), stobj.base().position().z(), stobj.base().orientation().yaw(), stobj.base().orientation().pitch(), stobj.base().orientation().roll());
-				normal_log("OSI", "Output Object %d[%llu] Probability %f Detected stat object position in sensor coord: %f,%f,%f \n", i, stobj.id().value(), obj->header().existence_probability(), obj->base().position().x(), obj->base().position().y(), obj->base().position().z());
+				NormalLog("DEBUG", "Detected stationary object %d minimal distance to Ego/Sensor %f", i, distance);
+                                NormalLog("DEBUG", "Detected stationary object %d angle to Ego/Sensor %f", i, angle_to_stat_obj);
+                                NormalLog("OSI",
+                                          "Output Object %d[%llu] Probability %f Detected stat object position and orientation in environment coord: %f,%f,%f (%f,%f,%f)",
+                                          i,
+                                          stobj.id().value(),
+                                          obj->header().existence_probability(),
+                                          stobj.base().position().x(),
+                                          stobj.base().position().y(),
+                                          stobj.base().position().z(),
+                                          stobj.base().orientation().yaw(),
+                                          stobj.base().orientation().pitch(),
+                                          stobj.base().orientation().roll());
+                                NormalLog("OSI",
+                                          "Output Object %d[%llu] Probability %f Detected stat object position in sensor coord: %f,%f,%f \n",
+                                          i,
+                                          stobj.id().value(),
+                                          obj->header().existence_probability(),
+                                          obj->base().position().x(),
+                                          obj->base().position().y(),
+                                          obj->base().position().z());
 				i++;
 			}
 			else {
-				normal_log("OSI", "Ignoring stationary objects %d[%llu] Outside Sensor Scope Relative Position - ego and GT Position: %f,%f,%f (%f,%f,%f)", i, stobj.id().value(), stobj.base().position().x() - ego_World_x, stobj.base().position().y() - ego_World_y, stobj.base().position().z() - ego_World_z, stobj.base().position().x(), stobj.base().position().y(), stobj.base().position().z());
+                            NormalLog("OSI",
+                                      "Ignoring stationary objects %d[%llu] Outside Sensor Scope Relative Position - ego and GT Position: %f,%f,%f (%f,%f,%f)",
+                                      i,
+                                      stobj.id().value(),
+                                      stobj.base().position().x() - ego_World_x,
+                                      stobj.base().position().y() - ego_World_y,
+                                      stobj.base().position().z() - ego_World_z,
+                                      stobj.base().position().x(),
+                                      stobj.base().position().y(),
+                                      stobj.base().position().z());
 				//normal_log("OSI", "Ignoring stobjicle %d[%llu] Outside Sensor Scope Object trans_x,trans_y,trans_z, distance to sensor,winkel %f,%f,%f (%f,%f,%f) ,%f,%f", i, stobj.id().value(), trans_x, trans_y, trans_z, rel_x, rel_y, rel_z, distance,winkel);
 
 			}
@@ -1194,10 +1276,14 @@ DEBUGBREAK();
 
 			double R1 = 0, R2 = 0, R3 = 0;
 			EulerWinkel(ego_yaw, ego_pitch, ego_roll, trafficlightOrientationYaw, trafficlightOrientationPitch, trafficlightOrientationRoll, R1, R2, R3);
-			normal_log("DEBUG", "Detected object Orientierung zum Vehicle  %f,%f,%f", R1, R2, R3);
-			normal_log("OSI", "Ground Truth Traffic Sign  %f, %f,%f ", trafficlight.base().position().x(), trafficlight.base().position().y(), trafficlight.base().position().z());
+                        NormalLog("DEBUG", "Detected object Orientierung zum Vehicle  %f,%f,%f", R1, R2, R3);
+                        NormalLog("OSI",
+                                  "Ground Truth Traffic Sign  %f, %f,%f ",
+                                  trafficlight.base().position().x(),
+                                  trafficlight.base().position().y(),
+                                  trafficlight.base().position().z());
 			CalKoordNew(trans_x, trans_y, trans_z, ego_yaw, ego_pitch, ego_roll, xxKoordinate, yyKoordinate, zzKoordinate);
-			normal_log("OSI", "TrafficLight in Sensor-Coordinates: %f,%f,%f", xxKoordinate, yyKoordinate, zzKoordinate);
+                        NormalLog("OSI", "TrafficLight in Sensor-Coordinates: %f,%f,%f", xxKoordinate, yyKoordinate, zzKoordinate);
 
 
 			double distance = sqrt(trans_x*trans_x + trans_y * trans_y + trans_z * trans_z);
@@ -1226,10 +1312,10 @@ DEBUGBREAK();
 				}
 
 				obj->mutable_header()->add_ground_truth_id()->CopyFrom(trafficlight.id());
-				normal_log("OSI", "TrafficLight ID: %f", trafficlight.id());
+                                NormalLog("OSI", "TrafficLight ID: %f", trafficlight.id());
 				obj->mutable_header()->mutable_tracking_id()->set_value(itl);
 				obj->mutable_header()->set_existence_probability(existence_prob / 100);
-				normal_log("OSI", "TrafficLight Existence Probability: %f", existence_prob / 100);
+                                NormalLog("OSI", "TrafficLight Existence Probability: %f", existence_prob / 100);
 				//obj->mutable_header()->set_age(current_object_history.age);
 				obj->mutable_header()->set_measurement_state(osi3::DetectedItemHeader_MeasurementState_MEASUREMENT_STATE_MEASURED);
 				obj->mutable_header()->add_sensor_id()->CopyFrom(currentViewIn.sensor_id());
@@ -1257,21 +1343,47 @@ DEBUGBREAK();
 
 				candidate->set_probability(1);
 
-				normal_log("DEBUG", "Detected traffic light color %d", candidate->classification().color());
-				normal_log("DEBUG", "Detected traffic light mode %d", candidate->classification().mode());
-				normal_log("DEBUG", "Detected traffic light icon %d", candidate->classification().icon());
-				normal_log("DEBUG", "Detected traffic light assigned lane id %d", candidate->classification().assigned_lane_id());
-				normal_log("DEBUG", "Detected traffic classification %d", trafficlight.classification());
+				NormalLog("DEBUG", "Detected traffic light color %d", candidate->classification().color());
+                                NormalLog("DEBUG", "Detected traffic light mode %d", candidate->classification().mode());
+                                NormalLog("DEBUG", "Detected traffic light icon %d", candidate->classification().icon());
+                                NormalLog("DEBUG", "Detected traffic light assigned lane id %d", candidate->classification().assigned_lane_id());
+                                NormalLog("DEBUG", "Detected traffic classification %d", trafficlight.classification());
 
-				normal_log("DEBUG", "Detected traffic light %d minimal distance to Ego/Sensor %f", itl, distance);
-				normal_log("DEBUG", "Detected traffic light %d angle to Ego/Sensor %f", itl, angle_to_traffic_light);
-				normal_log("OSI", "Output traffic light %d[%llu] Probability %f Detected traffic light position and orientation in environment coord: %f,%f,%f (%f,%f,%f)", itl, trafficlight.id().value(), obj->header().existence_probability(), trafficlight.base().position().x(), trafficlight.base().position().y(), trafficlight.base().position().z(), trafficlight.base().orientation().yaw(), trafficlight.base().orientation().pitch(), trafficlight.base().orientation().roll());
-				normal_log("OSI", "Output Object %d[%llu] Probability %f Detected  traffic light position in sensor coord: %f,%f,%f \n", itl, trafficlight.id().value(), obj->header().existence_probability(), obj->base().position().x(), obj->base().position().y(), obj->base().position().z());
+				NormalLog("DEBUG", "Detected traffic light %d minimal distance to Ego/Sensor %f", itl, distance);
+                                NormalLog("DEBUG", "Detected traffic light %d angle to Ego/Sensor %f", itl, angle_to_traffic_light);
+                                NormalLog("OSI",
+                                          "Output traffic light %d[%llu] Probability %f Detected traffic light position and orientation in environment coord: %f,%f,%f (%f,%f,%f)",
+                                          itl,
+                                          trafficlight.id().value(),
+                                          obj->header().existence_probability(),
+                                          trafficlight.base().position().x(),
+                                          trafficlight.base().position().y(),
+                                          trafficlight.base().position().z(),
+                                          trafficlight.base().orientation().yaw(),
+                                          trafficlight.base().orientation().pitch(),
+                                          trafficlight.base().orientation().roll());
+                                NormalLog("OSI",
+                                          "Output Object %d[%llu] Probability %f Detected  traffic light position in sensor coord: %f,%f,%f \n",
+                                          itl,
+                                          trafficlight.id().value(),
+                                          obj->header().existence_probability(),
+                                          obj->base().position().x(),
+                                          obj->base().position().y(),
+                                          obj->base().position().z());
 				
 				itl++;
 			}
 			else {
-				normal_log("OSI", "Ignoring traffic light %d[%llu] Outside Sensor Scope Relative Position - ego and GT Position: %f,%f,%f (%f,%f,%f)", itl, trafficlight.id().value(), trafficlight.base().position().x() - ego_World_x, trafficlight.base().position().y() - ego_World_y, trafficlight.base().position().z() - ego_World_z, trafficlight.base().position().x(), trafficlight.base().position().y(), trafficlight.base().position().z());
+                            NormalLog("OSI",
+                                      "Ignoring traffic light %d[%llu] Outside Sensor Scope Relative Position - ego and GT Position: %f,%f,%f (%f,%f,%f)",
+                                      itl,
+                                      trafficlight.id().value(),
+                                      trafficlight.base().position().x() - ego_World_x,
+                                      trafficlight.base().position().y() - ego_World_y,
+                                      trafficlight.base().position().z() - ego_World_z,
+                                      trafficlight.base().position().x(),
+                                      trafficlight.base().position().y(),
+                                      trafficlight.base().position().z());
 				//normal_log("OSI", "Ignoring stobjicle %d[%llu] Outside Sensor Scope Object trans_x,trans_y,trans_z, distance to sensor,winkel %f,%f,%f (%f,%f,%f) ,%f,%f", i, trafficlight.id().value(), trans_x, trans_y, trans_z, rel_x, rel_y, rel_z, distance,winkel);
 
 			}
@@ -1284,11 +1396,15 @@ DEBUGBREAK();
 		int its = 0;
 		for_each(currentViewIn.global_ground_truth().traffic_sign().begin(), currentViewIn.global_ground_truth().traffic_sign().end(),
 			[this, &its, &currentViewIn, &currentOut, masked, ego_id, ego_World_x, ego_World_y, ego_World_z, &origin_World_x, &origin_World_y, &origin_World_z, &mpos_x, &mpos_y, &mpos_z, ego_yaw, ego_pitch, ego_roll, actual_range, &sens_World_x, &sens_World_y, &sens_World_z, &sensSV_x, &sensSV_y, &sensSV_z](const osi3::TrafficSign& tsobj) {
-			normal_log("OSI", "TrafficSign with ID %llu ", tsobj.id().value());
+                        NormalLog("OSI", "TrafficSign with ID %llu ", tsobj.id().value());
 			//Calculate the traffic light  in Sensor coordinates (erstmal zur mounting posistion) !! Sp�ter eventuell zur Hinterachse Auto 
 			double xxxKoordinate;	double yyyKoordinate; double zzzKoordinate;  //Coordinates of the moving object in sensor coordinate system (movin object center of bounding box to mounting position sensor) 
 		
-			normal_log("OSI", "Ground Truth Traffic Sign  %f, %f,%f ", tsobj.main_sign().base().position().x(), tsobj.main_sign().base().position().y(), tsobj.main_sign().base().position().z());
+			NormalLog("OSI",
+                                  "Ground Truth Traffic Sign  %f, %f,%f ",
+                                  tsobj.main_sign().base().position().x(),
+                                  tsobj.main_sign().base().position().y(),
+                                  tsobj.main_sign().base().position().z());
 			
 			double transTS_x = tsobj.main_sign().base().position().x() - origin_World_x;
 			double transTS_y = tsobj.main_sign().base().position().y() - origin_World_y;
@@ -1300,15 +1416,15 @@ DEBUGBREAK();
 
 			double R1 = 0, R2 = 0, R3 = 0;
 			EulerWinkel(ego_yaw, ego_pitch, ego_roll, tsobjMOrientationYaw, tsobjMOrientationPitch, tsobjMOrientationRoll, R1, R2, R3);
-			normal_log("DEBUG", "Detected object Orientierung zum Vehicle  %f,%f,%f", R1, R2, R3);
+                        NormalLog("DEBUG", "Detected object Orientierung zum Vehicle  %f,%f,%f", R1, R2, R3);
 
-			normal_log("OSI", "TrafficSign position x %f", tsobj.main_sign().base().position().x() - sens_World_x);
-			normal_log("OSI", "TrafficSign position y %f", tsobj.main_sign().base().position().y() - sens_World_y);
-			normal_log("OSI", "TrafficSign position z %f", tsobj.main_sign().base().position().z() - sens_World_z);
+			NormalLog("OSI", "TrafficSign position x %f", tsobj.main_sign().base().position().x() - sens_World_x);
+                        NormalLog("OSI", "TrafficSign position y %f", tsobj.main_sign().base().position().y() - sens_World_y);
+                        NormalLog("OSI", "TrafficSign position z %f", tsobj.main_sign().base().position().z() - sens_World_z);
 
 			CalKoordNew(transTS_x, transTS_y, transTS_z, ego_yaw, ego_pitch, ego_roll, xxxKoordinate, yyyKoordinate, zzzKoordinate);
 
-			normal_log("OSI", "TrafficSign in Sensor-Coordinates: %f,%f,%f", xxxKoordinate, yyyKoordinate, zzzKoordinate);
+			NormalLog("OSI", "TrafficSign in Sensor-Coordinates: %f,%f,%f", xxxKoordinate, yyyKoordinate, zzzKoordinate);
 
 			double distance = sqrt(transTS_x*transTS_x + transTS_y * transTS_y + transTS_z * transTS_z);
 			//Vector camera sensor, camera view direction 
@@ -1349,9 +1465,10 @@ DEBUGBREAK();
 				obj->mutable_main_sign()->mutable_base()->mutable_dimension()->set_width(tsobj.main_sign().base().dimension().width());
 				obj->mutable_main_sign()->mutable_base()->mutable_dimension()->set_height(tsobj.main_sign().base().dimension().height());
 
-				normal_log("DEBUG", "Detected traffic sign %d minimal distance to Ego/Sensor %f", its, distance);
-				normal_log("DEBUG", "Detected traffic sign %d angle to Ego/Sensor %f", its, angle_to_traffic_sign);
-				normal_log("OSI", "Output traffic sign %d[%llu] Probability %f Detected traffic sign position\
+				NormalLog("DEBUG", "Detected traffic sign %d minimal distance to Ego/Sensor %f", its, distance);
+                                NormalLog("DEBUG", "Detected traffic sign %d angle to Ego/Sensor %f", its, angle_to_traffic_sign);
+                                NormalLog("OSI",
+                                          "Output traffic sign %d[%llu] Probability %f Detected traffic sign position\
 								  								  									  		 						and orientation in environment coord:%f,%f,%f,  (%f,%f,%f)", its, tsobj.id().value(), obj->header().existence_probability(), tsobj.main_sign().base().position().x(), tsobj.main_sign().base().position().y(), tsobj.main_sign().base().position().z(), tsobj.main_sign().base().orientation().yaw(), tsobj.main_sign().base().orientation().pitch(), tsobj.main_sign().base().orientation().roll());
 				//normal_log("OSI", "Output Object %d[%llu] Probability %f Detected  traffic sign position in sensor coord: %f,%f,%f \n", its, tsobj.id().value(), obj->header().existence_probability(), obj->main_sign.base().position().x(), obj->main_sign.base().position().y(), obj->main_sign.base().position().z());
 				its++;
