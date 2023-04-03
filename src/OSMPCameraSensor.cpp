@@ -47,6 +47,7 @@
 #include <string>
 
 using namespace std;
+std::vector<object_info> object_history_vector;
 
 #ifdef PRIVATE_LOG_PATH
 ofstream COSMPCameraSensor::private_log_file;

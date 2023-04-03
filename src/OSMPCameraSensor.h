@@ -78,7 +78,12 @@
 #include "osi_sensorview.pb.h"
 
 using namespace std;
-
+struct object_info
+{
+    int id;
+    int age;
+    int movement_state;  // 0:stationary, 1:moving, 2:stopped
+};
 /* FMU Class */
 class OSMPCameraSensor
 {
