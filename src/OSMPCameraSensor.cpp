@@ -1361,9 +1361,12 @@ DEBUGBREAK();
 
         NormalLog("OSI", "Mapped %d vehicles to output", i);
         /* Serialize */
-        SetFmiSensorDataOut(current_out);
+        //SetFmiSensorDataOut(current_out);
+        //SetFmiValid(1);
+        //SetFmiCount(current_out.moving_object_size());
+        SetFmiSensorDataOut(currentOut);
         SetFmiValid(1);
-        SetFmiCount(current_out.moving_object_size());
+        SetFmiCount(currentOut.moving_object_size());
     }
     else
     {
