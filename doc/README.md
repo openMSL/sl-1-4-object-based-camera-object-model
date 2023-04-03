@@ -34,7 +34,7 @@ It includes typical sensor artifacts like
 - soft FoV transitions
 - different detection ranges for different targets
 - occlusion effects depending on the sensor technology
-- existence probability 
+- existence probability
 - tracker simulation
 
 The detection of moving objects, stationary objects, traffic signs and traffic lights is implemented.
