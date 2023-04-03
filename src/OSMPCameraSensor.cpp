@@ -381,7 +381,7 @@ void OSMPCameraSensor::RotatePoint(double x, double y, double z, double yaw, dou
     rz = matrix_trans[2][0] * x + matrix_trans[2][1] * y + matrix_trans[2][2] * z;
 }
 
-****** Rotation from environment to object coordinate system (yaw, pitch, roll = orientation of car in environment system) ******/
+/****** Rotation from environment to object coordinate system (yaw, pitch, roll = orientation of car in environment system) ******/
 void rot2veh(double x, double y, double z, double yaw, double pitch, double roll, double &rx, double &ry, double &rz)
 {
 	double matrix[3][3];
@@ -567,12 +567,13 @@ fmi2Status OSMPCameraSensor::DoCalc(fmi2Real current_communication_point, fmi2Re
 DEBUGBREAK();
 
 	osi3::SensorData currentOut;
-	double time = currentCommunicationPoint + communicationStepSize;
+double time = current_communication_point + communication_step_size;
     NormalLog("OSI", "Calculating Camera Sensor at %f for %f (step size %f)", currentCommunicationPoint, time, communicationStepSize);
 #ifndef COMPILE_VTD_2_2
 	// OSI standard..
 	osi3::SensorView currentIn;
-	if (get_fmi_sensor_view_in(currentIn)) {
+    if (GetFmiSensorViewIn(currentIn))
+    {
 		osi3::SensorView& currentViewIn = currentIn;
 #else
 	// VTD v2.2 receives SensorData..
@@ -727,7 +728,7 @@ DEBUGBREAK();
 
 
 
-		double actual_range = fmi_nominal_range()*1.1;
+		double actual_range = FmiNominalRange()*1.1;
 		/* Calculate vehicle FoV and distance to EGO (needed for occlusion) for all vehicles */
 
 		std::vector<double> distance(nof_mov_obj);  // define vector with length nof_obj and initialize it to 0
