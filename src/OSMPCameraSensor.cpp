@@ -38,7 +38,9 @@
 #else
 #define DEBUGBREAK()
 #endif
-
+#define PI 3.14159265
+#define camera_FOV 50
+#define camera_range 150
 #include <algorithm>
 #include <cmath>
 #include <cstdint>
