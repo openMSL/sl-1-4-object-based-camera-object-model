@@ -1,5 +1,5 @@
-# SL 1-4 Object Based Camera Object Model                     
- 
+# SL 1-4 Object Based Camera Object Model
+
 ## Model Description
 
 This model is a parameterizable object based video perception sensor and tracking model using the interface OSI. 
@@ -50,6 +50,7 @@ Parametrizable parameters are
 ## Inferfaces
 
 Configuration:
+
 - Windows 10
 - Visual Studio 17
 - CMake 3.10.2
@@ -87,7 +88,9 @@ Aboslutely not warranty is given for functionality or statements made and we are
 ## Acknowledgements and Credits
 
 This work received funding from the research project 
-"[SET Level](https://setlevel.de/)" of the [PEGASUS](https://pegasus-family.de) project family, promoted by the German Federal Ministry for Economic Affairs and Energy based on a decision of the German Bundestag.
+"[SET Level](https://setlevel.de/)" of the [PEGASUS](https://pegasus-family.de) project family,
+ promoted by the German Federal Ministry for Economic Affairs and Energy based on a decision of the German Bundestag.
+ 
 | SET Level                                                                                                | PEGASUS Family                                                                                                       | BMWi                                                                                                                                                                                 |
 |----------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | <a href="https://setlevel.de"><img src="https://setlevel.de/assets/logo-setlevel.svg" width="100" /></a> | <a href="https://pegasus-family.de"><img src="https://setlevel.de/assets/logo-pegasus-family.svg" width="100" /></a> | <a href="https://www.bmwi.de/Redaktion/DE/Textsammlungen/Technologie/fahrzeug-und-systemtechnologien.html"><img src="https://setlevel.de/assets/logo-bmwi-en.svg" width="100" /></a> |
