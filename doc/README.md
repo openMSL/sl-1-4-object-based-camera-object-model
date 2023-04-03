@@ -16,7 +16,7 @@ For more detailed information see the official documentation.
 The actual logic of the model is packed in a so called strategy.
 The apply function of the strategy is called by the do_calc function of the OSMPFramework.
 The strategy itself is structured into four modules as shown in the image below.
-
+<img src="img\2020-11-25_08h21_52.png" width="800" />
 
 ### Modeling Approach, general info
 
@@ -81,3 +81,8 @@ This sensor model is very basic and not validated to provide a realistic sensor 
 
 This work received funding from the research project 
 "[SET Level](https://setlevel.de/)" of the [PEGASUS ](https://pegasus-family.de) project family, promoted by the German Federal Ministry for Economic Affairs and Energy based on a decision of the German Bundestag.
+| SET Level                                                                                                | PEGASUS Family                                                                                                       | BMWi                                                                                                                                                                                 |
+|----------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| <a href="https://setlevel.de"><img src="https://setlevel.de/assets/logo-setlevel.svg" width="100" /></a> | <a href="https://pegasus-family.de"><img src="https://setlevel.de/assets/logo-pegasus-family.svg" width="100" /></a> | <a href="https://www.bmwi.de/Redaktion/DE/Textsammlungen/Technologie/fahrzeug-und-systemtechnologien.html"><img src="https://setlevel.de/assets/logo-bmwi-en.svg" width="100" /></a> |
+
+list of relevant additional credits
