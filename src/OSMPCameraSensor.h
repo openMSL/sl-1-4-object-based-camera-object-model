@@ -5,7 +5,7 @@
 //
 
 #ifndef FMU_SHARED_OBJECT
-#define FMI2_FUNCTION_PREFIX OSMPDummySensor_
+#define FMI2_FUNCTION_PREFIX OSMPCameraSensor_
 #endif
 #include "fmi2Functions.h"
 
@@ -80,11 +80,11 @@
 using namespace std;
 
 /* FMU Class */
-class HelloWorldSensor
+class OSMPCameraSensor
 {
   public:
     /* FMI2 Interface mapped to C++ */
-    HelloWorldSensor(fmi2String theinstance_name,
+    OSMPCameraSensor(fmi2String theinstance_name,
                      fmi2Type thefmu_type,
                      fmi2String thefmu_guid,
                      fmi2String thefmu_resource_location,
@@ -148,7 +148,7 @@ class HelloWorldSensor
 #else
             vsnprintf(buffer, 1024, format, ap);
 #endif
-            private_log_file << "OSMPDummySensor"
+            private_log_file << "OSMPCameraSensor"
                              << "::Global:FMI: " << buffer << endl;
             private_log_file.flush();
         }
@@ -170,7 +170,7 @@ class HelloWorldSensor
             private_log_file.open(PRIVATE_LOG_PATH, ios::out | ios::app);
         if (private_log_file.is_open())
         {
-            private_log_file << "OSMPDummySensor"
+            private_log_file << "OSMPCameraSensor"
                              << "::" << instanceName << "<" << ((void*)this) << ">:" << category << ": " << buffer << endl;
             private_log_file.flush();
         }
