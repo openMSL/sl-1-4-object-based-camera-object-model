@@ -1,7 +1,7 @@
-# *doc* Folder
+# SL 1-1 Reflection Based Radar Object Model
 
-The src folder contains further documentation of the model.
-This can be done either as images, which are included in readme files, or as md-files with further information linked in the main readme of the repository.
+[![Credibility Assessment Level 0](../../actions/workflows/cl0.yml/badge.svg)](https://github.com/openMSL/sl-1-5-sensor-model-testing/blob/main/doc/test_architecture.md#cl-0-license-check)
+[![Credibility Assessment Level 1](../../actions/workflows/cl1.yml/badge.svg)](https://github.com/openMSL/sl-1-5-sensor-model-testing/blob/main/doc/test_architecture.md#cl-1-code-verification)
  
 ## Model Description
 
