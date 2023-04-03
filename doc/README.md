@@ -2,14 +2,13 @@
 
 The src folder contains further documentation of the model.
 This can be done either as images, which are included in readme files, or as md-files with further information linked in the main readme of the repository.
-
-
-
  
 ## Model Description
+
 This model is a parameterizable object based video perception sensor and tracking model using the interface OSI. The model was developed in the project SetLevel by Bosch. 
 
 ## Modeling Approach
+
 ### Modeling Framework / Model Overall Structure
 
 The "object based camera object model" is based on object lists and all modeling is performed on object level.
@@ -24,12 +23,14 @@ The strategy itself is structured into four modules as shown in the image below.
 <img src="img\2020-11-25_08h21_52.png" width="800" />
 
 ### Modeling Approach, general info
+
 The first module in the figure above brings the received ground truth stationary and moving objects (potentially also traffic signs and traffic lights from sensor_view.global_ground_truth) into a common format.
 This enables iterations over all objects regardless of classification.
 Then they are transformed to the sensor coordinate system for the following calculations.
 In the last module, the tracked objects are transformed to the virtual sensor coordinate system (here: vehicle coordinate system) and the fields in the sensor data requested by the HADf are filled.
 
 ### Modeling of Specific Effects
+
 It includes typical sensor artifacts like 
 - soft FoV transitions
 - different detection ranges for different targets
@@ -39,12 +40,14 @@ It includes typical sensor artifacts like
 The detection of moving objects, stationary objects, traffic signs and traffic lights is implemented. 
 
 ## Model Parameterization
+
 Parametrizable parameters are 
 - FOV
 - mounting position 
 - view distance 
 
 ## Inferfaces
+
 Configuration:
 - Windows 10
 - Visual Studio 17
@@ -53,6 +56,7 @@ Configuration:
 - Protobuf 3.11.4
 
 ## Configuration and installation
+
 Settings:
 
 OSI, Protobuf and the Modul have to be build with the same configuration:
@@ -79,19 +83,24 @@ The hello world example is based on the [OSMPDummySensor](https://github.com/Ope
 
 
 ## Build Instructions in Windows 
+
 When building and installing, the framework will build an fmu package, which can be used with a simulation tool like CarMaker, dSpace ASM or others.
 
-## Build Instructions in Ubuntu 
+## Build Instructions in Ubuntu
+ 
 Testet with Ubuntu 16.04. Install the modules OSI and Protobuf. 
 
 ## Licensing
+
 The work created by Robert Bosch GmbH is licensed under the terms of the Mozilla Public License, v. 2.0
 
 
 ## Disclaimers
+
 This sensor model is very basic and not validated to provide a realistic sensor behaviour. The model shows generic behaviour and is thus not sensor specific. This is a prototype. Use at own risk. Aboslutely not warranty is given for functionality or statements made and we are not liable in case of any damage.
 
 ## Acknowledgements and Credits
+
 This work received funding from the research project 
 "[SET Level](https://setlevel.de/)" of the [PEGASUS ](https://pegasus-family.de) project family, promoted by the German Federal Ministry for Economic Affairs and Energy based on a decision of the German Bundestag.
 | SET Level                                                                                                | PEGASUS Family                                                                                                       | BMWi                                                                                                                                                                                 |
