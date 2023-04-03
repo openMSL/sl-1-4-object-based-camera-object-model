@@ -1,8 +1,9 @@
-# SL 1-4 Object Based Camera Object Model 
-
+# SL 1-4 Object Based Camera Object Model                     
+ 
 ## Model Description
 
-This model is a parameterizable object based video perception sensor and tracking model using the interface OSI. The model was developed in the project SetLevel by Bosch. 
+This model is a parameterizable object based video perception sensor and tracking model using the interface OSI. 
+The model was developed in the project SetLevel by Bosch. 
 
 ## Modeling Approach
 
@@ -20,7 +21,8 @@ The strategy itself is structured into four modules as shown in the image below.
 
 ### Modeling Approach, general info
 
-The first module in the figure above brings the received ground truth stationary and moving objects (potentially also traffic signs and traffic lights from sensor_view.global_ground_truth) into a common format.
+The first module in the figure above brings the received ground truth stationary and moving objects 
+(potentially also traffic signs and traffic lights from sensor_view.global_ground_truth) into a common format.
 This enables iterations over all objects regardless of classification.
 Then they are transformed to the sensor coordinate system for the following calculations.
 In the last module, the tracked objects are transformed to the virtual sensor coordinate system (here: vehicle coordinate system) and the fields in the sensor data requested by the HADf are filled.
@@ -28,16 +30,19 @@ In the last module, the tracked objects are transformed to the virtual sensor co
 ### Modeling of Specific Effects
 
 It includes typical sensor artifacts like 
+
 - soft FoV transitions
 - different detection ranges for different targets
 - occlusion effects depending on the sensor technology
 - existence probability 
 - tracker simulation 
+
 The detection of moving objects, stationary objects, traffic signs and traffic lights is implemented. 
 
 ## Model Parameterization
 
-Parametrizable parameters are 
+Parametrizable parameters are
+ 
 - FOV
 - mounting position 
 - view distance 
@@ -75,12 +80,14 @@ The work created by Robert Bosch GmbH is licensed under the terms of the Mozilla
 
 ## Disclaimers
 
-This sensor model is very basic and not validated to provide a realistic sensor behaviour. The model shows generic behaviour and is thus not sensor specific. This is a prototype. Use at own risk. Aboslutely not warranty is given for functionality or statements made and we are not liable in case of any damage.
+This sensor model is very basic and not validated to provide a realistic sensor behaviour. 
+The model shows generic behaviour and is thus not sensor specific. This is a prototype. Use at own risk. 
+Aboslutely not warranty is given for functionality or statements made and we are not liable in case of any damage.
 
 ## Acknowledgements and Credits
 
 This work received funding from the research project 
-"[SET Level](https://setlevel.de/)" of the [PEGASUS ](https://pegasus-family.de) project family, promoted by the German Federal Ministry for Economic Affairs and Energy based on a decision of the German Bundestag.
+"[SET Level](https://setlevel.de/)" of the [PEGASUS](https://pegasus-family.de) project family, promoted by the German Federal Ministry for Economic Affairs and Energy based on a decision of the German Bundestag.
 | SET Level                                                                                                | PEGASUS Family                                                                                                       | BMWi                                                                                                                                                                                 |
 |----------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | <a href="https://setlevel.de"><img src="https://setlevel.de/assets/logo-setlevel.svg" width="100" /></a> | <a href="https://pegasus-family.de"><img src="https://setlevel.de/assets/logo-pegasus-family.svg" width="100" /></a> | <a href="https://www.bmwi.de/Redaktion/DE/Textsammlungen/Technologie/fahrzeug-und-systemtechnologien.html"><img src="https://setlevel.de/assets/logo-bmwi-en.svg" width="100" /></a> |
