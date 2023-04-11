@@ -447,8 +447,8 @@ void CalculateKoordinate(double a1, double a2, double a3, double d1, double d2, 
 	double nenner_lot = lz * sqrt(b1 * b1 + b2 * b2 + b3 * b3);
 	double	beta = acos(round(zaehler_lot / nenner_lot));
 	double koordinate=0.0;
-    const value1=90;
-    const value2 = 180;
+    const int value1=90;
+    const int value2 = 180;
 	if (beta > value1 / value2 * PI) { koordinate = -abs(lz); }
 	else { koordinate = abs(lz); }
 	//Koordinate = 3;
@@ -493,7 +493,7 @@ void CalKoordNew(double trans_x, double trans_y, double trans_z, double ego_yaw,
 
 float CalculateAngle(double r1, double r2, double r3, double g1, double g2, double g3)
 {
-    const value3 = 180;
+    const int value3 = 180;
 	double nenner1 = g1 * r1 + g2 * r2 + g3 * r3;
 	double nenner2 = sqrt(g1*g1 + g2 * g2 + g3 * g3)*sqrt(r1*r1 + r2 * r2 + r3 * r3);
 	double angle = acos(nenner1 / nenner2) * value3 / PI;
@@ -744,7 +744,7 @@ double time = current_communication_point + communication_step_size;
 
 
 		/* Clear Output */
-                const value4 = 1000000000.0;
+                const double value4 = 1000000000.0;
 		current_out.Clear();
 		current_out.mutable_version()->CopyFrom(osi3::InterfaceVersion::descriptor()->file()->options().GetExtension(osi3::current_interface_version));
 		/* Adjust Timestamps and Ids */
@@ -755,7 +755,7 @@ double time = current_communication_point + communication_step_size;
 
 
 
-        const value5 = 1.1;
+        const double value5 = 1.1;
 		double actual_range = FmiNominalRange()*value5;
 		/* Calculate vehicle FoV and distance to EGO (needed for occlusion) for all vehicles */
 
@@ -796,7 +796,7 @@ double time = current_communication_point + communication_step_size;
 				double veh_yaw = veh.base().orientation().yaw();
 				double veh_pitch = veh.base().orientation().pitch();
 				double veh_roll = veh.base().orientation().roll();
-                                const value10 = 2.0;
+                                const double value10 = 2.0;
 
 
 
