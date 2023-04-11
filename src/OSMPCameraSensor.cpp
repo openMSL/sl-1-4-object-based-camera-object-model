@@ -231,12 +231,12 @@ fmi2Status OSMPCameraSensor::DoInit()
     return fmi2OK;
 }
 
-static fmi2Status OSMPCameraSensor::DoStart(fmi2Boolean tolerance_defined, fmi2Real tolerance, fmi2Real start_time, fmi2Boolean stop_time_defined, fmi2Real stop_time)
+fmi2Status OSMPCameraSensor::DoStart(fmi2Boolean tolerance_defined, fmi2Real tolerance, fmi2Real start_time, fmi2Boolean stop_time_defined, fmi2Real stop_time)
 {
     return fmi2OK;
 }
 
-static fmi2Status OSMPCameraSensor::DoEnterInitializationMode()
+fmi2Status OSMPCameraSensor::DoEnterInitializationMode()
 {
     return fmi2OK;
 }
