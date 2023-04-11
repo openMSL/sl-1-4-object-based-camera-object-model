@@ -447,7 +447,9 @@ void CalculateKoordinate(double a1, double a2, double a3, double d1, double d2, 
 	double nenner_lot = lz * sqrt(b1 * b1 + b2 * b2 + b3 * b3);
 	double	beta = acos(round(zaehler_lot / nenner_lot));
 	double koordinate=0.0;
-	if (beta > 90 / 180 * PI) { koordinate = -abs(lz); }
+    const value1=90;
+    const value2 = 180;
+	if (beta > value1 / value2 * PI) { koordinate = -abs(lz); }
 	else { koordinate = abs(lz); }
 	//Koordinate = 3;
 	//return Koordinate;
@@ -491,10 +493,10 @@ void CalKoordNew(double trans_x, double trans_y, double trans_z, double ego_yaw,
 
 float CalculateAngle(double r1, double r2, double r3, double g1, double g2, double g3)
 {
-
+    const value3 = 180;
 	double nenner1 = g1 * r1 + g2 * r2 + g3 * r3;
 	double nenner2 = sqrt(g1*g1 + g2 * g2 + g3 * g3)*sqrt(r1*r1 + r2 * r2 + r3 * r3);
-	double angle = acos(nenner1 / nenner2) * 180 / PI;
+	double angle = acos(nenner1 / nenner2) * value3 / PI;
 	return angle;
 }
 
@@ -742,26 +744,31 @@ double time = current_communication_point + communication_step_size;
 
 
 		/* Clear Output */
+                const value4 = 1000000000.0;
 		current_out.Clear();
 		current_out.mutable_version()->CopyFrom(osi3::InterfaceVersion::descriptor()->file()->options().GetExtension(osi3::current_interface_version));
 		/* Adjust Timestamps and Ids */
 		current_out.mutable_timestamp()->set_seconds((long long int)floor(time));
-		current_out.mutable_timestamp()->set_nanos((int)((time - floor(time))*1000000000.0));
+		current_out.mutable_timestamp()->set_nanos((int)((time - floor(time))*value4));
 		/* Copy of SensorView */
                 current_out.add_sensor_view()->CopyFrom(current_view_in);
 
 
 
-
-		double actual_range = FmiNominalRange()*1.1;
+        const value5 = 1.1;
+		double actual_range = FmiNominalRange()*value5;
 		/* Calculate vehicle FoV and distance to EGO (needed for occlusion) for all vehicles */
 
 		std::vector<double> distance(nof_mov_obj);  // define vector with length nof_obj and initialize it to 0
 
 
 		//double veh_rel2_x, veh_rel2_y, veh_rel2_z; //only for DEBUG!!!
-		double trans_x, trans_y, trans_z;
-		double veh_rel_x, veh_rel_y, veh_rel_z;
+                double trans_x;
+                double trans_y;
+                double trans_z;
+                double veh_rel_x;
+                double veh_rel_y;
+                double veh_rel_z;
 		std::vector<double> c1_x(nof_mov_obj);		// x coordinate of corner 1 (in sensor coord sys) (needed as reference corner for location distribution)	
 		std::vector<double> c1_y(nof_mov_obj);		// y coordinate of corner 1 (in sensor coord sys)	
 		std::vector<double> c1_z(nof_mov_obj);		// z coordinate of corner 1 (in sensor coord sys)	
@@ -789,7 +796,7 @@ double time = current_communication_point + communication_step_size;
 				double veh_yaw = veh.base().orientation().yaw();
 				double veh_pitch = veh.base().orientation().pitch();
 				double veh_roll = veh.base().orientation().roll();
-
+                                const value10 = 2.0;
 
 
 
@@ -800,30 +807,30 @@ double time = current_communication_point + communication_step_size;
 				double veh_width = veh.base().dimension().width();
 				double veh_length = veh.base().dimension().length();
 				// double veh_height = veh.base().dimension().height(); // should actually be done for 3D (box - 8 corners)
-				double corner1_rel_x = veh_rel_x - veh_length / 2.; //this and the following could be done with x,y,z vectors instead
-				double corner1_rel_y = veh_rel_y + veh_width / 2.;
+                                double corner1_rel_x = veh_rel_x - veh_length / value10;  // this and the following could be done with x,y,z vectors instead
+                                double corner1_rel_y = veh_rel_y + veh_width / value10;
 				double corner1_rel_z = veh_rel_z;
-				double corner2_rel_x = veh_rel_x + veh_length / 2.;
-				double corner2_rel_y = veh_rel_y + veh_width / 2.;
+                                double corner2_rel_x = veh_rel_x + veh_length / value10;
+                                double corner2_rel_y = veh_rel_y + veh_width / value10;
 				double corner2_rel_z = veh_rel_z;
-				double corner3_rel_x = veh_rel_x - veh_length / 2.;
-				double corner3_rel_y = veh_rel_y - veh_width / 2.;
+                                double corner3_rel_x = veh_rel_x - veh_length / value10;
+                                double corner3_rel_y = veh_rel_y - veh_width / value10;
 				double corner3_rel_z = veh_rel_z;
-				double corner4_rel_x = veh_rel_x + veh_length / 2.;
-				double corner4_rel_y = veh_rel_y - veh_width / 2.;
+                                double corner4_rel_x = veh_rel_x + veh_length / value10;
+                                double corner4_rel_y = veh_rel_y - veh_width / value10;
 				double corner4_rel_z = veh_rel_z;
-                                double corner1_x;
-                                double corner1_y;
-                                double corner1_z;
-                                double corner2_x;
-                                double corner2_y;
-                                double corner2_z;
-                                double corner3_x;
-                                double corner3_y;
-                                double corner3_z;
-                                double corner4_x;
-                                double corner4_y;
-                                double corner4_z;
+                                double corner1_x=0.0;
+                                double corner1_y = 0.0;
+                                double corner1_z = 0.0;
+                                double corner2_x = 0.0;
+                                double corner2_y = 0.0;
+                                double corner2_z = 0.0;
+                                double corner3_x = 0.0;
+                                double corner3_y = 0.0;
+                                double corner3_z = 0.0;
+                                double corner4_x = 0.0;
+                                double corner4_y = 0.0;
+                                double corner4_z = 0.0;
 				Rot2env(corner1_rel_x, corner1_rel_y, corner1_rel_z, veh_yaw, veh_pitch, veh_roll, corner1_x, corner1_y, corner1_z); //rotate into environment coordinate system
 				Rot2env(corner2_rel_x, corner2_rel_y, corner2_rel_z, veh_yaw, veh_pitch, veh_roll, corner2_x, corner2_y, corner2_z); //rotate into environment coordinate system
 				Rot2env(corner3_rel_x, corner3_rel_y, corner3_rel_z, veh_yaw, veh_pitch, veh_roll, corner3_x, corner3_y, corner3_z); //rotate into environment coordinate system
@@ -842,18 +849,18 @@ double time = current_communication_point + communication_step_size;
 				double trans_c4_x = corner4_x - sens_world_x;	// vector from sensor to corner 4
 				double trans_c4_y = corner4_y - sens_world_y;
 				double trans_c4_z = corner4_z - sens_world_z;
-                                double rel_c1_x;
-                                double rel_c1_y;
-                                double rel_c1_z;
-                                double rel_c2_x;
-                                double rel_c2_y;
-                                double rel_c2_z;
-                                double rel_c3_x;
-                                double rel_c3_y;
-                                double rel_c3_z;
-                                double rel_c4_x;
-                                double rel_c4_y;
-                                double rel_c4_z;
+                                double rel_c1_x = 0.0;
+                                double rel_c1_y = 0.0;
+                                double rel_c1_z = 0.0;
+                                double rel_c2_x = 0.0;
+                                double rel_c2_y = 0.0;
+                                double rel_c2_z = 0.0;
+                                double rel_c3_x = 0.0;
+                                double rel_c3_y = 0.0;
+                                double rel_c3_z = 0.0;
+                                double rel_c4_x = 0.0;
+                                double rel_c4_y = 0.0;
+                                double rel_c4_z = 0.0;
 				Rot2veh(trans_c1_x, trans_c1_y, trans_c1_z, ego_yaw, ego_pitch, ego_roll, rel_c1_x, rel_c1_y, rel_c1_z); //rotate into coordinate system of ego vehicle
 				Rot2veh(trans_c2_x, trans_c2_y, trans_c2_z, ego_yaw, ego_pitch, ego_roll, rel_c2_x, rel_c2_y, rel_c2_z); //rotate into coordinate system of ego vehicle
 				Rot2veh(trans_c3_x, trans_c3_y, trans_c3_z, ego_yaw, ego_pitch, ego_roll, rel_c3_x, rel_c3_y, rel_c3_z); //rotate into coordinate system of ego vehicle
@@ -942,7 +949,7 @@ double time = current_communication_point + communication_step_size;
 
 				// bool masked = 0;
 				int occ_ind = 0;	// index of occluding car
-				double loc;			// length of occluding car
+                                double loc = 0.0;  // length of occluding car
 				for (size_t j = 1; j < nof_mov_obj; ++j) { //assume j=0 =always EGO tbconfirmed! type size_t of j was auto but caused compiler warning					// if ((j!=i) && (distance[j]<distance[i]) && (phi_min[j]<phi_min[i]) && (phi_max[j]<phi_max[i])) masked = 1;
 					if ((j != i) && (distM[j] < distM[i])) {  //2do: rear cars should be excluded; may cause false values						// normal_log("DEBUG","i %d, j %d, distance[j] %.2f,distance[i] %.2f, phi_min[j] %.2f, phi_min[i] %.2f, phi_max[j] %.2f, phi_max[i] %.2f, masked %d, nof_obj %d",i,j,distance[j],distance[i],phi_min[j],phi_min[i],phi_max[j],phi_max[i],masked[i],nof_obj);
 						if ((phi_max[j] < phi_min[i]) || (phi_min[j] > phi_max[i])) {							//		normal_log("OSI", "Vehicle %d not occluded by vehicle %d", i, j);
@@ -1033,7 +1040,7 @@ double time = current_communication_point + communication_step_size;
 
 
 				//TypeName = "Type_Unknown";
-				std::string TypeName2 = veh.GetTypeName();
+				std::string typename2 = veh.GetTypeName();
 				//		normal_log("DEBUG", "moving object information id %d and masked %d", veh.id().value(), masked[i + 1]);
 				//Age
 				ObjectInfo current_object_history{};
@@ -1063,7 +1070,9 @@ double time = current_communication_point + communication_step_size;
                                           veh.base().orientation().pitch(),
                                           veh.base().orientation().roll());
 
-				double rr1 = 0, rr2 = 0, rr3 = 0;
+				double rr1 = 0;
+                                double rr2 = 0;
+                                double rr3 = 0;
 				EulerWinkel(ego_yaw, ego_pitch, ego_roll, veh_orientation_yaw, veh_orientation_pitch, veh_orientation_roll, rr1, rr2,rr3);
                                 NormalLog("DEBUG", "Detected object Orientierung zum Vehicle  %f,%f,%f", rr1, rr2, rr3);
 				
@@ -1087,9 +1096,9 @@ double time = current_communication_point + communication_step_size;
 				double delta_x = vx - ego_vel_x;
 				double delta_y = vy - ego_vel_y;
 				double delta_z = vz - ego_vel_z;
-                                double vx_sens;
-                                double vy_sens;
-                                double vz_sens;  // velocity components in coordinate system of ego vehicle
+                                double vx_sens=0.0;
+                                double vy_sens = 0.0;
+                                double vz_sens = 0.0;  // velocity components in coordinate system of ego vehicle
 				Rot2veh(delta_x, delta_y, delta_z, ego_yaw, ego_pitch, ego_roll, vx_sens, vy_sens, vz_sens); //rotate into coordinate system of ego vehicle
 
 				NormalLog("OSI", "Velocity of moving object global coordinates: x %f ,y %f z %f \n", vx, vy, vz);
