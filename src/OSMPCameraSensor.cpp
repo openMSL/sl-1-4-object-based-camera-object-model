@@ -60,7 +60,7 @@ ofstream COSMPCameraSensor::private_log_file;
 void* DecodeIntegerToPointer(fmi2Integer hi, fmi2Integer lo)
 {
 #if PTRDIFF_MAX == INT64_MAX
-    union addrconv
+    union Addrconv
     {
         struct
         {
@@ -68,7 +68,7 @@ void* DecodeIntegerToPointer(fmi2Integer hi, fmi2Integer lo)
             int hi;
         } base;
         unsigned long long address;
-    } myaddr{};
+    } myaddr;
     myaddr.base.lo = lo;
     myaddr.base.hi = hi;
     return reinterpret_cast<void*>(myaddr.address);
@@ -426,7 +426,7 @@ void Rot2env(double x, double y, double z, double yaw, double pitch, double roll
 
 // Function to find 
 // cross product of two vector array. 
-void CrossProduct(double vect_a[], double vect_b[], double cross_p[])
+void CrossProduct(const double vect_a[], const double vect_b[], const double cross_p[])
 
 {
 
@@ -494,7 +494,7 @@ void CalKoordNew(double trans_x, double trans_y, double trans_z, double ego_yaw,
 
 
 
-float CalculateAngle(double r1, double r2, double r3, double g1, double g2, double g3)
+double CalculateAngle(double r1, double r2, double r3, double g1, double g2, double g3)
 {
     const int value3 = 180;
 	double nenner1 = g1 * r1 + g2 * r2 + g3 * r3;
