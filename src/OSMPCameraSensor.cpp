@@ -763,20 +763,20 @@ double time = current_communication_point + communication_step_size;
 
 
 		//double veh_rel2_x, veh_rel2_y, veh_rel2_z; //only for DEBUG!!!
-                double trans_x;
-                double trans_y;
-                double trans_z;
-                double veh_rel_x;
-                double veh_rel_y;
-                double veh_rel_z;
+                double trans_x = 0.0;
+                double trans_y = 0.0;
+                double trans_z = 0.0;
+                double veh_rel_x = 0.0;
+                double veh_rel_y = 0.0;
+                double veh_rel_z = 0.0;
 		std::vector<double> c1_x(nof_mov_obj);		// x coordinate of corner 1 (in sensor coord sys) (needed as reference corner for location distribution)	
 		std::vector<double> c1_y(nof_mov_obj);		// y coordinate of corner 1 (in sensor coord sys)	
 		std::vector<double> c1_z(nof_mov_obj);		// z coordinate of corner 1 (in sensor coord sys)	
 		std::vector<double> phi_min(nof_mov_obj);   // define vector with length nof_obj and initialize it to 0
 		std::vector<double> phi_max(nof_mov_obj);   // define vector with length nof_obj and initialize it to 0
 		std::vector<double> phi(nof_mov_obj);
-		std::vector<double> distM(nof_mov_obj);  // define vector with length nof_obj and initialize it to 0
-                double rel_x=0.0;
+		std::vector<double> dist_m(nof_mov_obj);  // define vector with length nof_obj and initialize it to 0
+                double rel_x = 0.0;
                 double rel_y = 0.0;
                 double rel_z = 0.0;
 
@@ -888,24 +888,24 @@ double time = current_communication_point + communication_step_size;
 				double cc_x = corner1_x;	// declare closest corner coordinates (default value corner 1)
 				double cc_y = corner1_y;
 				double cc_z = corner1_z;
-				distM[i] = distc1;	// distance to closest corner
-				if (distc2 < distM[i]) {
+				dist_m[i] = distc1;	// distance to closest corner
+				if (distc2 < dist_m[i]) {
 					cc_x = corner2_x;
 					cc_y = corner2_y;
 					cc_z = corner2_z;
-					distM[i] = distc2;
+					dist_m[i] = distc2;
 				}
 				if (distc3 < distance[i]) {
 					cc_x = corner3_x;
 					cc_y = corner3_y;
 					cc_z = corner3_z;
-					distM[i] = distc3;
+					dist_m[i] = distc3;
 				}
 				if (distc4 < distance[i]) {
 					cc_x = corner4_x;
 					cc_y = corner4_y;
 					cc_z = corner4_z;
-					distM[i] = distc4;
+					dist_m[i] = distc4;
 				}
 				trans_x = cc_x - sens_world_x; // Vector from sensor to closest corner of vehicle
 				trans_y = cc_y - sens_world_y;
@@ -951,7 +951,7 @@ double time = current_communication_point + communication_step_size;
 				int occ_ind = 0;	// index of occluding car
                                 double loc = 0.0;  // length of occluding car
 				for (size_t j = 1; j < nof_mov_obj; ++j) { //assume j=0 =always EGO tbconfirmed! type size_t of j was auto but caused compiler warning					// if ((j!=i) && (distance[j]<distance[i]) && (phi_min[j]<phi_min[i]) && (phi_max[j]<phi_max[i])) masked = 1;
-					if ((j != i) && (distM[j] < distM[i])) {  //2do: rear cars should be excluded; may cause false values						// normal_log("DEBUG","i %d, j %d, distance[j] %.2f,distance[i] %.2f, phi_min[j] %.2f, phi_min[i] %.2f, phi_max[j] %.2f, phi_max[i] %.2f, masked %d, nof_obj %d",i,j,distance[j],distance[i],phi_min[j],phi_min[i],phi_max[j],phi_max[i],masked[i],nof_obj);
+					if ((j != i) && (dist_m[j] < dist_m[i])) {  //2do: rear cars should be excluded; may cause false values						// normal_log("DEBUG","i %d, j %d, distance[j] %.2f,distance[i] %.2f, phi_min[j] %.2f, phi_min[i] %.2f, phi_max[j] %.2f, phi_max[i] %.2f, masked %d, nof_obj %d",i,j,distance[j],distance[i],phi_min[j],phi_min[i],phi_max[j],phi_max[i],masked[i],nof_obj);
 						if ((phi_max[j] < phi_min[i]) || (phi_min[j] > phi_max[i])) {							//		normal_log("OSI", "Vehicle %d not occluded by vehicle %d", i, j);
 						}
 						else {
@@ -982,7 +982,10 @@ double time = current_communication_point + communication_step_size;
 
 
 
-				if (vis == 1.0) masked[i] = 0;
+				if (vis == 1.0)
+                                {
+                                    masked[i] = 0;
+                                }
 				else {
 					masked[i] = 1; vis = 0;
 				}
@@ -1115,20 +1118,23 @@ double time = current_communication_point + communication_step_size;
 						osi3::DetectedMovingObject *obj = current_out.mutable_moving_object()->Add();
 						current_out.mutable_moving_object_header()->set_data_qualifier(osi3::DetectedEntityHeader_DataQualifier_DATA_QUALIFIER_AVAILABLE);
 
-						int max = 10;
-						int min = 0;
+						const int max = 10;
+						const int min = 0;
+                                                const int valueProzent = 100;
+                                                const double value11 = 0.2;
 						double randomnumber = (rand() % (max - min)) + min;
 
-						double existence_prob = 100 - abs(distance*0.2) + 0.2*randomnumber;
-						if (existence_prob > 100) {
-							existence_prob = 100;
+						double existence_prob = valueProzent - abs(distance * value11) + value11 * randomnumber;
+                                                if (existence_prob > valueProzent)
+                                                {
+                                                    existence_prob = valueProzent;
 						}
                                                 NormalLog("DEBUG", "Randomnumber is %f", randomnumber);
-						double randomPos = randomnumber / 100;
+						double randomPos = randomnumber / valueProzent;
                                                 NormalLog("DEBUG", "Random number is %f", randomPos);
 						obj->mutable_header()->add_ground_truth_id()->CopyFrom(veh.id());
 						obj->mutable_header()->mutable_tracking_id()->set_value(i);
-						obj->mutable_header()->set_existence_probability(existence_prob / 100);
+						obj->mutable_header()->set_existence_probability(existence_prob / valueProzent);
 						obj->mutable_header()->set_age(current_object_history.age);
 						obj->mutable_header()->set_measurement_state(osi3::DetectedItemHeader_MeasurementState_MEASUREMENT_STATE_MEASURED);
                                                 obj->mutable_header()->add_sensor_id()->CopyFrom(current_view_in.sensor_id());
@@ -1298,18 +1304,20 @@ double time = current_communication_point + communication_step_size;
 				osi3::DetectedStationaryObject *obj = current_out.mutable_stationary_object()->Add();
 				current_out.mutable_stationary_object_header()->set_data_qualifier(osi3::DetectedEntityHeader_DataQualifier_DATA_QUALIFIER_AVAILABLE);
 
-				int max = 10;
-				int min = 0;
+				const int max = 10;
+				const int min = 0;
 				int randomnumber = (rand() % (max - min)) + min;
-
-				double existence_prob = 100 - abs(distance*0.2) + 0.2*randomnumber;
-				if (existence_prob > 100) {
-					existence_prob = 100;
+                                const int value20 = 100; 
+                                const double value21 = 0.2;
+                                double existence_prob = value20 - abs(distance * value21) + value21 * randomnumber;
+                                if (existence_prob > value20)
+                                {
+                                    existence_prob = value20;
 				}
 
 				obj->mutable_header()->add_ground_truth_id()->CopyFrom(stobj.id());
 				obj->mutable_header()->mutable_tracking_id()->set_value(i);
-				obj->mutable_header()->set_existence_probability(existence_prob / 100);
+                                obj->mutable_header()->set_existence_probability(existence_prob / value20);
 			
 				obj->mutable_header()->set_measurement_state(osi3::DetectedItemHeader_MeasurementState_MEASUREMENT_STATE_MEASURED);
                                 obj->mutable_header()->add_sensor_id()->CopyFrom(current_view_in.sensor_id());
@@ -1457,20 +1465,22 @@ double time = current_communication_point + communication_step_size;
 				osi3::DetectedTrafficLight *obj = current_out.mutable_traffic_light()->Add();
 				current_out.mutable_traffic_light_header()->set_data_qualifier(osi3::DetectedEntityHeader_DataQualifier_DATA_QUALIFIER_AVAILABLE);
 
-				int max = 10;
-				int min = 0;
+				const int max = 10;
+				const int min = 0;
 				int randomnumber = (rand() % (max - min)) + min;
-
-				double existence_prob = 100 - abs(distance*0.2) + 0.2*randomnumber;
-				if (existence_prob > 100) {
-					existence_prob = 100;
+                const int value30=100;
+                                const double value31 = 0.2;
+                                double existence_prob = value30-abs(distance * value31) + value31 * randomnumber;
+                if (existence_prob > value30)
+                {
+                    existence_prob = value30;
 				}
 
 				obj->mutable_header()->add_ground_truth_id()->CopyFrom(trafficlight.id());
                                 NormalLog("OSI", "TrafficLight ID: %f", trafficlight.id());
 				obj->mutable_header()->mutable_tracking_id()->set_value(itl);
-				obj->mutable_header()->set_existence_probability(existence_prob / 100);
-                                NormalLog("OSI", "TrafficLight Existence Probability: %f", existence_prob / 100);
+				obj->mutable_header()->set_existence_probability(existence_prob / value30);
+                                NormalLog("OSI", "TrafficLight Existence Probability: %f", existence_prob / value30);
 				//obj->mutable_header()->set_age(current_object_history.age);
 				obj->mutable_header()->set_measurement_state(osi3::DetectedItemHeader_MeasurementState_MEASUREMENT_STATE_MEASURED);
                                 obj->mutable_header()->add_sensor_id()->CopyFrom(current_view_in.sensor_id());
@@ -1590,9 +1600,9 @@ double time = current_communication_point + communication_step_size;
                                   tsobj.main_sign().base().position().y(),
                                   tsobj.main_sign().base().position().z());
 			
-			double transTS_x = tsobj.main_sign().base().position().x() - origin_world_x;
-			double transTS_y = tsobj.main_sign().base().position().y() - origin_world_y;
-			double transTS_z = tsobj.main_sign().base().position().z() - origin_world_z;
+			double trans_ts_x = tsobj.main_sign().base().position().x() - origin_world_x;
+			double trans_ts_y = tsobj.main_sign().base().position().y() - origin_world_y;
+			double trans_ts_z = tsobj.main_sign().base().position().z() - origin_world_z;
 			double tsobjmorientationyaw = tsobj.main_sign().base().orientation().yaw();
 			double tsobjmorientationpitch = tsobj.main_sign().base().orientation().pitch();
 			double tsobjmorientationroll = tsobj.main_sign().base().orientation().roll();
@@ -1608,31 +1618,36 @@ double time = current_communication_point + communication_step_size;
                         NormalLog("OSI", "TrafficSign position y %f", tsobj.main_sign().base().position().y() - sens_world_y);
                         NormalLog("OSI", "TrafficSign position z %f", tsobj.main_sign().base().position().z() - sens_world_z);
 
-			CalKoordNew(transTS_x, transTS_y, transTS_z, ego_yaw, ego_pitch, ego_roll, xxxkoordinate, yyykoordinate, zzzkoordinate);
+			CalKoordNew(trans_ts_x, trans_ts_y, trans_ts_z, ego_yaw, ego_pitch, ego_roll, xxxkoordinate, yyykoordinate, zzzkoordinate);
 
 			NormalLog("OSI", "TrafficSign in Sensor-Coordinates: %f,%f,%f", xxxkoordinate, yyykoordinate, zzzkoordinate);
 
-			double distance = sqrt(transTS_x*transTS_x + transTS_y * transTS_y + transTS_z * transTS_z);
+			double distance = sqrt(trans_ts_x*trans_ts_x + trans_ts_y * trans_ts_y + trans_ts_z * trans_ts_z);
 			//Vector camera sensor, camera view direction 
 			double g1 = sens_sv_x - sens_world_x;
 			double g2 = sens_sv_y - sens_world_y;
 			double g3 = sens_sv_z - sens_world_z;
 			//Angle between 
-			double angle_to_traffic_sign = CalculateAngle(transTS_x, transTS_y, transTS_z, g1, g2, g3);
+			double angle_to_traffic_sign = CalculateAngle(trans_ts_x, trans_ts_y, trans_ts_z, g1, g2, g3);
 
 			if ((distance <= camera_range) && abs(angle_to_traffic_sign) < camera_FOV) {// (abs(trans_x/distance) >0.766025)){//0.766025)) {
 				osi3::DetectedTrafficSign *obj = current_out.mutable_traffic_sign()->Add();
 				current_out.mutable_traffic_sign_header()->set_data_qualifier(osi3::DetectedEntityHeader_DataQualifier_DATA_QUALIFIER_AVAILABLE);
 
-				int max = 10;
-				int min = 0;
+				const int max = 10;
+				const int min = 0;
 				int randomnumber = (rand() % (max - min)) + min;
-
-				double existence_prob = 100 - abs(distance*0.2) + 0.2*randomnumber;
+                                const int value40 = 100;
+                                const double value41 = 0.2;
+                                double existence_prob = value40 - abs(distance * value41) + value41 * randomnumber;
+                                if (existence_prob > value40)
+                                {
+                                    existence_prob = value40;
+                                }
 
 				obj->mutable_header()->add_ground_truth_id()->CopyFrom(tsobj.id());
 				obj->mutable_header()->mutable_tracking_id()->set_value(its);
-				obj->mutable_header()->set_existence_probability(existence_prob / 100);
+				obj->mutable_header()->set_existence_probability(existence_prob / value40);
 				//obj->mutable_header()->set_age(current_object_history.age);
 				obj->mutable_header()->set_measurement_state(osi3::DetectedItemHeader_MeasurementState_MEASUREMENT_STATE_MEASURED);
                                 obj->mutable_header()->add_sensor_id()->CopyFrom(current_view_in.sensor_id());
