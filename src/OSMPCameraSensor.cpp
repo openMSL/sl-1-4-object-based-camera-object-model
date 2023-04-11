@@ -1133,8 +1133,8 @@ double time = current_communication_point + communication_step_size;
                                                     existence_prob = value15;
 						}
                                                 NormalLog("DEBUG", "Randomnumber is %f", randomnumber);
-						double randomPos = randomnumber / value15;
-                                                NormalLog("DEBUG", "Random number is %f", randomPos);
+						double random_pos = randomnumber / value15;
+                                                NormalLog("DEBUG", "Random number is %f", random_pos);
 						obj->mutable_header()->add_ground_truth_id()->CopyFrom(veh.id());
 						obj->mutable_header()->mutable_tracking_id()->set_value(i);
 						obj->mutable_header()->set_existence_probability(existence_prob / value15);
