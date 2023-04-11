@@ -60,7 +60,7 @@ ofstream COSMPCameraSensor::private_log_file;
 void* DecodeIntegerToPointer(fmi2Integer hi, fmi2Integer lo)
 {
 #if PTRDIFF_MAX == INT64_MAX
-    union Addrconv
+    union addrconv
     {
         struct
         {
@@ -68,7 +68,7 @@ void* DecodeIntegerToPointer(fmi2Integer hi, fmi2Integer lo)
             int hi;
         } base;
         unsigned long long address;
-    } myaddr;
+    } myaddr{};
     myaddr.base.lo = lo;
     myaddr.base.hi = hi;
     return reinterpret_cast<void*>(myaddr.address);
@@ -78,6 +78,9 @@ void* DecodeIntegerToPointer(fmi2Integer hi, fmi2Integer lo)
 #error "Cannot determine 32bit or 64bit environment!"
 #endif
 }
+
+
+
 
 void EncodePointerToInteger(const void* ptr, fmi2Integer& hi, fmi2Integer& lo)
 {
