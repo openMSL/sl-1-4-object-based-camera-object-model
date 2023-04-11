@@ -830,18 +830,18 @@ double time = current_communication_point + communication_step_size;
 				Rot2env(corner4_rel_x, corner4_rel_y, corner4_rel_z, veh_yaw, veh_pitch, veh_roll, corner4_x, corner4_y, corner4_z); //rotate into environment coordinate system
 
 				/* Calculate azimuth angles of corners */
-				double trans_c1_x = corner1_x - sens_World_x;	// vector from sensor to corner 1
-				double trans_c1_y = corner1_y - sens_World_y;
-				double trans_c1_z = corner1_z - sens_World_z;
-				double trans_c2_x = corner2_x - sens_World_x;	// vector from sensor to corner 2
-				double trans_c2_y = corner2_y - sens_World_y;
-				double trans_c2_z = corner2_z - sens_World_z;
-				double trans_c3_x = corner3_x - sens_World_x;	// vector from sensor to corner 3
-				double trans_c3_y = corner3_y - sens_World_y;
-				double trans_c3_z = corner3_z - sens_World_z;
-				double trans_c4_x = corner4_x - sens_World_x;	// vector from sensor to corner 4
-				double trans_c4_y = corner4_y - sens_World_y;
-				double trans_c4_z = corner4_z - sens_World_z;
+				double trans_c1_x = corner1_x - sens_world_x;	// vector from sensor to corner 1
+				double trans_c1_y = corner1_y - sens_world_y;
+				double trans_c1_z = corner1_z - sens_world_z;
+				double trans_c2_x = corner2_x - sens_world_x;	// vector from sensor to corner 2
+				double trans_c2_y = corner2_y - sens_world_y;
+				double trans_c2_z = corner2_z - sens_world_z;
+				double trans_c3_x = corner3_x - sens_world_x;	// vector from sensor to corner 3
+				double trans_c3_y = corner3_y - sens_world_y;
+				double trans_c3_z = corner3_z - sens_world_z;
+				double trans_c4_x = corner4_x - sens_world_x;	// vector from sensor to corner 4
+				double trans_c4_y = corner4_y - sens_world_y;
+				double trans_c4_z = corner4_z - sens_world_z;
                                 double rel_c1_x;
                                 double rel_c1_y;
                                 double rel_c1_z;
