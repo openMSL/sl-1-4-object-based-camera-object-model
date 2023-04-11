@@ -552,7 +552,7 @@ void UpdateObjectHistoryVector(ObjectInfo& current_object_history, const osi3::S
 		else {
 			current_object_history.movement_state = 0;
 		}
-		g_object_history_vector.push_back(current_object_history);
+		object_history_vector.push_back(current_object_history);
 	}
 }
 
