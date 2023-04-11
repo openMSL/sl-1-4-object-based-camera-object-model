@@ -599,37 +599,37 @@ double time = current_communication_point + communication_step_size;
 
 		//Center of the bounding box in environment coordinates 
 		//Position and Orientation 
-		double ego_World_x = 0;
-        double ego_World_y = 0;
-        double ego_World_z = 0;
+		double ego_world_x = 0;
+        double ego_world_y = 0;
+        double ego_world_z = 0;
         double ego_yaw = 0;
         double ego_pitch = 0;
         double ego_roll = 0;
 		double ego_vel_x = 0; double ego_vel_y = 0; double ego_vel_z = 0;//ego velocity 
 
 
-		double origin_Host_x = 0;
-                double origin_Host_y = 0;
-                double origin_Host_z = 0;  // Position of the host vehicle Ursprung in host vehicle coordinates
+		double origin_host_x = 0;
+                double origin_host_y = 0;
+                double origin_host_z = 0;  // Position of the host vehicle Ursprung in host vehicle coordinates
 		//Position of the host vehicle Ursprung in environment coordinates
-                double origin_World_x = 0;
-                double origin_World_y = 0;
-                double origin_World_z = 0;
+                double origin_world_x = 0;
+                double origin_world_y = 0;
+                double origin_world_z = 0;
 
-		double bbctr_Host_x = 0;
-                double bbctr_Host_y = 0;
-                double bbctr_Host_z = 0;
+		double bbctr_host_x = 0;
+                double bbctr_host_y = 0;
+                double bbctr_host_z = 0;
                 double origin_rot_x = 0;
                 double origin_rot_y = 0;
                 double origin_rot_z = 0;
 		//Position of the sensor in environment coordinates 
-		double sens_World_x = 0;
-                double sens_World_y = 0;
-                double sens_World_z = 0;
+		double sens_world_x = 0;
+                double sens_world_y = 0;
+                double sens_world_z = 0;
 		//Camera view direction after calculation of all orientation - 
-		double sensSV_x = 0;
-                double sensSV_y = 0;
-                double sensSV_z = 0;
+		double sens_sv_x = 0;
+                double sens_sv_y = 0;
+                double sens_sv_z = 0;
 		std::vector<int>   masked(nof_mov_obj);  	// define vector with length nof_obj and initialize it to 0
 
 
@@ -665,51 +665,51 @@ double time = current_communication_point + communication_step_size;
 
 		for_each(current_view_in.global_ground_truth().moving_object().begin(),
                          current_view_in.global_ground_truth().moving_object().end(),
-			[this, ego_id, &bbctr_Host_x, &bbctr_Host_y, &bbctr_Host_z, &ego_World_x, &ego_World_y, &ego_World_z, &ego_yaw, &ego_pitch, &ego_roll, &ego_vel_x, &ego_vel_y, &ego_vel_z, &origin_World_x, &origin_World_y, &origin_World_z, &origin_rot_x, &origin_rot_y, &origin_rot_z, &origin_Host_x, &origin_Host_y, &origin_Host_z, &mpos_x, &mpos_y, &mpos_z, &mpos_rot_x, &mpos_rot_y, &mpos_rot_z, &mpos_yaw, &mpos_pitch, &mpos_roll, &sens_World_x, &sens_World_y, &sens_World_z, &sensSV_x, &sensSV_y, &sensSV_z](const osi3::MovingObject& obj) {
+			[this, ego_id, &bbctr_host_x, &bbctr_host_y, &bbctr_host_z, &ego_world_x, &ego_world_y, &ego_world_z, &ego_yaw, &ego_pitch, &ego_roll, &ego_vel_x, &ego_vel_y, &ego_vel_z, &origin_world_x, &origin_world_y, &origin_world_z, &origin_rot_x, &origin_rot_y, &origin_rot_z, &origin_host_x, &origin_host_y, &origin_host_z, &mpos_x, &mpos_y, &mpos_z, &mpos_rot_x, &mpos_rot_y, &mpos_rot_z, &mpos_yaw, &mpos_pitch, &mpos_roll, &sens_world_x, &sens_world_y, &sens_world_z, &sens_sv_x, &sens_sv_y, &sens_sv_z](const osi3::MovingObject& obj) {
                              NormalLog("OSI", "MovingObject with ID %llu is EgoVehicle: %d", obj.id().value(), obj.id().value() == ego_id.value());
 			if (obj.id().value() == ego_id.value()) {
                             NormalLog("OSI", "Found EgoVehicle with ID: %llu", obj.id().value());
 
-				ego_World_x = obj.base().position().x(); ego_World_y = obj.base().position().y(); ego_World_z = obj.base().position().z();
+				ego_world_x = obj.base().position().x(); ego_world_y = obj.base().position().y(); ego_world_z = obj.base().position().z();
 				ego_yaw = obj.base().orientation().yaw(); ego_pitch = obj.base().orientation().pitch();	ego_roll = obj.base().orientation().roll();
 				
 				//ego_World_x = 1; ego_World_y = 1; ego_World_z = 1; ego_yaw = PI; ego_pitch = 0; ego_roll = 0;
 
-				NormalLog("OSI", "Current EGO position and orientation: %f,%f,%f,%f,%f,%f", ego_World_x, ego_World_y, ego_World_z, ego_yaw, ego_pitch, ego_roll);
+				NormalLog("OSI", "Current EGO position and orientation: %f,%f,%f,%f,%f,%f", ego_world_x, ego_world_y, ego_world_z, ego_yaw, ego_pitch, ego_roll);
 				ego_vel_x = obj.base().velocity().x(); ego_vel_y = obj.base().velocity().y(); ego_vel_z = obj.base().velocity().z();
 
 
 				//Position of the ego origin in host vehicle coordinates  (bbcenter_to_rear)
-				bbctr_Host_x = obj.vehicle_attributes().bbcenter_to_rear().x(); bbctr_Host_y = obj.vehicle_attributes().bbcenter_to_rear().y(); bbctr_Host_z = obj.vehicle_attributes().bbcenter_to_rear().z();
+				bbctr_host_x = obj.vehicle_attributes().bbcenter_to_rear().x(); bbctr_host_y = obj.vehicle_attributes().bbcenter_to_rear().y(); bbctr_host_z = obj.vehicle_attributes().bbcenter_to_rear().z();
 				
 				//bbctr_Host_x = -2; bbctr_Host_y = -0.5; bbctr_Host_z = 0;
                                 double h1 = 0;
                                 double h2 = 0;
                                 double h3 = 0;
 				//Position of the ego origin in world coordinates after rotation  
-				NormalLog("OSI", "Current EGO bbcenter to rear vector: %f,%f,%f", bbctr_Host_x, bbctr_Host_y, bbctr_Host_z);
-				Rot2env(bbctr_Host_x, bbctr_Host_y, bbctr_Host_z, ego_yaw, ego_pitch, ego_roll, origin_rot_x, origin_rot_y, origin_rot_z); //rotate into coordinate system of environment
-				origin_World_x = origin_rot_x + ego_World_x;
-				origin_World_y = origin_rot_y + ego_World_y;
-				origin_World_z = origin_rot_z + ego_World_z;
-                                NormalLog("OSI", "Current EGO Origin Position in environment coordinates: %f,%f,%f", origin_World_x, origin_World_y, origin_World_z);
+				NormalLog("OSI", "Current EGO bbcenter to rear vector: %f,%f,%f", bbctr_host_x, bbctr_host_y, bbctr_host_z);
+				Rot2env(bbctr_host_x, bbctr_host_y, bbctr_host_z, ego_yaw, ego_pitch, ego_roll, origin_rot_x, origin_rot_y, origin_rot_z); //rotate into coordinate system of environment
+				origin_world_x = origin_rot_x + ego_world_x;
+				origin_world_y = origin_rot_y + ego_world_y;
+				origin_world_z = origin_rot_z + ego_world_z;
+                                NormalLog("OSI", "Current EGO Origin Position in environment coordinates: %f,%f,%f", origin_world_x, origin_world_y, origin_world_z);
 
 				
-				Rot2veh(origin_World_x - ego_World_x, origin_World_y - ego_World_y, origin_World_z - ego_World_z, ego_yaw, ego_pitch, ego_roll, h1, h2, h3);
+				Rot2veh(origin_world_x - ego_world_x, origin_world_y - ego_world_y, origin_world_z - ego_world_z, ego_yaw, ego_pitch, ego_roll, h1, h2, h3);
                                 NormalLog("OSI", "Current Host ORigin in Host coordinates: %f,%f,%f", h1, h2, h3);
-				double sens_ego_x = origin_Host_x + mpos_x;	// sensor x-position in ego coordinate system before ego-orientation rotation
-				double sens_ego_y = origin_Host_y + mpos_y;	// sensor y-position in ego coordinate system before ego-orientation rotation
-				double sens_ego_z = origin_Host_z + mpos_z;	// sensor z-position in ego coordinate system before ego-orientation rotation
+				double sens_ego_x = origin_host_x + mpos_x;	// sensor x-position in ego coordinate system before ego-orientation rotation
+				double sens_ego_y = origin_host_y + mpos_y;	// sensor y-position in ego coordinate system before ego-orientation rotation
+				double sens_ego_z = origin_host_z + mpos_z;	// sensor z-position in ego coordinate system before ego-orientation rotation
 
 
 
 				Rot2env(sens_ego_x, sens_ego_y, sens_ego_z, ego_yaw, ego_pitch, ego_roll, mpos_rot_x, mpos_rot_y, mpos_rot_z);
 				//Position of the sensor in environment coordinates 
-				sens_World_x = ego_World_x + mpos_rot_x;
-				sens_World_y = ego_World_y + mpos_rot_y;
-				sens_World_z = ego_World_z + mpos_rot_z;
+				sens_world_x = ego_world_x + mpos_rot_x;
+				sens_world_y = ego_world_y + mpos_rot_y;
+				sens_world_z = ego_world_z + mpos_rot_z;
                                 NormalLog("OSI", "Current Sensor Coordinates in host coordinate system: x %f, y %f, z %f", sens_ego_x, sens_ego_y, sens_ego_z);
-                                NormalLog("OSI", "Current Sensor Coordinates in environment coordinate system: x %f, y %f, z %f", sens_World_x, sens_World_y, sens_World_z);
+                                NormalLog("OSI", "Current Sensor Coordinates in environment coordinate system: x %f, y %f, z %f", sens_world_x, sens_world_y, sens_world_z);
 
 				
 				//With sensor-rotation 
@@ -717,16 +717,16 @@ double time = current_communication_point + communication_step_size;
 				
 				Rot2env(1, 0, 0, mpos_yaw, mpos_pitch, mpos_roll, sens_sv_mprotx, sens_sv_mproty, sens_sv_mprotz);
 				
-				sensSV_x = sens_ego_x + sens_sv_mprotx;	// Sichtvektor sensor x in ego coordinate system before ego-orientation rotation
-				sensSV_y = sens_ego_y + sens_sv_mproty;	// sensor y in ego coordinate system before ego-orientation rotation
-				sensSV_z = sens_ego_z + sens_sv_mprotz;	// sensor z in ego coordinate system before ego-orientation rotation
+				sens_sv_x = sens_ego_x + sens_sv_mprotx;	// Sichtvektor sensor x in ego coordinate system before ego-orientation rotation
+				sens_sv_y = sens_ego_y + sens_sv_mproty;	// sensor y in ego coordinate system before ego-orientation rotation
+				sens_sv_z = sens_ego_z + sens_sv_mprotz;	// sensor z in ego coordinate system before ego-orientation rotation
 				
 				double sens_sv_rot_x = 0; double sens_sv_rot_y = 0; double sens_sv_rot_z = 0;
 				
-				Rot2env(sensSV_x, sensSV_y, sensSV_z, ego_yaw, ego_pitch, ego_roll, sens_sv_rot_x, sens_sv_rot_y, sens_sv_rot_z);
-				sensSV_x = ego_World_x + sens_sv_rot_x;
-				sensSV_y = ego_World_y + sens_sv_rot_y;
-				sensSV_z = ego_World_z + sens_sv_rot_z;
+				Rot2env(sens_sv_x, sens_sv_y, sens_sv_z, ego_yaw, ego_pitch, ego_roll, sens_sv_rot_x, sens_sv_rot_y, sens_sv_rot_z);
+				sens_sv_x = ego_world_x + sens_sv_rot_x;
+				sens_sv_y = ego_world_y + sens_sv_rot_y;
+				sens_sv_z = ego_world_z + sens_sv_rot_z;
 
 				//normal_log("OSI", "EGO position and orientation: x %f, y %f, z %f,yaw %f, pitch %f, roll %f", ego_World_x, ego_World_y, ego_World_z, ego_yaw, ego_pitch, ego_roll);
 				//normal_log("OSI", "Current BB Position rear: %f,%f,%f", origin_Host_x, origin_Host_y, origin_Host_z);
@@ -769,9 +769,9 @@ double time = current_communication_point + communication_step_size;
 		std::vector<double> phi_max(nof_mov_obj);   // define vector with length nof_obj and initialize it to 0
 		std::vector<double> phi(nof_mov_obj);
 		std::vector<double> distM(nof_mov_obj);  // define vector with length nof_obj and initialize it to 0
-                double rel_x;
-                double rel_y;
-                double rel_z;
+                double rel_x=0.0;
+                double rel_y = 0.0;
+                double rel_z = 0.0;
 
 		for (auto v_i = current_view_in.global_ground_truth().moving_object().begin(); v_i != current_view_in.global_ground_truth().moving_object().end(); ++v_i)
                 {
@@ -812,10 +812,18 @@ double time = current_communication_point + communication_step_size;
 				double corner4_rel_x = veh_rel_x + veh_length / 2.;
 				double corner4_rel_y = veh_rel_y - veh_width / 2.;
 				double corner4_rel_z = veh_rel_z;
-				double corner1_x, corner1_y, corner1_z;
-				double corner2_x, corner2_y, corner2_z;
-				double corner3_x, corner3_y, corner3_z;
-				double corner4_x, corner4_y, corner4_z;
+                                double corner1_x;
+                                double corner1_y;
+                                double corner1_z;
+                                double corner2_x;
+                                double corner2_y;
+                                double corner2_z;
+                                double corner3_x;
+                                double corner3_y;
+                                double corner3_z;
+                                double corner4_x;
+                                double corner4_y;
+                                double corner4_z;
 				Rot2env(corner1_rel_x, corner1_rel_y, corner1_rel_z, veh_yaw, veh_pitch, veh_roll, corner1_x, corner1_y, corner1_z); //rotate into environment coordinate system
 				Rot2env(corner2_rel_x, corner2_rel_y, corner2_rel_z, veh_yaw, veh_pitch, veh_roll, corner2_x, corner2_y, corner2_z); //rotate into environment coordinate system
 				Rot2env(corner3_rel_x, corner3_rel_y, corner3_rel_z, veh_yaw, veh_pitch, veh_roll, corner3_x, corner3_y, corner3_z); //rotate into environment coordinate system
@@ -834,10 +842,18 @@ double time = current_communication_point + communication_step_size;
 				double trans_c4_x = corner4_x - sens_World_x;	// vector from sensor to corner 4
 				double trans_c4_y = corner4_y - sens_World_y;
 				double trans_c4_z = corner4_z - sens_World_z;
-				double rel_c1_x, rel_c1_y, rel_c1_z;
-				double rel_c2_x, rel_c2_y, rel_c2_z;
-				double rel_c3_x, rel_c3_y, rel_c3_z;
-				double rel_c4_x, rel_c4_y, rel_c4_z;
+                                double rel_c1_x;
+                                double rel_c1_y;
+                                double rel_c1_z;
+                                double rel_c2_x;
+                                double rel_c2_y;
+                                double rel_c2_z;
+                                double rel_c3_x;
+                                double rel_c3_y;
+                                double rel_c3_z;
+                                double rel_c4_x;
+                                double rel_c4_y;
+                                double rel_c4_z;
 				Rot2veh(trans_c1_x, trans_c1_y, trans_c1_z, ego_yaw, ego_pitch, ego_roll, rel_c1_x, rel_c1_y, rel_c1_z); //rotate into coordinate system of ego vehicle
 				Rot2veh(trans_c2_x, trans_c2_y, trans_c2_z, ego_yaw, ego_pitch, ego_roll, rel_c2_x, rel_c2_y, rel_c2_z); //rotate into coordinate system of ego vehicle
 				Rot2veh(trans_c3_x, trans_c3_y, trans_c3_z, ego_yaw, ego_pitch, ego_roll, rel_c3_x, rel_c3_y, rel_c3_z); //rotate into coordinate system of ego vehicle
@@ -884,16 +900,16 @@ double time = current_communication_point + communication_step_size;
 					cc_z = corner4_z;
 					distM[i] = distc4;
 				}
-				trans_x = cc_x - sens_World_x; // Vector from sensor to closest corner of vehicle
-				trans_y = cc_y - sens_World_y;
-				trans_z = cc_z - sens_World_z;
+				trans_x = cc_x - sens_world_x; // Vector from sensor to closest corner of vehicle
+				trans_y = cc_y - sens_world_y;
+				trans_z = cc_z - sens_world_z;
 				// normal_log("DEBUG","trans_x: %.2f, trans_y: %.2f,trans_z: %.2f",trans_x,trans_y,trans_z);
                                 NormalLog("OSI",
                                           "Current Veh Position: %.2f,%.2f,%.2f (long name)",
                                           veh.base().position().x(),
                                           veh.base().position().y(),
                                           veh.base().position().z());  // test, delme
-                                NormalLog("OSI", "Current Ego Position: %.2f,%.2f,%.2f", ego_World_x, ego_World_y, ego_World_z);
+                                NormalLog("OSI", "Current Ego Position: %.2f,%.2f,%.2f", ego_world_x, ego_world_y, ego_world_z);
 				// rotatePoint(trans_x, trans_y, trans_z, ego_yaw, ego_pitch, ego_roll, rel_x, rel_y, rel_z); //rotate into coordinate system of ego vehicle
 				Rot2veh(trans_x, trans_y, trans_z, ego_yaw, ego_pitch, ego_roll, rel_x, rel_y, rel_z); //rotate into coordinate system of ego vehicle
 				// distance[i] = sqrt(rel_x * rel_x + rel_y*rel_y + rel_z*rel_z); //same as with trans?
@@ -985,18 +1001,18 @@ double time = current_communication_point + communication_step_size;
                      &current_out,
                      &masked,
                      ego_id,
-                     ego_World_x,
-                     ego_World_y,
-                     ego_World_z,
+                     ego_world_x,
+                     ego_world_y,
+                     ego_world_z,
                      ego_vel_x,
                      ego_vel_y,
                      ego_vel_z,
                      &mpos_x,
                      &mpos_y,
                      &mpos_z,
-                     &origin_World_x,
-                     &origin_World_y,
-                     &origin_World_z,
+                     &origin_world_x,
+                     &origin_world_y,
+                     &origin_world_z,
                      &origin_rot_x,
                      &origin_rot_y,
                      &origin_rot_z,
@@ -1007,12 +1023,12 @@ double time = current_communication_point + communication_step_size;
                      ego_pitch,
                      ego_roll,
                      actual_range,
-                     &sens_World_x,
-                     &sens_World_y,
-                     &sens_World_z,
-                     &sensSV_x,
-                     &sensSV_y,
-                     &sensSV_z](const osi3::MovingObject& veh) {
+                     &sens_world_x,
+                     &sens_world_y,
+                     &sens_world_z,
+                     &sens_sv_x,
+                     &sens_sv_y,
+                     &sens_sv_z](const osi3::MovingObject& veh) {
 			if (veh.id().value() != ego_id.value()) {
 
 
@@ -1027,17 +1043,17 @@ double time = current_communication_point + communication_step_size;
 
 
 				//Calculate the Moving Objects in Sensor coordinates (erstmal zur mounting posistion) !! Sp�ter eventuell zur Hinterachse Auto 
-				double xxKoordinate = 0;	double yyKoordinate = 0; double zzKoordinate = 0;  //Coordinates of the moving object in sensor coordinate system (movin object center of bounding box to mounting position sensor) 
+				double xxkoordinate = 0.0;	double yykoordinate = 0.0; double zzkoordinate = 0.0;  //Coordinates of the moving object in sensor coordinate system (movin object center of bounding box to mounting position sensor) 
 
 
-				double trans_x = veh.base().position().x() - origin_World_x;
-				double trans_y = veh.base().position().y() - origin_World_y;
-				double trans_z = veh.base().position().z() - origin_World_z;
+				double trans_x = veh.base().position().x() - origin_world_x;
+				double trans_y = veh.base().position().y() - origin_world_y;
+				double trans_z = veh.base().position().z() - origin_world_z;
 
 
-				double vehOrientationYaw = veh.base().orientation().yaw();
-				double vehOrientationPitch = veh.base().orientation().pitch();
-				double vehOrientationRoll = veh.base().orientation().roll();
+				double veh_orientation_yaw = veh.base().orientation().yaw();
+				double veh_orientation_pitch = veh.base().orientation().pitch();
+				double veh_orientation_roll = veh.base().orientation().roll();
 
 			
 				NormalLog("DEBUG", "Detected object bb center to mitte Hinterachse in Welt koordinaten %f,%f,%f", trans_x, trans_y, trans_z);
@@ -1048,17 +1064,17 @@ double time = current_communication_point + communication_step_size;
                                           veh.base().orientation().roll());
 
 				double rr1 = 0, rr2 = 0, rr3 = 0;
-				EulerWinkel(ego_yaw, ego_pitch, ego_roll, vehOrientationYaw, vehOrientationPitch, vehOrientationRoll, rr1, rr2,rr3);
+				EulerWinkel(ego_yaw, ego_pitch, ego_roll, veh_orientation_yaw, veh_orientation_pitch, veh_orientation_roll, rr1, rr2,rr3);
                                 NormalLog("DEBUG", "Detected object Orientierung zum Vehicle  %f,%f,%f", rr1, rr2, rr3);
 				
-				Rot2veh(trans_x, trans_y, trans_z, ego_yaw, ego_pitch, ego_roll, xxKoordinate, yyKoordinate, zzKoordinate);
-                                NormalLog("DEBUG", "Detected object in Vehicle Koordinaten %f,%f,%f", xxKoordinate, yyKoordinate, zzKoordinate);
+				Rot2veh(trans_x, trans_y, trans_z, ego_yaw, ego_pitch, ego_roll, xxkoordinate, yykoordinate, zzkoordinate);
+                                NormalLog("DEBUG", "Detected object in Vehicle Koordinaten %f,%f,%f", xxkoordinate, yykoordinate, zzkoordinate);
 				
 				double distance = sqrt(trans_x*trans_x + trans_y * trans_y + trans_z * trans_z);
 				//Vector camera sensor, camera view direction 
-				double g1 = sensSV_x - sens_World_x;
-				double g2 = sensSV_y - sens_World_y;
-				double g3 = sensSV_z - sens_World_z;
+				double g1 = sens_sv_x - sens_world_x;
+				double g2 = sens_sv_y - sens_world_y;
+				double g3 = sens_sv_z - sens_world_z;
 				//Angle between 
 				double angle_to_mov_obj = CalculateAngle(trans_x, trans_y, trans_z, g1, g2, g3);
 				//normal_log("OSI", "Winkel Vektors Sensor-Richtungsvektor zum Sensor-Objekt: %f", angle_to_mov_obj);
@@ -1071,7 +1087,9 @@ double time = current_communication_point + communication_step_size;
 				double delta_x = vx - ego_vel_x;
 				double delta_y = vy - ego_vel_y;
 				double delta_z = vz - ego_vel_z;
-				double vx_sens, vy_sens, vz_sens; //velocity components in coordinate system of ego vehicle
+                                double vx_sens;
+                                double vy_sens;
+                                double vz_sens;  // velocity components in coordinate system of ego vehicle
 				Rot2veh(delta_x, delta_y, delta_z, ego_yaw, ego_pitch, ego_roll, vx_sens, vy_sens, vz_sens); //rotate into coordinate system of ego vehicle
 
 				NormalLog("OSI", "Velocity of moving object global coordinates: x %f ,y %f z %f \n", vx, vy, vz);
@@ -1109,9 +1127,9 @@ double time = current_communication_point + communication_step_size;
 						//Position in Sensor Koordinaten 
 						//Input are the Coordinates in the Sensor-Environment 
 
-						obj->mutable_base()->mutable_position()->set_x(xxKoordinate);
-						obj->mutable_base()->mutable_position()->set_y(yyKoordinate);
-						obj->mutable_base()->mutable_position()->set_z(zzKoordinate);
+						obj->mutable_base()->mutable_position()->set_x(xxkoordinate);
+						obj->mutable_base()->mutable_position()->set_y(yykoordinate);
+						obj->mutable_base()->mutable_position()->set_z(zzkoordinate);
 
 						obj->mutable_base()->mutable_orientation()->set_pitch(rr1);
 						obj->mutable_base()->mutable_orientation()->set_roll(rr3);
@@ -1166,9 +1184,9 @@ double time = current_communication_point + communication_step_size;
                                               "Ignoring Vehicle %d[%llu] Outside Sensor Scope Relative Position - ego and GT Position: %f,%f,%f (%f,%f,%f)",
                                               i,
                                               veh.id().value(),
-                                              veh.base().position().x() - ego_World_x,
-                                              veh.base().position().y() - ego_World_y,
-                                              veh.base().position().z() - ego_World_z,
+                                              veh.base().position().x() - ego_world_x,
+                                              veh.base().position().y() - ego_world_y,
+                                              veh.base().position().z() - ego_world_z,
                                               veh.base().position().x(),
                                               veh.base().position().y(),
                                               veh.base().position().z());
@@ -1184,9 +1202,9 @@ double time = current_communication_point + communication_step_size;
                                       "Ignoring EGO Vehicle %d[%llu] Relative Position: %f,%f,%f (%f,%f,%f)",
                                       i,
                                       veh.id().value(),
-                                      veh.base().position().x() - ego_World_x,
-                                      veh.base().position().y() - ego_World_y,
-                                      veh.base().position().z() - ego_World_z,
+                                      veh.base().position().x() - ego_world_x,
+                                      veh.base().position().y() - ego_world_y,
+                                      veh.base().position().z() - ego_world_z,
                                       veh.base().position().x(),
                                       veh.base().position().y(),
                                       veh.base().position().z());
@@ -1210,12 +1228,12 @@ double time = current_communication_point + communication_step_size;
                      &current_out,
                      masked,
                      ego_id,
-                     ego_World_x,
-                     ego_World_y,
-                     ego_World_z,
-                     &origin_World_x,
-                     &origin_World_y,
-                     &origin_World_z,
+                     ego_world_x,
+                     ego_world_y,
+                     ego_world_z,
+                     &origin_world_x,
+                     &origin_world_y,
+                     &origin_world_z,
                      &mpos_x,
                      &mpos_y,
                      &mpos_z,
@@ -1223,39 +1241,42 @@ double time = current_communication_point + communication_step_size;
                      ego_pitch,
                      ego_roll,
                      actual_range,
-                     &sens_World_x,
-                     &sens_World_y,
-                     &sens_World_z,
-                     &sensSV_x,
-                     &sensSV_y,
-                     &sensSV_z](const osi3::StationaryObject& stobj) {
+                     &sens_world_x,
+                     &sens_world_y,
+                     &sens_world_z,
+                     &sens_sv_x,
+                     &sens_sv_y,
+                     &sens_sv_z](const osi3::StationaryObject& stobj) {
 
 
-			double xxKoordinate;	double yyKoordinate; double zzKoordinate;  //Coordinates of the moving object in sensor coordinate system (movin object center of bounding box to mounting position sensor) 
-			double trans_x = stobj.base().position().x() - origin_World_x;
-			double trans_y = stobj.base().position().y() - origin_World_y;
-			double trans_z = stobj.base().position().z() - origin_World_z;
+			double xxkoordinate = 0.0;
+                        double yykoordinate = 0.0;
+                        double zzkoordinate =
+                            0.0;  // Coordinates of the moving object in sensor coordinate system (movin object center of bounding box to mounting position sensor) 
+			double trans_x = stobj.base().position().x() - origin_world_x;
+			double trans_y = stobj.base().position().y() - origin_world_y;
+			double trans_z = stobj.base().position().z() - origin_world_z;
 
 
-			double stobjOrientationYaw = stobj.base().orientation().yaw();
-			double stobjOrientationPitch = stobj.base().orientation().pitch();
-			double stobjOrientationRoll = stobj.base().orientation().roll();
+			double stobj_orientation_yaw = stobj.base().orientation().yaw();
+			double stobj_orientation_pitch = stobj.base().orientation().pitch();
+			double stobj_orientation_roll = stobj.base().orientation().roll();
 
 
 			double rr1 = 0;
                         double rr2 = 0;
                         double rr3 = 0;
-			EulerWinkel(ego_yaw, ego_pitch, ego_roll, stobjOrientationYaw, stobjOrientationPitch, stobjOrientationRoll, rr1, rr2, rr3);
+			EulerWinkel(ego_yaw, ego_pitch, ego_roll, stobj_orientation_yaw, stobj_orientation_pitch, stobj_orientation_roll, rr1, rr2, rr3);
                         NormalLog("DEBUG", "Detected object Orientierung zum Vehicle  %f,%f,%f", rr1, rr2, rr3);
-			CalKoordNew(trans_x, trans_y, trans_z, ego_yaw, ego_pitch, ego_roll, xxKoordinate, yyKoordinate, zzKoordinate);
-                        NormalLog("OSI", "Stationary Object in Sensor-Coordinates: %f,%f,%f", xxKoordinate, yyKoordinate, zzKoordinate);
+			CalKoordNew(trans_x, trans_y, trans_z, ego_yaw, ego_pitch, ego_roll, xxkoordinate, yykoordinate, zzkoordinate);
+                        NormalLog("OSI", "Stationary Object in Sensor-Coordinates: %f,%f,%f", xxkoordinate, yykoordinate, zzkoordinate);
 
 
 			double distance = sqrt(trans_x*trans_x + trans_y * trans_y + trans_z * trans_z);
 			//Vector camera sensor, camera view direction 
-			double g1 = sensSV_x - sens_World_x;
-			double g2 = sensSV_y - sens_World_y;
-			double g3 = sensSV_z - sens_World_z;
+			double g1 = sens_sv_x - sens_world_x;
+			double g2 = sens_sv_y - sens_world_y;
+			double g3 = sens_sv_z - sens_world_z;
 			//Angle between 
 			double angle_to_stat_obj = CalculateAngle(trans_x, trans_y, trans_z, g1, g2, g3);
                         NormalLog("OSI", "Winkel Vektors Sensor-Richtungsvektor zum Sensor-Objekt: %f", angle_to_stat_obj);
@@ -1286,9 +1307,9 @@ double time = current_communication_point + communication_step_size;
 
 				//Position in Sensor Koordinaten 
 				//Input are the Coordinates in the Sensor-Environment 
-				obj->mutable_base()->mutable_position()->set_x(xxKoordinate);
-				obj->mutable_base()->mutable_position()->set_y(yyKoordinate);
-				obj->mutable_base()->mutable_position()->set_z(zzKoordinate);
+				obj->mutable_base()->mutable_position()->set_x(xxkoordinate);
+				obj->mutable_base()->mutable_position()->set_y(yykoordinate);
+				obj->mutable_base()->mutable_position()->set_z(zzkoordinate);
 				obj->mutable_base()->mutable_orientation()->set_pitch(rr1);
 				obj->mutable_base()->mutable_orientation()->set_roll(rr3);
 				obj->mutable_base()->mutable_orientation()->set_yaw(rr2);
@@ -1332,9 +1353,9 @@ double time = current_communication_point + communication_step_size;
                                       "Ignoring stationary objects %d[%llu] Outside Sensor Scope Relative Position - ego and GT Position: %f,%f,%f (%f,%f,%f)",
                                       i,
                                       stobj.id().value(),
-                                      stobj.base().position().x() - ego_World_x,
-                                      stobj.base().position().y() - ego_World_y,
-                                      stobj.base().position().z() - ego_World_z,
+                                      stobj.base().position().x() - ego_world_x,
+                                      stobj.base().position().y() - ego_world_y,
+                                      stobj.base().position().z() - ego_world_z,
                                       stobj.base().position().x(),
                                       stobj.base().position().y(),
                                       stobj.base().position().z());
@@ -1358,12 +1379,12 @@ double time = current_communication_point + communication_step_size;
                      &current_out,
                      masked,
                      ego_id,
-                     ego_World_x,
-                     ego_World_y,
-                     ego_World_z,
-                     &origin_World_x,
-                     &origin_World_y,
-                     &origin_World_z,
+                     ego_world_x,
+                     ego_world_y,
+                     ego_world_z,
+                     &origin_world_x,
+                     &origin_world_y,
+                     &origin_world_z,
                      &mpos_x,
                      &mpos_y,
                      &mpos_z,
@@ -1371,48 +1392,51 @@ double time = current_communication_point + communication_step_size;
                      ego_pitch,
                      ego_roll,
                      actual_range,
-                     &sens_World_x,
-                     &sens_World_y,
-                     &sens_World_z,
-                     &sensSV_x,
-                     &sensSV_y,
-                     &sensSV_z](const osi3::TrafficLight& trafficlight) {
+                     &sens_world_x,
+                     &sens_world_y,
+                     &sens_world_z,
+                     &sens_sv_x,
+                     &sens_sv_y,
+                     &sens_sv_z](const osi3::TrafficLight& trafficlight) {
 
 
 			
 			//Calculate the traffic light  in Sensor coordinates (erstmal zur mounting posistion) !! Sp�ter eventuell zur Hinterachse Auto 
-			double xxKoordinate;	double yyKoordinate; double zzKoordinate;  //Coordinates of the moving object in sensor coordinate system (movin object center of bounding box to mounting position sensor) 
+			double xxkoordinate = 0.0;
+                        double yykoordinate = 0.0;
+                        double zzkoordinate =
+                            0.0;  // Coordinates of the moving object in sensor coordinate system (movin object center of bounding box to mounting position sensor) 
 			//double trans_x = trafficlight.base().position().x() - sens_World_x;
 			//double trans_y = trafficlight.base().position().y() - sens_World_y;
 			///double trans_z = trafficlight.base().position().z() - sens_World_z;
-			double trans_x = trafficlight.base().position().x() - origin_World_x;
-			double trans_y = trafficlight.base().position().y() - origin_World_y;
-			double trans_z = trafficlight.base().position().z() - origin_World_z;
+			double trans_x = trafficlight.base().position().x() - origin_world_x;
+			double trans_y = trafficlight.base().position().y() - origin_world_y;
+			double trans_z = trafficlight.base().position().z() - origin_world_z;
 
-			double trafficlightOrientationYaw = trafficlight.base().orientation().yaw();
-			double trafficlightOrientationPitch = trafficlight.base().orientation().pitch();
-			double trafficlightOrientationRoll = trafficlight.base().orientation().roll();
+			double trafficlightorientationyaw = trafficlight.base().orientation().yaw();
+			double trafficlightorientationpitch = trafficlight.base().orientation().pitch();
+			double trafficlightorientationroll = trafficlight.base().orientation().roll();
 
 
 			double rr1 = 0;
                         double rr2 = 0;
                         double rr3 = 0;
-			EulerWinkel(ego_yaw, ego_pitch, ego_roll, trafficlightOrientationYaw, trafficlightOrientationPitch, trafficlightOrientationRoll, rr1, rr2, rr3);
+			EulerWinkel(ego_yaw, ego_pitch, ego_roll, trafficlightorientationyaw, trafficlightorientationpitch, trafficlightorientationroll, rr1, rr2, rr3);
                         NormalLog("DEBUG", "Detected object Orientierung zum Vehicle  %f,%f,%f", rr1, rr2, rr3);
                         NormalLog("OSI",
                                   "Ground Truth Traffic Sign  %f, %f,%f ",
                                   trafficlight.base().position().x(),
                                   trafficlight.base().position().y(),
                                   trafficlight.base().position().z());
-			CalKoordNew(trans_x, trans_y, trans_z, ego_yaw, ego_pitch, ego_roll, xxKoordinate, yyKoordinate, zzKoordinate);
-                        NormalLog("OSI", "TrafficLight in Sensor-Coordinates: %f,%f,%f", xxKoordinate, yyKoordinate, zzKoordinate);
+			CalKoordNew(trans_x, trans_y, trans_z, ego_yaw, ego_pitch, ego_roll, xxkoordinate, yykoordinate, zzkoordinate);
+                        NormalLog("OSI", "TrafficLight in Sensor-Coordinates: %f,%f,%f", xxkoordinate, yykoordinate, zzkoordinate);
 
 
 			double distance = sqrt(trans_x*trans_x + trans_y * trans_y + trans_z * trans_z);
 			//Vector camera sensor, camera view direction 
-			double g1 = sensSV_x - sens_World_x;
-			double g2 = sensSV_y - sens_World_y;
-			double g3 = sensSV_z - sens_World_z;
+			double g1 = sens_sv_x - sens_world_x;
+			double g2 = sens_sv_y - sens_world_y;
+			double g3 = sens_sv_z - sens_world_z;
 			//Angle between 
 			double angle_to_traffic_light = CalculateAngle(trans_x, trans_y, trans_z, g1, g2, g3);
 			//normal_log("OSI", "Winkel Vektors Sensor-Richtungsvektor zum Sensor-Objekt: %f", angle_to_mov_obj);
@@ -1444,9 +1468,9 @@ double time = current_communication_point + communication_step_size;
 
 				//Position in Sensor Koordinaten 
 				//Input are the Coordinates in the Sensor-Environment 
-				obj->mutable_base()->mutable_position()->set_x(xxKoordinate);
-				obj->mutable_base()->mutable_position()->set_y(yyKoordinate);
-				obj->mutable_base()->mutable_position()->set_z(zzKoordinate);
+				obj->mutable_base()->mutable_position()->set_x(xxkoordinate);
+				obj->mutable_base()->mutable_position()->set_y(yykoordinate);
+				obj->mutable_base()->mutable_position()->set_z(zzkoordinate);
 				obj->mutable_base()->mutable_orientation()->set_pitch(trafficlight.base().orientation().pitch());
 				obj->mutable_base()->mutable_orientation()->set_roll(trafficlight.base().orientation().roll());
 				obj->mutable_base()->mutable_orientation()->set_yaw(trafficlight.base().orientation().yaw());
@@ -1500,9 +1524,9 @@ double time = current_communication_point + communication_step_size;
                                       "Ignoring traffic light %d[%llu] Outside Sensor Scope Relative Position - ego and GT Position: %f,%f,%f (%f,%f,%f)",
                                       itl,
                                       trafficlight.id().value(),
-                                      trafficlight.base().position().x() - ego_World_x,
-                                      trafficlight.base().position().y() - ego_World_y,
-                                      trafficlight.base().position().z() - ego_World_z,
+                                      trafficlight.base().position().x() - ego_world_x,
+                                      trafficlight.base().position().y() - ego_world_y,
+                                      trafficlight.base().position().z() - ego_world_z,
                                       trafficlight.base().position().x(),
                                       trafficlight.base().position().y(),
                                       trafficlight.base().position().z());
@@ -1525,12 +1549,12 @@ double time = current_communication_point + communication_step_size;
                      &current_out,
                      masked,
                      ego_id,
-                     ego_World_x,
-                     ego_World_y,
-                     ego_World_z,
-                     &origin_World_x,
-                     &origin_World_y,
-                     &origin_World_z,
+                     ego_world_x,
+                     ego_world_y,
+                     ego_world_z,
+                     &origin_world_x,
+                     &origin_world_y,
+                     &origin_world_z,
                      &mpos_x,
                      &mpos_y,
                      &mpos_z,
@@ -1538,15 +1562,18 @@ double time = current_communication_point + communication_step_size;
                      ego_pitch,
                      ego_roll,
                      actual_range,
-                     &sens_World_x,
-                     &sens_World_y,
-                     &sens_World_z,
-                     &sensSV_x,
-                     &sensSV_y,
-                     &sensSV_z](const osi3::TrafficSign& tsobj) {
+                     &sens_world_x,
+                     &sens_world_y,
+                     &sens_world_z,
+                     &sens_sv_x,
+                     &sens_sv_y,
+                     &sens_sv_z](const osi3::TrafficSign& tsobj) {
                         NormalLog("OSI", "TrafficSign with ID %llu ", tsobj.id().value());
 			//Calculate the traffic light  in Sensor coordinates (erstmal zur mounting posistion) !! Sp�ter eventuell zur Hinterachse Auto 
-			double xxxKoordinate;	double yyyKoordinate; double zzzKoordinate;  //Coordinates of the moving object in sensor coordinate system (movin object center of bounding box to mounting position sensor) 
+			double xxxkoordinate = 0.0;
+                        double yyykoordinate = 0.0;
+                        double zzzkoordinate =
+                            0.0;  // Coordinates of the moving object in sensor coordinate system (movin object center of bounding box to mounting position sensor) 
 		
 			NormalLog("OSI",
                                   "Ground Truth Traffic Sign  %f, %f,%f ",
@@ -1554,33 +1581,33 @@ double time = current_communication_point + communication_step_size;
                                   tsobj.main_sign().base().position().y(),
                                   tsobj.main_sign().base().position().z());
 			
-			double transTS_x = tsobj.main_sign().base().position().x() - origin_World_x;
-			double transTS_y = tsobj.main_sign().base().position().y() - origin_World_y;
-			double transTS_z = tsobj.main_sign().base().position().z() - origin_World_z;
-			double tsobjMOrientationYaw = tsobj.main_sign().base().orientation().yaw();
-			double tsobjMOrientationPitch = tsobj.main_sign().base().orientation().pitch();
-			double tsobjMOrientationRoll = tsobj.main_sign().base().orientation().roll();
+			double transTS_x = tsobj.main_sign().base().position().x() - origin_world_x;
+			double transTS_y = tsobj.main_sign().base().position().y() - origin_world_y;
+			double transTS_z = tsobj.main_sign().base().position().z() - origin_world_z;
+			double tsobjmorientationyaw = tsobj.main_sign().base().orientation().yaw();
+			double tsobjmorientationpitch = tsobj.main_sign().base().orientation().pitch();
+			double tsobjmorientationroll = tsobj.main_sign().base().orientation().roll();
 
 
 			double rr1 = 0;
                         double rr2 = 0;
                         double rr3 = 0;
-			EulerWinkel(ego_yaw, ego_pitch, ego_roll, tsobjMOrientationYaw, tsobjMOrientationPitch, tsobjMOrientationRoll, rr1, rr2, rr3);
+			EulerWinkel(ego_yaw, ego_pitch, ego_roll, tsobjmorientationyaw, tsobjmorientationpitch, tsobjmorientationroll, rr1, rr2, rr3);
                         NormalLog("DEBUG", "Detected object Orientierung zum Vehicle  %f,%f,%f", rr1, rr2, rr3);
 
-			NormalLog("OSI", "TrafficSign position x %f", tsobj.main_sign().base().position().x() - sens_World_x);
-                        NormalLog("OSI", "TrafficSign position y %f", tsobj.main_sign().base().position().y() - sens_World_y);
-                        NormalLog("OSI", "TrafficSign position z %f", tsobj.main_sign().base().position().z() - sens_World_z);
+			NormalLog("OSI", "TrafficSign position x %f", tsobj.main_sign().base().position().x() - sens_world_x);
+                        NormalLog("OSI", "TrafficSign position y %f", tsobj.main_sign().base().position().y() - sens_world_y);
+                        NormalLog("OSI", "TrafficSign position z %f", tsobj.main_sign().base().position().z() - sens_world_z);
 
-			CalKoordNew(transTS_x, transTS_y, transTS_z, ego_yaw, ego_pitch, ego_roll, xxxKoordinate, yyyKoordinate, zzzKoordinate);
+			CalKoordNew(transTS_x, transTS_y, transTS_z, ego_yaw, ego_pitch, ego_roll, xxxkoordinate, yyykoordinate, zzzkoordinate);
 
-			NormalLog("OSI", "TrafficSign in Sensor-Coordinates: %f,%f,%f", xxxKoordinate, yyyKoordinate, zzzKoordinate);
+			NormalLog("OSI", "TrafficSign in Sensor-Coordinates: %f,%f,%f", xxxkoordinate, yyykoordinate, zzzkoordinate);
 
 			double distance = sqrt(transTS_x*transTS_x + transTS_y * transTS_y + transTS_z * transTS_z);
 			//Vector camera sensor, camera view direction 
-			double g1 = sensSV_x - sens_World_x;
-			double g2 = sensSV_y - sens_World_y;
-			double g3 = sensSV_z - sens_World_z;
+			double g1 = sens_sv_x - sens_world_x;
+			double g2 = sens_sv_y - sens_world_y;
+			double g3 = sens_sv_z - sens_world_z;
 			//Angle between 
 			double angle_to_traffic_sign = CalculateAngle(transTS_x, transTS_y, transTS_z, g1, g2, g3);
 
@@ -1603,9 +1630,9 @@ double time = current_communication_point + communication_step_size;
 
 				//Position in Sensor Koordinaten 
 				//Input are the Coordinates in the Sensor-Environment 
-				obj->mutable_main_sign()->mutable_base()->mutable_position()->set_x(xxxKoordinate);
-				obj->mutable_main_sign()->mutable_base()->mutable_position()->set_y(yyyKoordinate);
-				obj->mutable_main_sign()->mutable_base()->mutable_position()->set_z(zzzKoordinate);
+				obj->mutable_main_sign()->mutable_base()->mutable_position()->set_x(xxxkoordinate);
+				obj->mutable_main_sign()->mutable_base()->mutable_position()->set_y(yyykoordinate);
+				obj->mutable_main_sign()->mutable_base()->mutable_position()->set_z(zzzkoordinate);
 				obj->mutable_main_sign()->mutable_base()->mutable_orientation()->set_pitch(rr1);
 				obj->mutable_main_sign()->mutable_base()->mutable_orientation()->set_roll(rr3);
 				obj->mutable_main_sign()->mutable_base()->mutable_orientation()->set_yaw(rr2);
