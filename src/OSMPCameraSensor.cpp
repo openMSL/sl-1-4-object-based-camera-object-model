@@ -47,7 +47,7 @@
 #include <string>
 
 using namespace std;
-const std::vector<ObjectInfo> g_object_history_vector;
+const std::vector<ObjectInfo> object_history_vector;
 
 #ifdef PRIVATE_LOG_PATH
 ofstream COSMPCameraSensor::private_log_file;
@@ -519,23 +519,23 @@ double GetAbsVelocity(const osi3::Vector3d& velocity_3d) {
 void UpdateObjectHistoryVector(ObjectInfo& current_object_history, const osi3::SensorView& input_sensor_view, int obj_idx, bool moving) {
 	int current_object_idx=0;
 	if (moving) {
-            current_object_idx = GetObjectInfoIdx(g_object_history_vector, input_sensor_view.global_ground_truth().moving_object(obj_idx).id().value());
+            current_object_idx = GetObjectInfoIdx(object_history_vector, input_sensor_view.global_ground_truth().moving_object(obj_idx).id().value());
 	}
 	else {
-            current_object_idx = GetObjectInfoIdx(g_object_history_vector, input_sensor_view.global_ground_truth().stationary_object(obj_idx).id().value());
+            current_object_idx = GetObjectInfoIdx(object_history_vector, input_sensor_view.global_ground_truth().stationary_object(obj_idx).id().value());
 	}
 	if (current_object_idx != -1) {
-		g_object_history_vector.at(current_object_idx).age++;
+		object_history_vector.at(current_object_idx).age++;
 		if (moving) {
                     if (GetAbsVelocity(input_sensor_view.global_ground_truth().moving_object(obj_idx).base().velocity()) > 0.01)
                     {
-				g_object_history_vector.at(current_object_idx).movement_state = 1;
+				object_history_vector.at(current_object_idx).movement_state = 1;
 			}
-			else if (g_object_history_vector.at(current_object_idx).movement_state == 1) {
-				g_object_history_vector.at(current_object_idx).movement_state = 2;
+			else if (object_history_vector.at(current_object_idx).movement_state == 1) {
+				object_history_vector.at(current_object_idx).movement_state = 2;
 			}
 		}
-		current_object_history = g_object_history_vector.at(current_object_idx);
+		current_object_history = object_history_vector.at(current_object_idx);
 	}
 	else {
 		current_object_history.id = current_object_idx;
