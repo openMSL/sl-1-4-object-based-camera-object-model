@@ -426,7 +426,7 @@ void Rot2env(double x, double y, double z, double yaw, double pitch, double roll
 
 // Function to find 
 // cross product of two vector array. 
-void CrossProduct(const double vect_a[], const double vect_b[], const double cross_p[])
+void CrossProduct( double vect_a[],  double vect_b[], double cross_p[])
 
 {
 
