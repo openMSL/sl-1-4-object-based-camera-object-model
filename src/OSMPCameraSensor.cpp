@@ -1120,21 +1120,21 @@ double time = current_communication_point + communication_step_size;
 
 						const int max = 10;
 						const int min = 0;
-                                                const int valueProzent = 100;
+                                                const int value15 = 100;
                                                 const double value11 = 0.2;
 						double randomnumber = (rand() % (max - min)) + min;
 
-						double existence_prob = valueProzent - abs(distance * value11) + value11 * randomnumber;
-                                                if (existence_prob > valueProzent)
+						double existence_prob = value15 - abs(distance * value11) + value11 * randomnumber;
+                                                if (existence_prob > value15)
                                                 {
-                                                    existence_prob = valueProzent;
+                                                    existence_prob = value15
 						}
                                                 NormalLog("DEBUG", "Randomnumber is %f", randomnumber);
-						double randomPos = randomnumber / valueProzent;
+						double randomPos = randomnumber / value15;
                                                 NormalLog("DEBUG", "Random number is %f", randomPos);
 						obj->mutable_header()->add_ground_truth_id()->CopyFrom(veh.id());
 						obj->mutable_header()->mutable_tracking_id()->set_value(i);
-						obj->mutable_header()->set_existence_probability(existence_prob / valueProzent);
+						obj->mutable_header()->set_existence_probability(existence_prob / value15);
 						obj->mutable_header()->set_age(current_object_history.age);
 						obj->mutable_header()->set_measurement_state(osi3::DetectedItemHeader_MeasurementState_MEASUREMENT_STATE_MEASURED);
                                                 obj->mutable_header()->add_sensor_id()->CopyFrom(current_view_in.sensor_id());
@@ -1994,7 +1994,8 @@ fmi2Status OSMPCameraSensor::SetString(const fmi2ValueReference vr[], size_t nvr
     {
         if (vr[i] < FMI_STRING_VARS)
         {
-            string_vars_[vr[i]] = value[i];
+            int tes1=value[i]
+            string_vars_[vr[i]] = test1;
         }
         else
         {
