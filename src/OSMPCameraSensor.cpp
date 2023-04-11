@@ -268,7 +268,7 @@ fmi2Status OSMPCameraSensor::DoExitInitializationMode()
 }
 
 //****** Arcus tangens function taking into account the sign of numerator and denominator ****** /
-double arcTan(double num, double denom)
+double ArcTan(double num, double denom)
 {
 	double result = atan(num / denom);
 	if (denom < 0) {
@@ -281,11 +281,11 @@ double arcTan(double num, double denom)
 	}
 	return result;
 }
-void EulerWinkel(double egoyaw, double egopitch, double egoroll, double objectyaw, double objectpitch, double objectroll, double &R1, double &R2, double &R3)
+void EulerWinkel(double egoyaw, double egopitch, double egoroll, double objectyaw, double objectpitch, double objectroll, double &rr1, double &rr2, double &rr3)
 {
 	double matrixobject[3][3];
 	double matrixego[3][3];
-	double MR[3][3];
+	double mr[3][3];
 	double ego_cos_yaw = cos(egoyaw);		// psi		yaw
 	double ego_cos_pitch = cos(egopitch);	// theta	pitch
 	double ego_cos_roll = cos(egoroll);	// phi		roll
@@ -308,17 +308,17 @@ void EulerWinkel(double egoyaw, double egopitch, double egoroll, double objectya
 	matrixego[0][1] = ego_sin_roll*ego_sin_pitch*ego_cos_yaw - ego_cos_roll*ego_sin_yaw;	matrixego[1][1] = ego_sin_roll*ego_sin_pitch*ego_sin_yaw + ego_cos_roll*ego_cos_yaw;	matrixego[2][1] = ego_sin_roll*ego_cos_pitch;
 	matrixego[0][2] = ego_cos_roll*ego_sin_pitch*ego_cos_yaw + ego_sin_roll*ego_sin_yaw;	matrixego[1][2] = ego_cos_roll*ego_sin_pitch*ego_sin_yaw - ego_sin_roll*ego_cos_yaw;	matrixego[2][2] = ego_cos_roll*ego_cos_pitch;
 
-	MR[0][0] = matrixego[0][0] * matrixobject[0][0] + matrixego[0][1] * matrixobject[1][0] + matrixego[0][2] * matrixobject[2][0];
-	MR[0][1] = matrixego[0][0] * matrixobject[0][1] + matrixego[0][1] * matrixobject[1][1] + matrixego[0][2] * matrixobject[2][1];
-	MR[0][2] = matrixego[0][0] * matrixobject[0][2] + matrixego[0][1] * matrixobject[1][2] + matrixego[0][2] * matrixobject[2][2];
+	mr[0][0] = matrixego[0][0] * matrixobject[0][0] + matrixego[0][1] * matrixobject[1][0] + matrixego[0][2] * matrixobject[2][0];
+	mr[0][1] = matrixego[0][0] * matrixobject[0][1] + matrixego[0][1] * matrixobject[1][1] + matrixego[0][2] * matrixobject[2][1];
+	mr[0][2] = matrixego[0][0] * matrixobject[0][2] + matrixego[0][1] * matrixobject[1][2] + matrixego[0][2] * matrixobject[2][2];
 
-	MR[1][0] = matrixego[1][0] * matrixobject[0][0] + matrixego[1][1] * matrixobject[1][0] + matrixego[1][2] * matrixobject[2][0];
-	MR[1][1] = matrixego[1][0] * matrixobject[0][1] + matrixego[1][1] * matrixobject[1][1] + matrixego[1][2] * matrixobject[2][1];
-	MR[1][2] = matrixego[1][0] * matrixobject[0][2] + matrixego[1][1] * matrixobject[1][2] + matrixego[1][2] * matrixobject[2][2];
+	mr[1][0] = matrixego[1][0] * matrixobject[0][0] + matrixego[1][1] * matrixobject[1][0] + matrixego[1][2] * matrixobject[2][0];
+	mr[1][1] = matrixego[1][0] * matrixobject[0][1] + matrixego[1][1] * matrixobject[1][1] + matrixego[1][2] * matrixobject[2][1];
+	mr[1][2] = matrixego[1][0] * matrixobject[0][2] + matrixego[1][1] * matrixobject[1][2] + matrixego[1][2] * matrixobject[2][2];
 
-	MR[2][0] = matrixego[2][0] * matrixobject[0][0] + matrixego[2][1] * matrixobject[1][0] + matrixego[2][2] * matrixobject[2][0];
-	MR[2][1] = matrixego[2][0] * matrixobject[0][1] + matrixego[2][1] * matrixobject[1][1] + matrixego[2][2] * matrixobject[2][1];
-	MR[2][2] = matrixego[2][0] * matrixobject[0][2] + matrixego[2][1] * matrixobject[1][2] + matrixego[2][2] * matrixobject[2][2];
+	mr[2][0] = matrixego[2][0] * matrixobject[0][0] + matrixego[2][1] * matrixobject[1][0] + matrixego[2][2] * matrixobject[2][0];
+	mr[2][1] = matrixego[2][0] * matrixobject[0][1] + matrixego[2][1] * matrixobject[1][1] + matrixego[2][2] * matrixobject[2][1];
+	mr[2][2] = matrixego[2][0] * matrixobject[0][2] + matrixego[2][1] * matrixobject[1][2] + matrixego[2][2] * matrixobject[2][2];
 
 	/*normal_log("osi", "matrixego: %f,%f,%f", MR[1][1]);
 	normal_log("osi", "matrixego: %f,%f,%f", rvxx,rvxy,rvxz);
@@ -333,9 +333,9 @@ void EulerWinkel(double egoyaw, double egopitch, double egoroll, double objectya
 
 
 
-	R1 = arcTan(-MR[0][2], sqrt(MR[0][0] * MR[0][0] + MR[1][0] * MR[1][0]));
-	R2 = arcTan(MR[0][1] / cos(R1), MR[0][0] / cos(R1));
-	R3 = arcTan(MR[1][2] / cos(R1), MR[2][2] / cos(R1));
+	rr1 = ArcTan(-mr[0][2], sqrt(mr[0][0] * mr[0][0] + mr[1][0] * mr[1][0]));
+	rr2 = ArcTan(mr[0][1] / cos(rr1), mr[0][0] / cos(rr1));
+	rr3 = ArcTan(mr[1][2] / cos(rr1), mr[2][2] / cos(rr1));
 }
 
 
@@ -382,7 +382,7 @@ void OSMPCameraSensor::RotatePoint(double x, double y, double z, double yaw, dou
 }
 
 /****** Rotation from environment to object coordinate system (yaw, pitch, roll = orientation of car in environment system) ******/
-void rot2veh(double x, double y, double z, double yaw, double pitch, double roll, double &rx, double &ry, double &rz)
+void Rot2veh(double x, double y, double z, double yaw, double pitch, double roll, double &rx, double &ry, double &rz)
 {
 	double matrix[3][3];
 	double cos_yaw = cos(yaw);		// psi		yaw
@@ -402,7 +402,7 @@ void rot2veh(double x, double y, double z, double yaw, double pitch, double roll
 }
 
 /****** Rotation from object to environment coordinate system (yaw, pitch, roll = orientation of car in environment system) ******/
-void rot2env(double x, double y, double z, double yaw, double pitch, double roll, double &rx, double &ry, double &rz)	// Koordinatentransformation vom koerperfesten ins raumfeste Koordinatensystem
+void Rot2env(double x, double y, double z, double yaw, double pitch, double roll, double &rx, double &ry, double &rz)	// Koordinatentransformation vom koerperfesten ins raumfeste Koordinatensystem
 {
 	double matrix[3][3];
 	double cos_yaw = cos(yaw);
@@ -423,35 +423,35 @@ void rot2env(double x, double y, double z, double yaw, double pitch, double roll
 
 // Function to find 
 // cross product of two vector array. 
-void crossProduct(double vect_A[], double vect_B[], double cross_P[])
+void CrossProduct(double vect_a[], double vect_b[], double cross_p[])
 
 {
 
-	cross_P[0] = vect_A[1] * vect_B[2] - vect_A[2] * vect_B[1];
-	cross_P[1] = vect_A[2] * vect_B[0] - vect_A[0] * vect_B[2];
-	cross_P[2] = vect_A[0] * vect_B[1] - vect_A[1] * vect_B[0];
+	cross_p[0] = vect_a[1] * vect_b[2] - vect_a[2] * vect_b[1];
+	cross_p[1] = vect_a[2] * vect_b[0] - vect_a[0] * vect_b[2];
+	cross_p[2] = vect_a[0] * vect_b[1] - vect_a[1] * vect_b[0];
 }
-void CalculateKoordinate(double a1, double a2, double a3, double d1, double d2, double d3, double b1, double b2, double b3, double &Koord)
+void CalculateKoordinate(double a1, double a2, double a3, double d1, double d2, double d3, double b1, double b2, double b3, double &koord)
 {
 	double t = -1 / (a1 * a1 + a2 * a2 + a3 * a3)*(d1 * a1 + d2 * a2 + d3 * a3);
-	double F[2];
-	F[0] = d1 + t * a1;
-	F[1] = d2 + t * a2;
-	F[2] = d3 + t * a3;
-	double LZ = sqrt((d1 - F[0])*(d1 - F[0]) + (d2 - F[1])*(d2 - F[1]) + (d3 - F[2])*(d3 - F[2]));
-	double h0 = d1 - F[0];
-	double h1 = d2 - F[1];
-	double h2 = d3 - F[2];
+	double ff[2];
+	ff[0] = d1 + t * a1;
+	ff[1] = d2 + t * a2;
+	ff[2] = d3 + t * a3;
+	double lz = sqrt((d1 - ff[0])*(d1 - ff[0]) + (d2 - ff[1])*(d2 - ff[1]) + (d3 - ff[2])*(d3 - ff[2]));
+	double h0 = d1 - ff[0];
+	double h1 = d2 - ff[1];
+	double h2 = d3 - ff[2];
 	//double Koordinate = 0.0;
-	double zaehlerLot = b1 * h0 + b2 * h1 + b3 * h2;
-	double nennerLot = LZ * sqrt(b1 * b1 + b2 * b2 + b3 * b3);
-	double	beta = acos(round(zaehlerLot / nennerLot));
-	double Koordinate;
-	if (beta > 90 / 180 * PI) { Koordinate = -abs(LZ); }
-	else { Koordinate = abs(LZ); }
+	double zaehler_Lot = b1 * h0 + b2 * h1 + b3 * h2;
+	double nenner_Lot = lz * sqrt(b1 * b1 + b2 * b2 + b3 * b3);
+	double	beta = acos(round(zaehler_Lot / nenner_Lot));
+	double koordinate=0.0;
+	if (beta > 90 / 180 * PI) { koordinate = -abs(lz); }
+	else { koordinate = abs(lz); }
 	//Koordinate = 3;
 	//return Koordinate;
-	Koord = Koordinate;
+	koord = koordinate;
 
 }
 
@@ -462,13 +462,13 @@ void CalKoordNew(double trans_x, double trans_y, double trans_z, double ego_yaw,
 	double rvyx = 0; double rvyy = 0; double rvyz = 0;
 	double rvzx = 0; double rvzy = 0; double rvzz = 0;
 
-	rot2env(1, 0, 0, ego_yaw, ego_pitch, ego_roll, rvxx, rvxy, rvxz);
-	rot2env(0, 1, 0, ego_yaw, ego_pitch, ego_roll, rvyx, rvyy, rvyz);
-	rot2env(0, 0, 1, ego_yaw, ego_pitch, ego_roll, rvzx, rvzy, rvzz);
+	Rot2env(1, 0, 0, ego_yaw, ego_pitch, ego_roll, rvxx, rvxy, rvxz);
+	Rot2env(0, 1, 0, ego_yaw, ego_pitch, ego_roll, rvyx, rvyy, rvyz);
+	Rot2env(0, 0, 1, ego_yaw, ego_pitch, ego_roll, rvzx, rvzy, rvzz);
 	
 	double vectrvx[] = { rvxx, rvxy, rvxz }; double vectrvy[] = { rvyx, rvyy, rvyz }; double vectrvz[] = { rvzx, rvzy, rvzz };
 	double vectexy[3]; double vectexz[3]; double vecteyz[3];
-	crossProduct(vectrvx, vectrvy, vectexy); crossProduct(vectrvx, vectrvz, vectexz); crossProduct(vectrvy, vectrvz, vecteyz);
+	CrossProduct(vectrvx, vectrvy, vectexy); CrossProduct(vectrvx, vectrvz, vectexz); CrossProduct(vectrvy, vectrvz, vecteyz);
 	
 	double d[] = { trans_x, trans_y, trans_z };
 	//lot berechnen 	
@@ -663,14 +663,14 @@ double time = current_communication_point + communication_step_size;
 				double h1 = 0, h2 = 0, h3 = 0;
 				//Position of the ego origin in world coordinates after rotation  
 				NormalLog("OSI", "Current EGO bbcenter to rear vector: %f,%f,%f", bbctr_Host_x, bbctr_Host_y, bbctr_Host_z);
-				rot2env(bbctr_Host_x, bbctr_Host_y, bbctr_Host_z, ego_yaw, ego_pitch, ego_roll, origin_rot_x, origin_rot_y, origin_rot_z); //rotate into coordinate system of environment
+				Rot2env(bbctr_Host_x, bbctr_Host_y, bbctr_Host_z, ego_yaw, ego_pitch, ego_roll, origin_rot_x, origin_rot_y, origin_rot_z); //rotate into coordinate system of environment
 				origin_World_x = origin_rot_x + ego_World_x;
 				origin_World_y = origin_rot_y + ego_World_y;
 				origin_World_z = origin_rot_z + ego_World_z;
                                 NormalLog("OSI", "Current EGO Origin Position in environment coordinates: %f,%f,%f", origin_World_x, origin_World_y, origin_World_z);
 
 				
-				rot2veh(origin_World_x - ego_World_x, origin_World_y - ego_World_y, origin_World_z - ego_World_z, ego_yaw, ego_pitch, ego_roll, h1, h2, h3);
+				Rot2veh(origin_World_x - ego_World_x, origin_World_y - ego_World_y, origin_World_z - ego_World_z, ego_yaw, ego_pitch, ego_roll, h1, h2, h3);
                                 NormalLog("OSI", "Current Host ORigin in Host coordinates: %f,%f,%f", h1, h2, h3);
 				double sens_EGO_x = origin_Host_x + mpos_x;	// sensor x-position in ego coordinate system before ego-orientation rotation
 				double sens_EGO_y = origin_Host_y + mpos_y;	// sensor y-position in ego coordinate system before ego-orientation rotation
@@ -678,7 +678,7 @@ double time = current_communication_point + communication_step_size;
 
 
 
-				rot2env(sens_EGO_x, sens_EGO_y, sens_EGO_z, ego_yaw, ego_pitch, ego_roll, mpos_rot_x, mpos_rot_y, mpos_rot_z);
+				Rot2env(sens_EGO_x, sens_EGO_y, sens_EGO_z, ego_yaw, ego_pitch, ego_roll, mpos_rot_x, mpos_rot_y, mpos_rot_z);
 				//Position of the sensor in environment coordinates 
 				sens_World_x = ego_World_x + mpos_rot_x;
 				sens_World_y = ego_World_y + mpos_rot_y;
@@ -690,7 +690,7 @@ double time = current_communication_point + communication_step_size;
 				//With sensor-rotation 
 				double sensSV_mprotx = 0; double sensSV_mproty = 0; double sensSV_mprotz = 0;
 				
-				rot2env(1, 0, 0, mpos_yaw, mpos_pitch, mpos_roll, sensSV_mprotx, sensSV_mproty, sensSV_mprotz);
+				Rot2env(1, 0, 0, mpos_yaw, mpos_pitch, mpos_roll, sensSV_mprotx, sensSV_mproty, sensSV_mprotz);
 				
 				sensSV_x = sens_EGO_x + sensSV_mprotx;	// Sichtvektor sensor x in ego coordinate system before ego-orientation rotation
 				sensSV_y = sens_EGO_y + sensSV_mproty;	// sensor y in ego coordinate system before ego-orientation rotation
@@ -698,7 +698,7 @@ double time = current_communication_point + communication_step_size;
 				
 				double sensSV_rot_x = 0; double sensSV_rot_y = 0; double sensSV_rot_z = 0;
 				
-				rot2env(sensSV_x, sensSV_y, sensSV_z, ego_yaw, ego_pitch, ego_roll, sensSV_rot_x, sensSV_rot_y, sensSV_rot_z);
+				Rot2env(sensSV_x, sensSV_y, sensSV_z, ego_yaw, ego_pitch, ego_roll, sensSV_rot_x, sensSV_rot_y, sensSV_rot_z);
 				sensSV_x = ego_World_x + sensSV_rot_x;
 				sensSV_y = ego_World_y + sensSV_rot_y;
 				sensSV_z = ego_World_z + sensSV_rot_z;
@@ -766,7 +766,7 @@ double time = current_communication_point + communication_step_size;
 
 
 				// rotatePoint(veh_x, veh_y, veh_z, ego_yaw, ego_pitch, ego_roll, veh_rel_x, veh_rel_y, veh_rel_z); //rotate into coordinate system of ego vehicle
-				rot2veh(veh_x, veh_y, veh_z, veh_yaw, veh_pitch, veh_roll, veh_rel_x, veh_rel_y, veh_rel_z); //rotate into coordinate system of vehicle    -------------!!!! MF nicht notwendig
+				Rot2veh(veh_x, veh_y, veh_z, veh_yaw, veh_pitch, veh_roll, veh_rel_x, veh_rel_y, veh_rel_z); //rotate into coordinate system of vehicle    -------------!!!! MF nicht notwendig
 				//rot2env(veh_rel_x, veh_rel_y, veh_rel_z, veh_yaw, veh_pitch, veh_roll, veh_rel2_x, veh_rel2_y, veh_rel2_z); //only for DEBUG!!!
 				// normal_log("DEBUG","Vehicle %d coordinates in own coord sys: %.2f,%.2f,%.2f", i,veh_rel_x,veh_rel_y,veh_rel_z);
 				double veh_width = veh.base().dimension().width();
@@ -788,10 +788,10 @@ double time = current_communication_point + communication_step_size;
 				double corner2_x, corner2_y, corner2_z;
 				double corner3_x, corner3_y, corner3_z;
 				double corner4_x, corner4_y, corner4_z;
-				rot2env(corner1_rel_x, corner1_rel_y, corner1_rel_z, veh_yaw, veh_pitch, veh_roll, corner1_x, corner1_y, corner1_z); //rotate into environment coordinate system
-				rot2env(corner2_rel_x, corner2_rel_y, corner2_rel_z, veh_yaw, veh_pitch, veh_roll, corner2_x, corner2_y, corner2_z); //rotate into environment coordinate system
-				rot2env(corner3_rel_x, corner3_rel_y, corner3_rel_z, veh_yaw, veh_pitch, veh_roll, corner3_x, corner3_y, corner3_z); //rotate into environment coordinate system
-				rot2env(corner4_rel_x, corner4_rel_y, corner4_rel_z, veh_yaw, veh_pitch, veh_roll, corner4_x, corner4_y, corner4_z); //rotate into environment coordinate system
+				Rot2env(corner1_rel_x, corner1_rel_y, corner1_rel_z, veh_yaw, veh_pitch, veh_roll, corner1_x, corner1_y, corner1_z); //rotate into environment coordinate system
+				Rot2env(corner2_rel_x, corner2_rel_y, corner2_rel_z, veh_yaw, veh_pitch, veh_roll, corner2_x, corner2_y, corner2_z); //rotate into environment coordinate system
+				Rot2env(corner3_rel_x, corner3_rel_y, corner3_rel_z, veh_yaw, veh_pitch, veh_roll, corner3_x, corner3_y, corner3_z); //rotate into environment coordinate system
+				Rot2env(corner4_rel_x, corner4_rel_y, corner4_rel_z, veh_yaw, veh_pitch, veh_roll, corner4_x, corner4_y, corner4_z); //rotate into environment coordinate system
 
 				/* Calculate azimuth angles of corners */
 				double trans_c1_x = corner1_x - sens_World_x;	// vector from sensor to corner 1
@@ -810,17 +810,17 @@ double time = current_communication_point + communication_step_size;
 				double rel_c2_x, rel_c2_y, rel_c2_z;
 				double rel_c3_x, rel_c3_y, rel_c3_z;
 				double rel_c4_x, rel_c4_y, rel_c4_z;
-				rot2veh(trans_c1_x, trans_c1_y, trans_c1_z, ego_yaw, ego_pitch, ego_roll, rel_c1_x, rel_c1_y, rel_c1_z); //rotate into coordinate system of ego vehicle
-				rot2veh(trans_c2_x, trans_c2_y, trans_c2_z, ego_yaw, ego_pitch, ego_roll, rel_c2_x, rel_c2_y, rel_c2_z); //rotate into coordinate system of ego vehicle
-				rot2veh(trans_c3_x, trans_c3_y, trans_c3_z, ego_yaw, ego_pitch, ego_roll, rel_c3_x, rel_c3_y, rel_c3_z); //rotate into coordinate system of ego vehicle
-				rot2veh(trans_c4_x, trans_c4_y, trans_c4_z, ego_yaw, ego_pitch, ego_roll, rel_c4_x, rel_c4_y, rel_c4_z); //rotate into coordinate system of ego vehicle
+				Rot2veh(trans_c1_x, trans_c1_y, trans_c1_z, ego_yaw, ego_pitch, ego_roll, rel_c1_x, rel_c1_y, rel_c1_z); //rotate into coordinate system of ego vehicle
+				Rot2veh(trans_c2_x, trans_c2_y, trans_c2_z, ego_yaw, ego_pitch, ego_roll, rel_c2_x, rel_c2_y, rel_c2_z); //rotate into coordinate system of ego vehicle
+				Rot2veh(trans_c3_x, trans_c3_y, trans_c3_z, ego_yaw, ego_pitch, ego_roll, rel_c3_x, rel_c3_y, rel_c3_z); //rotate into coordinate system of ego vehicle
+				Rot2veh(trans_c4_x, trans_c4_y, trans_c4_z, ego_yaw, ego_pitch, ego_roll, rel_c4_x, rel_c4_y, rel_c4_z); //rotate into coordinate system of ego vehicle
 				c1_x[i] = rel_c1_x;
 				c1_y[i] = rel_c1_y;
 				c1_z[i] = rel_c1_z;
-				double phi_c1 = arcTan(rel_c1_y, rel_c1_x); //also valid for x<0 (rear cars)
-				double phi_c2 = arcTan(rel_c2_y, rel_c2_x);
-				double phi_c3 = arcTan(rel_c3_y, rel_c3_x);
-				double phi_c4 = arcTan(rel_c4_y, rel_c4_x);
+				double phi_c1 = ArcTan(rel_c1_y, rel_c1_x); //also valid for x<0 (rear cars)
+				double phi_c2 = ArcTan(rel_c2_y, rel_c2_x);
+				double phi_c3 = ArcTan(rel_c3_y, rel_c3_x);
+				double phi_c4 = ArcTan(rel_c4_y, rel_c4_x);
 				double phi_list[] = { phi_c1, phi_c2, phi_c3, phi_c4 };
 				phi_min[i] = *std::min_element(phi_list, phi_list + 4);
 				phi_max[i] = *std::max_element(phi_list, phi_list + 4);
@@ -867,9 +867,9 @@ double time = current_communication_point + communication_step_size;
                                           veh.base().position().z());  // test, delme
                                 NormalLog("OSI", "Current Ego Position: %.2f,%.2f,%.2f", ego_World_x, ego_World_y, ego_World_z);
 				// rotatePoint(trans_x, trans_y, trans_z, ego_yaw, ego_pitch, ego_roll, rel_x, rel_y, rel_z); //rotate into coordinate system of ego vehicle
-				rot2veh(trans_x, trans_y, trans_z, ego_yaw, ego_pitch, ego_roll, rel_x, rel_y, rel_z); //rotate into coordinate system of ego vehicle
+				Rot2veh(trans_x, trans_y, trans_z, ego_yaw, ego_pitch, ego_roll, rel_x, rel_y, rel_z); //rotate into coordinate system of ego vehicle
 				// distance[i] = sqrt(rel_x * rel_x + rel_y*rel_y + rel_z*rel_z); //same as with trans?
-				phi[i] = arcTan(rel_y, rel_x); // Azimuth of closest corner (was: center of bounding box)
+				phi[i] = ArcTan(rel_y, rel_x); // Azimuth of closest corner (was: center of bounding box)
 
 			}
 			else
@@ -985,11 +985,11 @@ double time = current_communication_point + communication_step_size;
                                           veh.base().orientation().pitch(),
                                           veh.base().orientation().roll());
 
-				double R1 = 0, R2 = 0, R3 = 0;
-				EulerWinkel(ego_yaw, ego_pitch, ego_roll, vehOrientationYaw, vehOrientationPitch, vehOrientationRoll, R1, R2, R3);
-                                NormalLog("DEBUG", "Detected object Orientierung zum Vehicle  %f,%f,%f", R1, R2, R3);
+				double rr1 = 0, rr2 = 0, rr3 = 0;
+				EulerWinkel(ego_yaw, ego_pitch, ego_roll, vehOrientationYaw, vehOrientationPitch, vehOrientationRoll, rr1, rr2,rr3);
+                                NormalLog("DEBUG", "Detected object Orientierung zum Vehicle  %f,%f,%f", rr1, rr2, rr3);
 				
-				rot2veh(trans_x, trans_y, trans_z, ego_yaw, ego_pitch, ego_roll, xxKoordinate, yyKoordinate, zzKoordinate);
+				Rot2veh(trans_x, trans_y, trans_z, ego_yaw, ego_pitch, ego_roll, xxKoordinate, yyKoordinate, zzKoordinate);
                                 NormalLog("DEBUG", "Detected object in Vehicle Koordinaten %f,%f,%f", xxKoordinate, yyKoordinate, zzKoordinate);
 				
 				double distance = sqrt(trans_x*trans_x + trans_y * trans_y + trans_z * trans_z);
@@ -1010,7 +1010,7 @@ double time = current_communication_point + communication_step_size;
 				double delta_y = vy - ego_vel_y;
 				double delta_z = vz - ego_vel_z;
 				double vx_sens, vy_sens, vz_sens; //velocity components in coordinate system of ego vehicle
-				rot2veh(delta_x, delta_y, delta_z, ego_yaw, ego_pitch, ego_roll, vx_sens, vy_sens, vz_sens); //rotate into coordinate system of ego vehicle
+				Rot2veh(delta_x, delta_y, delta_z, ego_yaw, ego_pitch, ego_roll, vx_sens, vy_sens, vz_sens); //rotate into coordinate system of ego vehicle
 
 				NormalLog("OSI", "Velocity of moving object global coordinates: x %f ,y %f z %f \n", vx, vy, vz);
                                 NormalLog("OSI", "Velocity of moving object environment coordinates: x %f ,y %f z %f \n", vx_sens, vy_sens, vz_sens);
@@ -1051,9 +1051,9 @@ double time = current_communication_point + communication_step_size;
 						obj->mutable_base()->mutable_position()->set_y(yyKoordinate);
 						obj->mutable_base()->mutable_position()->set_z(zzKoordinate);
 
-						obj->mutable_base()->mutable_orientation()->set_pitch(R1);
-						obj->mutable_base()->mutable_orientation()->set_roll(R3);
-						obj->mutable_base()->mutable_orientation()->set_yaw(R2);
+						obj->mutable_base()->mutable_orientation()->set_pitch(rr1);
+						obj->mutable_base()->mutable_orientation()->set_roll(rr3);
+						obj->mutable_base()->mutable_orientation()->set_yaw(rr2);
 
 						obj->mutable_base()->mutable_velocity()->set_x(vx_sens);
 						obj->mutable_base()->mutable_velocity()->set_y(vy_sens);
@@ -1154,9 +1154,9 @@ double time = current_communication_point + communication_step_size;
 			double stobjOrientationRoll = stobj.base().orientation().roll();
 
 
-			double R1 = 0, R2 = 0, R3 = 0;
-			EulerWinkel(ego_yaw, ego_pitch, ego_roll, stobjOrientationYaw, stobjOrientationPitch, stobjOrientationRoll, R1, R2, R3);
-                        NormalLog("DEBUG", "Detected object Orientierung zum Vehicle  %f,%f,%f", R1, R2, R3);
+			double rr1 = 0, rr2 = 0, rr3 = 0;
+			EulerWinkel(ego_yaw, ego_pitch, ego_roll, stobjOrientationYaw, stobjOrientationPitch, stobjOrientationRoll, rr1, rr2, rr3);
+                        NormalLog("DEBUG", "Detected object Orientierung zum Vehicle  %f,%f,%f", rr1, rr2, rr3);
 			CalKoordNew(trans_x, trans_y, trans_z, ego_yaw, ego_pitch, ego_roll, xxKoordinate, yyKoordinate, zzKoordinate);
                         NormalLog("OSI", "Stationary Object in Sensor-Coordinates: %f,%f,%f", xxKoordinate, yyKoordinate, zzKoordinate);
 
@@ -1199,9 +1199,9 @@ double time = current_communication_point + communication_step_size;
 				obj->mutable_base()->mutable_position()->set_x(xxKoordinate);
 				obj->mutable_base()->mutable_position()->set_y(yyKoordinate);
 				obj->mutable_base()->mutable_position()->set_z(zzKoordinate);
-				obj->mutable_base()->mutable_orientation()->set_pitch(R1);
-				obj->mutable_base()->mutable_orientation()->set_roll(R3);
-				obj->mutable_base()->mutable_orientation()->set_yaw(R2);
+				obj->mutable_base()->mutable_orientation()->set_pitch(rr1);
+				obj->mutable_base()->mutable_orientation()->set_roll(rr3);
+				obj->mutable_base()->mutable_orientation()->set_yaw(rr2);
 
 				obj->mutable_base()->mutable_dimension()->set_length(stobj.base().dimension().length());
 				obj->mutable_base()->mutable_dimension()->set_width(stobj.base().dimension().width());
@@ -1278,9 +1278,9 @@ double time = current_communication_point + communication_step_size;
 			double trafficlightOrientationRoll = trafficlight.base().orientation().roll();
 
 
-			double R1 = 0, R2 = 0, R3 = 0;
-			EulerWinkel(ego_yaw, ego_pitch, ego_roll, trafficlightOrientationYaw, trafficlightOrientationPitch, trafficlightOrientationRoll, R1, R2, R3);
-                        NormalLog("DEBUG", "Detected object Orientierung zum Vehicle  %f,%f,%f", R1, R2, R3);
+			double rr1 = 0, rr2 = 0, rr3 = 0;
+			EulerWinkel(ego_yaw, ego_pitch, ego_roll, trafficlightOrientationYaw, trafficlightOrientationPitch, trafficlightOrientationRoll, rr1, rr2, rr3);
+                        NormalLog("DEBUG", "Detected object Orientierung zum Vehicle  %f,%f,%f", rr1, rr2, rr3);
                         NormalLog("OSI",
                                   "Ground Truth Traffic Sign  %f, %f,%f ",
                                   trafficlight.base().position().x(),
@@ -1418,9 +1418,9 @@ double time = current_communication_point + communication_step_size;
 			double tsobjMOrientationRoll = tsobj.main_sign().base().orientation().roll();
 
 
-			double R1 = 0, R2 = 0, R3 = 0;
-			EulerWinkel(ego_yaw, ego_pitch, ego_roll, tsobjMOrientationYaw, tsobjMOrientationPitch, tsobjMOrientationRoll, R1, R2, R3);
-                        NormalLog("DEBUG", "Detected object Orientierung zum Vehicle  %f,%f,%f", R1, R2, R3);
+			double rr1 = 0, rr2 = 0, rr3 = 0;
+			EulerWinkel(ego_yaw, ego_pitch, ego_roll, tsobjMOrientationYaw, tsobjMOrientationPitch, tsobjMOrientationRoll, rr1, rr2, rr3);
+                        NormalLog("DEBUG", "Detected object Orientierung zum Vehicle  %f,%f,%f", rr1, rr2, rr3);
 
 			NormalLog("OSI", "TrafficSign position x %f", tsobj.main_sign().base().position().x() - sens_World_x);
                         NormalLog("OSI", "TrafficSign position y %f", tsobj.main_sign().base().position().y() - sens_World_y);
@@ -1460,9 +1460,9 @@ double time = current_communication_point + communication_step_size;
 				obj->mutable_main_sign()->mutable_base()->mutable_position()->set_x(xxxKoordinate);
 				obj->mutable_main_sign()->mutable_base()->mutable_position()->set_y(yyyKoordinate);
 				obj->mutable_main_sign()->mutable_base()->mutable_position()->set_z(zzzKoordinate);
-				obj->mutable_main_sign()->mutable_base()->mutable_orientation()->set_pitch(R1);
-				obj->mutable_main_sign()->mutable_base()->mutable_orientation()->set_roll(R3);
-				obj->mutable_main_sign()->mutable_base()->mutable_orientation()->set_yaw(R2);
+				obj->mutable_main_sign()->mutable_base()->mutable_orientation()->set_pitch(rr1);
+				obj->mutable_main_sign()->mutable_base()->mutable_orientation()->set_roll(rr3);
+				obj->mutable_main_sign()->mutable_base()->mutable_orientation()->set_yaw(rr2);
 
 
 				obj->mutable_main_sign()->mutable_base()->mutable_dimension()->set_length(tsobj.main_sign().base().dimension().length());
