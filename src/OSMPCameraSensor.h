@@ -78,7 +78,7 @@
 #include "osi_sensorview.pb.h"
 
 using namespace std;
-struct object_info
+struct ObjectInfo
 {
     int id;
     int age;

@@ -47,7 +47,7 @@
 #include <string>
 
 using namespace std;
-std::vector<object_info> object_history_vector;
+std::vector<ObjectInfo> object_history_vector;
 
 #ifdef PRIVATE_LOG_PATH
 ofstream COSMPCameraSensor::private_log_file;
@@ -498,7 +498,7 @@ float CalculateAngle(double r1, double r2, double r3, double g1, double g2, doub
 	return angle;
 }
 
-int get_object_info_idx(std::vector<object_info> search_vector, int search_id) {
+int get_object_info_idx(std::vector<ObjectInfo> search_vector, int search_id) {
 	int idx = 0;
 	for (auto it = search_vector.begin(); it < search_vector.end(); it++) {
 		if (it->id == search_id) {
@@ -514,7 +514,7 @@ double get_abs_velocity(const osi3::Vector3d& velocity_3d) {
 }
 
 
-void update_object_history_vector(object_info& current_object_history, const osi3::SensorView& input_sensor_view, int obj_idx, bool moving) {
+void update_object_history_vector(ObjectInfo& current_object_history, const osi3::SensorView& input_sensor_view, int obj_idx, bool moving) {
 	int current_object_idx;
 	if (moving) {
 		current_object_idx = get_object_info_idx(object_history_vector, input_sensor_view.global_ground_truth().moving_object(obj_idx).id().value());
@@ -958,7 +958,7 @@ double time = current_communication_point + communication_step_size;
 				std::string TypeName2 = veh.GetTypeName();
 				//		normal_log("DEBUG", "moving object information id %d and masked %d", veh.id().value(), masked[i + 1]);
 				//Age
-				object_info current_object_history{};
+				ObjectInfo current_object_history{};
 				int obj_idx = i;
 				int current_object_idx = get_object_info_idx(object_history_vector, currentViewIn.global_ground_truth().moving_object(obj_idx).id().value());
 				update_object_history_vector(current_object_history, currentViewIn, obj_idx, true);
