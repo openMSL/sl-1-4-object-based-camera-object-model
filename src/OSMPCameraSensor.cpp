@@ -1045,7 +1045,7 @@ double time = current_communication_point + communication_step_size;
 				//Age
 				ObjectInfo current_object_history{};
 				int obj_idx = i;
-                                int current_object_idx = GetObjectInfoIdx(g_object_history_vector, current_view_in.global_ground_truth().moving_object(obj_idx).id().value());
+                                int current_object_idx = GetObjectInfoIdx(object_history_vector, current_view_in.global_ground_truth().moving_object(obj_idx).id().value());
                                 UpdateObjectHistoryVector(current_object_history, current_view_in, obj_idx, true);
 
 
