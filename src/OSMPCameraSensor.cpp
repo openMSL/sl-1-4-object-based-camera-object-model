@@ -434,7 +434,7 @@ void CrossProduct(double vect_a[], double vect_b[], double cross_p[])
 void CalculateKoordinate(double a1, double a2, double a3, double d1, double d2, double d3, double b1, double b2, double b3, double &koord)
 {
 	double t = -1 / (a1 * a1 + a2 * a2 + a3 * a3)*(d1 * a1 + d2 * a2 + d3 * a3);
-	double ff[2];
+	double ff[3];
 	ff[0] = d1 + t * a1;
 	ff[1] = d2 + t * a2;
 	ff[2] = d3 + t * a3;
@@ -443,9 +443,9 @@ void CalculateKoordinate(double a1, double a2, double a3, double d1, double d2, 
 	double h1 = d2 - ff[1];
 	double h2 = d3 - ff[2];
 	//double Koordinate = 0.0;
-	double zaehler_Lot = b1 * h0 + b2 * h1 + b3 * h2;
-	double nenner_Lot = lz * sqrt(b1 * b1 + b2 * b2 + b3 * b3);
-	double	beta = acos(round(zaehler_Lot / nenner_Lot));
+	double zaehler_lot = b1 * h0 + b2 * h1 + b3 * h2;
+	double nenner_lot = lz * sqrt(b1 * b1 + b2 * b2 + b3 * b3);
+	double	beta = acos(round(zaehler_lot / nenner_lot));
 	double koordinate=0.0;
 	if (beta > 90 / 180 * PI) { koordinate = -abs(lz); }
 	else { koordinate = abs(lz); }
@@ -498,7 +498,7 @@ float CalculateAngle(double r1, double r2, double r3, double g1, double g2, doub
 	return angle;
 }
 
-int get_object_info_idx(std::vector<ObjectInfo> search_vector, int search_id) {
+int GetObjectInfoIdx(std::vector<ObjectInfo> search_vector, int search_id) {
 	int idx = 0;
 	for (auto it = search_vector.begin(); it < search_vector.end(); it++) {
 		if (it->id == search_id) {
@@ -509,23 +509,24 @@ int get_object_info_idx(std::vector<ObjectInfo> search_vector, int search_id) {
 	return -1;
 }
 
-double get_abs_velocity(const osi3::Vector3d& velocity_3d) {
+double GetAbsVelocity(const osi3::Vector3d& velocity_3d) {
 	return sqrt(pow(velocity_3d.x(), 2) + pow(velocity_3d.y(), 2) + pow(velocity_3d.z(), 2));
 }
 
 
-void update_object_history_vector(ObjectInfo& current_object_history, const osi3::SensorView& input_sensor_view, int obj_idx, bool moving) {
-	int current_object_idx;
+void UpdateObjectHistoryVector(ObjectInfo& current_object_history, const osi3::SensorView& input_sensor_view, int obj_idx, bool moving) {
+	int current_object_idx=0;
 	if (moving) {
-		current_object_idx = get_object_info_idx(object_history_vector, input_sensor_view.global_ground_truth().moving_object(obj_idx).id().value());
+            current_object_idx = GetObjectInfoIdx(object_history_vector, input_sensor_view.global_ground_truth().moving_object(obj_idx).id().value());
 	}
 	else {
-		current_object_idx = get_object_info_idx(object_history_vector, input_sensor_view.global_ground_truth().stationary_object(obj_idx).id().value());
+            current_object_idx = GetObjectInfoIdx(object_history_vector, input_sensor_view.global_ground_truth().stationary_object(obj_idx).id().value());
 	}
 	if (current_object_idx != -1) {
 		object_history_vector.at(current_object_idx).age++;
 		if (moving) {
-			if (get_abs_velocity(input_sensor_view.global_ground_truth().moving_object(obj_idx).base().velocity()) > 0.01) {
+                    if (GetAbsVelocity(input_sensor_view.global_ground_truth().moving_object(obj_idx).base().velocity()) > 0.01)
+                    {
 				object_history_vector.at(current_object_idx).movement_state = 1;
 			}
 			else if (object_history_vector.at(current_object_idx).movement_state == 1) {
@@ -538,7 +539,8 @@ void update_object_history_vector(ObjectInfo& current_object_history, const osi3
 		current_object_history.id = current_object_idx;
 		current_object_history.age = 1;
 		if (moving) {
-			if (get_abs_velocity(input_sensor_view.global_ground_truth().moving_object(obj_idx).base().velocity()) > 0.01) {
+                    if (GetAbsVelocity(input_sensor_view.global_ground_truth().moving_object(obj_idx).base().velocity()) > 0.01)
+                    {
 				current_object_history.movement_state = 1;
 			}
 			else {
@@ -566,59 +568,79 @@ fmi2Status OSMPCameraSensor::DoCalc(fmi2Real current_communication_point, fmi2Re
 {
 DEBUGBREAK();
 
-	osi3::SensorData currentOut;
+	osi3::SensorData current_out;
 double time = current_communication_point + communication_step_size;
         NormalLog("OSI", "Calculating Camera Sensor at %f for %f (step size %f)", current_communication_point, time, communication_step_size);
 #ifndef COMPILE_VTD_2_2
 	// OSI standard..
-	osi3::SensorView currentIn;
-    if (GetFmiSensorViewIn(currentIn))
+	osi3::SensorView current_in;
+    if (GetFmiSensorViewIn(current_in))
     {
-		osi3::SensorView& currentViewIn = currentIn;
+		osi3::SensorView& current_view_in = current_in;
 #else
 	// VTD v2.2 receives SensorData..
-	osi3::SensorData currentIn;
-	if (get_fmi_sensor_data_in(currentIn)) {
-		if (!currentIn.sensor_view_size()) {
+	osi3::SensorData current_in;
+	if (get_fmi_sensor_data_in(current_in)) {
+		if (!current_in.sensor_view_size()) {
 			normal_log("OSI", "No valid input for SensorData->SensorView.");
 			return fmi2Fatal;
 		}
-		const osi3::SensorView& currentViewIn = currentIn.sensor_view(0);
+		const osi3::SensorView& current_view_in = current_in.sensor_view(0);
 #endif
-		size_t nof_mov_obj = currentViewIn.global_ground_truth().moving_object().size(); // number of vehicles (including ego vehicle)
-		size_t nof_stat_obj = currentViewIn.global_ground_truth().stationary_object().size(); // number of vehicles (including ego vehicle)
-		size_t nof_trafLights_obj = currentViewIn.global_ground_truth().traffic_light().size();   // number of traffic lights 
-		size_t nof_trafSign_obj = currentViewIn.global_ground_truth().traffic_sign().size();      // number of traffic signs 
+		size_t nof_mov_obj = current_view_in.global_ground_truth().moving_object().size(); // number of vehicles (including ego vehicle)
+		size_t nof_stat_obj = current_view_in.global_ground_truth().stationary_object().size(); // number of vehicles (including ego vehicle)
+		size_t nof_traf_lights_obj = current_view_in.global_ground_truth().traffic_light().size();   // number of traffic lights 
+		size_t nof_traf_sign_obj = current_view_in.global_ground_truth().traffic_sign().size();      // number of traffic signs 
 
 		NormalLog("OSI", "Number of moving objects: %llu", nof_mov_obj);
                 NormalLog("OSI", "Number of stationary objects: %llu", nof_stat_obj);
-                NormalLog("OSI", "Number of traffic lights: %llu", nof_trafLights_obj);
-                NormalLog("OSI", "Number of traffic signs: %llu", nof_trafSign_obj);
+                NormalLog("OSI", "Number of traffic lights: %llu", nof_traf_lights_obj);
+                NormalLog("OSI", "Number of traffic signs: %llu", nof_traf_sign_obj);
 
 		//Center of the bounding box in environment coordinates 
 		//Position and Orientation 
-		double ego_World_x = 0, ego_World_y = 0, ego_World_z = 0, ego_yaw = 0, ego_pitch = 0, ego_roll = 0;
-
+		double ego_World_x = 0;
+        double ego_World_y = 0;
+        double ego_World_z = 0;
+        double ego_yaw = 0;
+        double ego_pitch = 0;
+        double ego_roll = 0;
 		double ego_vel_x = 0; double ego_vel_y = 0; double ego_vel_z = 0;//ego velocity 
 
 
-		double origin_Host_x = 0, origin_Host_y = 0, origin_Host_z = 0; //Position of the host vehicle Ursprung in host vehicle coordinates
+		double origin_Host_x = 0;
+                double origin_Host_y = 0;
+                double origin_Host_z = 0;  // Position of the host vehicle Ursprung in host vehicle coordinates
 		//Position of the host vehicle Ursprung in environment coordinates
-		double origin_World_x = 0, origin_World_y = 0, origin_World_z = 0;
+                double origin_World_x = 0;
+                double origin_World_y = 0;
+                double origin_World_z = 0;
 
-		double bbctr_Host_x = 0, bbctr_Host_y = 0, bbctr_Host_z = 0;
-		double origin_rot_x = 0, origin_rot_y = 0, origin_rot_z = 0;
+		double bbctr_Host_x = 0;
+                double bbctr_Host_y = 0;
+                double bbctr_Host_z = 0;
+                double origin_rot_x = 0;
+                double origin_rot_y = 0;
+                double origin_rot_z = 0;
 		//Position of the sensor in environment coordinates 
-		double sens_World_x = 0, sens_World_y = 0, sens_World_z = 0;
+		double sens_World_x = 0;
+                double sens_World_y = 0;
+                double sens_World_z = 0;
 		//Camera view direction after calculation of all orientation - 
-		double sensSV_x = 0, sensSV_y = 0, sensSV_z = 0;
+		double sensSV_x = 0;
+                double sensSV_y = 0;
+                double sensSV_z = 0;
 		std::vector<int>   masked(nof_mov_obj);  	// define vector with length nof_obj and initialize it to 0
 
 
 		//Sensor mounting position and orientation (in host vehicle frame with reference to the bbcenter_rear)
 		//Todo Mounting Position über CameraSensorViewConfig
-		double mpos_x = currentViewIn.mounting_position().position().x();        double mpos_y = currentViewIn.mounting_position().position().y();            double mpos_z = currentViewIn.mounting_position().position().z();
-		double mpos_yaw = currentViewIn.mounting_position().orientation().yaw(); double mpos_pitch = currentViewIn.mounting_position().orientation().pitch(); double mpos_roll = currentViewIn.mounting_position().orientation().roll();
+                double mpos_x = current_view_in.mounting_position().position().x();
+                double mpos_y = current_view_in.mounting_position().position().y();
+                double mpos_z = current_view_in.mounting_position().position().z();
+                double mpos_yaw = current_view_in.mounting_position().orientation().yaw();
+                double mpos_pitch = current_view_in.mounting_position().orientation().pitch();
+                double mpos_roll = current_view_in.mounting_position().orientation().roll();
 
 		//double mpos_x = 0;        double mpos_y = 0;            double mpos_z = 0;
 		//double mpos_yaw = 0; double mpos_pitch = 0; double mpos_roll = 0;
@@ -634,14 +656,15 @@ double time = current_communication_point + communication_step_size;
                           mpos_roll);
 
 
-		osi3::Identifier ego_id = currentViewIn.global_ground_truth().host_vehicle_id();
+		osi3::Identifier ego_id = current_view_in.global_ground_truth().host_vehicle_id();
                 NormalLog("OSI", "Looking for EgoVehicle with ID: %llu", ego_id.value());
 
 		/*Calculating the position of the ego vehicle*/
 		/*Calculating the position of the Sensor position in environment coordinates*/
 		/*Calculating the camera view direction*/
 
-		for_each(currentViewIn.global_ground_truth().moving_object().begin(), currentViewIn.global_ground_truth().moving_object().end(),
+		for_each(current_view_in.global_ground_truth().moving_object().begin(),
+                         current_view_in.global_ground_truth().moving_object().end(),
 			[this, ego_id, &bbctr_Host_x, &bbctr_Host_y, &bbctr_Host_z, &ego_World_x, &ego_World_y, &ego_World_z, &ego_yaw, &ego_pitch, &ego_roll, &ego_vel_x, &ego_vel_y, &ego_vel_z, &origin_World_x, &origin_World_y, &origin_World_z, &origin_rot_x, &origin_rot_y, &origin_rot_z, &origin_Host_x, &origin_Host_y, &origin_Host_z, &mpos_x, &mpos_y, &mpos_z, &mpos_rot_x, &mpos_rot_y, &mpos_rot_z, &mpos_yaw, &mpos_pitch, &mpos_roll, &sens_World_x, &sens_World_y, &sens_World_z, &sensSV_x, &sensSV_y, &sensSV_z](const osi3::MovingObject& obj) {
                              NormalLog("OSI", "MovingObject with ID %llu is EgoVehicle: %d", obj.id().value(), obj.id().value() == ego_id.value());
 			if (obj.id().value() == ego_id.value()) {
@@ -660,7 +683,9 @@ double time = current_communication_point + communication_step_size;
 				bbctr_Host_x = obj.vehicle_attributes().bbcenter_to_rear().x(); bbctr_Host_y = obj.vehicle_attributes().bbcenter_to_rear().y(); bbctr_Host_z = obj.vehicle_attributes().bbcenter_to_rear().z();
 				
 				//bbctr_Host_x = -2; bbctr_Host_y = -0.5; bbctr_Host_z = 0;
-				double h1 = 0, h2 = 0, h3 = 0;
+                                double h1 = 0;
+                                double h2 = 0;
+                                double h3 = 0;
 				//Position of the ego origin in world coordinates after rotation  
 				NormalLog("OSI", "Current EGO bbcenter to rear vector: %f,%f,%f", bbctr_Host_x, bbctr_Host_y, bbctr_Host_z);
 				Rot2env(bbctr_Host_x, bbctr_Host_y, bbctr_Host_z, ego_yaw, ego_pitch, ego_roll, origin_rot_x, origin_rot_y, origin_rot_z); //rotate into coordinate system of environment
@@ -672,36 +697,36 @@ double time = current_communication_point + communication_step_size;
 				
 				Rot2veh(origin_World_x - ego_World_x, origin_World_y - ego_World_y, origin_World_z - ego_World_z, ego_yaw, ego_pitch, ego_roll, h1, h2, h3);
                                 NormalLog("OSI", "Current Host ORigin in Host coordinates: %f,%f,%f", h1, h2, h3);
-				double sens_EGO_x = origin_Host_x + mpos_x;	// sensor x-position in ego coordinate system before ego-orientation rotation
-				double sens_EGO_y = origin_Host_y + mpos_y;	// sensor y-position in ego coordinate system before ego-orientation rotation
-				double sens_EGO_z = origin_Host_z + mpos_z;	// sensor z-position in ego coordinate system before ego-orientation rotation
+				double sens_ego_x = origin_Host_x + mpos_x;	// sensor x-position in ego coordinate system before ego-orientation rotation
+				double sens_ego_y = origin_Host_y + mpos_y;	// sensor y-position in ego coordinate system before ego-orientation rotation
+				double sens_ego_z = origin_Host_z + mpos_z;	// sensor z-position in ego coordinate system before ego-orientation rotation
 
 
 
-				Rot2env(sens_EGO_x, sens_EGO_y, sens_EGO_z, ego_yaw, ego_pitch, ego_roll, mpos_rot_x, mpos_rot_y, mpos_rot_z);
+				Rot2env(sens_ego_x, sens_ego_y, sens_ego_z, ego_yaw, ego_pitch, ego_roll, mpos_rot_x, mpos_rot_y, mpos_rot_z);
 				//Position of the sensor in environment coordinates 
 				sens_World_x = ego_World_x + mpos_rot_x;
 				sens_World_y = ego_World_y + mpos_rot_y;
 				sens_World_z = ego_World_z + mpos_rot_z;
-                                NormalLog("OSI", "Current Sensor Coordinates in host coordinate system: x %f, y %f, z %f", sens_EGO_x, sens_EGO_y, sens_EGO_z);
+                                NormalLog("OSI", "Current Sensor Coordinates in host coordinate system: x %f, y %f, z %f", sens_ego_x, sens_ego_y, sens_ego_z);
                                 NormalLog("OSI", "Current Sensor Coordinates in environment coordinate system: x %f, y %f, z %f", sens_World_x, sens_World_y, sens_World_z);
 
 				
 				//With sensor-rotation 
-				double sensSV_mprotx = 0; double sensSV_mproty = 0; double sensSV_mprotz = 0;
+				double sens_sv_mprotx = 0; double sens_sv_mproty = 0; double sens_sv_mprotz = 0;
 				
-				Rot2env(1, 0, 0, mpos_yaw, mpos_pitch, mpos_roll, sensSV_mprotx, sensSV_mproty, sensSV_mprotz);
+				Rot2env(1, 0, 0, mpos_yaw, mpos_pitch, mpos_roll, sens_sv_mprotx, sens_sv_mproty, sens_sv_mprotz);
 				
-				sensSV_x = sens_EGO_x + sensSV_mprotx;	// Sichtvektor sensor x in ego coordinate system before ego-orientation rotation
-				sensSV_y = sens_EGO_y + sensSV_mproty;	// sensor y in ego coordinate system before ego-orientation rotation
-				sensSV_z = sens_EGO_z + sensSV_mprotz;	// sensor z in ego coordinate system before ego-orientation rotation
+				sensSV_x = sens_ego_x + sens_sv_mprotx;	// Sichtvektor sensor x in ego coordinate system before ego-orientation rotation
+				sensSV_y = sens_ego_y + sens_sv_mproty;	// sensor y in ego coordinate system before ego-orientation rotation
+				sensSV_z = sens_ego_z + sens_sv_mprotz;	// sensor z in ego coordinate system before ego-orientation rotation
 				
-				double sensSV_rot_x = 0; double sensSV_rot_y = 0; double sensSV_rot_z = 0;
+				double sens_sv_rot_x = 0; double sens_sv_rot_y = 0; double sens_sv_rot_z = 0;
 				
-				Rot2env(sensSV_x, sensSV_y, sensSV_z, ego_yaw, ego_pitch, ego_roll, sensSV_rot_x, sensSV_rot_y, sensSV_rot_z);
-				sensSV_x = ego_World_x + sensSV_rot_x;
-				sensSV_y = ego_World_y + sensSV_rot_y;
-				sensSV_z = ego_World_z + sensSV_rot_z;
+				Rot2env(sensSV_x, sensSV_y, sensSV_z, ego_yaw, ego_pitch, ego_roll, sens_sv_rot_x, sens_sv_rot_y, sens_sv_rot_z);
+				sensSV_x = ego_World_x + sens_sv_rot_x;
+				sensSV_y = ego_World_y + sens_sv_rot_y;
+				sensSV_z = ego_World_z + sens_sv_rot_z;
 
 				//normal_log("OSI", "EGO position and orientation: x %f, y %f, z %f,yaw %f, pitch %f, roll %f", ego_World_x, ego_World_y, ego_World_z, ego_yaw, ego_pitch, ego_roll);
 				//normal_log("OSI", "Current BB Position rear: %f,%f,%f", origin_Host_x, origin_Host_y, origin_Host_z);
@@ -717,13 +742,13 @@ double time = current_communication_point + communication_step_size;
 
 
 		/* Clear Output */
-		currentOut.Clear();
-		currentOut.mutable_version()->CopyFrom(osi3::InterfaceVersion::descriptor()->file()->options().GetExtension(osi3::current_interface_version));
+		current_out.Clear();
+		current_out.mutable_version()->CopyFrom(osi3::InterfaceVersion::descriptor()->file()->options().GetExtension(osi3::current_interface_version));
 		/* Adjust Timestamps and Ids */
-		currentOut.mutable_timestamp()->set_seconds((long long int)floor(time));
-		currentOut.mutable_timestamp()->set_nanos((int)((time - floor(time))*1000000000.0));
+		current_out.mutable_timestamp()->set_seconds((long long int)floor(time));
+		current_out.mutable_timestamp()->set_nanos((int)((time - floor(time))*1000000000.0));
 		/* Copy of SensorView */
-		currentOut.add_sensor_view()->CopyFrom(currentViewIn);
+                current_out.add_sensor_view()->CopyFrom(current_view_in);
 
 
 
@@ -744,11 +769,14 @@ double time = current_communication_point + communication_step_size;
 		std::vector<double> phi_max(nof_mov_obj);   // define vector with length nof_obj and initialize it to 0
 		std::vector<double> phi(nof_mov_obj);
 		std::vector<double> distM(nof_mov_obj);  // define vector with length nof_obj and initialize it to 0
-		double rel_x, rel_y, rel_z;
+                double rel_x;
+                double rel_y;
+                double rel_z;
 
-		for (auto v_i = currentViewIn.global_ground_truth().moving_object().begin(); v_i != currentViewIn.global_ground_truth().moving_object().end(); ++v_i) {
+		for (auto v_i = current_view_in.global_ground_truth().moving_object().begin(); v_i != current_view_in.global_ground_truth().moving_object().end(); ++v_i)
+                {
 			const osi3::MovingObject& veh = *v_i;
-			auto const i = v_i - currentViewIn.global_ground_truth().moving_object().begin();
+                    auto const i = v_i - current_view_in.global_ground_truth().moving_object().begin();
 			if (veh.id().value() != ego_id.value()) {
 
 				/* Get corner coordinates:
@@ -879,16 +907,15 @@ double time = current_communication_point + communication_step_size;
 		}
 
 
-		for (auto v_i = currentViewIn.global_ground_truth().moving_object().begin();
-			v_i != currentViewIn.global_ground_truth().moving_object().end();
+		for (auto v_i = current_view_in.global_ground_truth().moving_object().begin(); v_i != current_view_in.global_ground_truth().moving_object().end();
 			++v_i) {
 			const osi3::MovingObject& veh = *v_i;
-			// osi3::DetectedObject *obj = currentOut.mutable_object()->Add();
-			size_t const i = v_i - currentViewIn.global_ground_truth().moving_object().begin();
-			// auto const i = v_i - currentViewIn.global_ground_truth().moving_object().begin();
+			// osi3::DetectedObject *obj = current_out.mutable_object()->Add();
+                        size_t const i = v_i - current_view_in.global_ground_truth().moving_object().begin();
+			// auto const i = v_i - current_view_in.global_ground_truth().moving_object().begin();
 			auto const vid = veh.id().value();
 			// auto const vid = i;
-			// normal_log("OSI", "Vehicle %d, vid %d, begin %d, end %d", i, vid, currentViewIn.global_ground_truth().moving_object().begin(), currentViewIn.global_ground_truth().moving_object().end());
+			// normal_log("OSI", "Vehicle %d, vid %d, begin %d, end %d", i, vid, current_view_in.global_ground_truth().moving_object().begin(), current_view_in.global_ground_truth().moving_object().end());
 			if (vid != ego_id.value()) {
 
 
@@ -912,7 +939,7 @@ double time = current_communication_point + communication_step_size;
 							double occ_temp = (phi_max_ij - phi_min_ij) / (phi_max[i] - phi_min[i]);
 							if (occ_temp > occ) {
 								occ = occ_temp; // Take the maximum occlusion.
-								loc = currentViewIn.global_ground_truth().moving_object(j).base().dimension().length();			// length of occluding car
+                                                            loc = current_view_in.global_ground_truth().moving_object(j).base().dimension().length();  // length of occluding car
 								//			normal_log("DEBUG", "Vehicle %d occluded by vehicle %d with length %.2f", i, j, loc);
 								occ_ind = j;
 							}
@@ -949,8 +976,43 @@ double time = current_communication_point + communication_step_size;
 
 		//Caculation of moving objects 
 		int i = 0;
-		for_each(currentViewIn.global_ground_truth().moving_object().begin(), currentViewIn.global_ground_truth().moving_object().end(),
-			[this, &i, &currentViewIn, &currentOut, &masked, ego_id, ego_World_x, ego_World_y, ego_World_z, ego_vel_x, ego_vel_y, ego_vel_z, &mpos_x, &mpos_y, &mpos_z, &origin_World_x, &origin_World_y, &origin_World_z, &origin_rot_x, &origin_rot_y, &origin_rot_z, &mpos_rot_x, &mpos_rot_y, &mpos_rot_z, ego_yaw, ego_pitch, ego_roll, actual_range, &sens_World_x, &sens_World_y, &sens_World_z, &sensSV_x, &sensSV_y, &sensSV_z](const osi3::MovingObject& veh) {
+                for_each(
+                    current_view_in.global_ground_truth().moving_object().begin(),
+                    current_view_in.global_ground_truth().moving_object().end(),
+                    [this,
+                     &i,
+                     &current_view_in,
+                     &current_out,
+                     &masked,
+                     ego_id,
+                     ego_World_x,
+                     ego_World_y,
+                     ego_World_z,
+                     ego_vel_x,
+                     ego_vel_y,
+                     ego_vel_z,
+                     &mpos_x,
+                     &mpos_y,
+                     &mpos_z,
+                     &origin_World_x,
+                     &origin_World_y,
+                     &origin_World_z,
+                     &origin_rot_x,
+                     &origin_rot_y,
+                     &origin_rot_z,
+                     &mpos_rot_x,
+                     &mpos_rot_y,
+                     &mpos_rot_z,
+                     ego_yaw,
+                     ego_pitch,
+                     ego_roll,
+                     actual_range,
+                     &sens_World_x,
+                     &sens_World_y,
+                     &sens_World_z,
+                     &sensSV_x,
+                     &sensSV_y,
+                     &sensSV_z](const osi3::MovingObject& veh) {
 			if (veh.id().value() != ego_id.value()) {
 
 
@@ -960,8 +1022,8 @@ double time = current_communication_point + communication_step_size;
 				//Age
 				ObjectInfo current_object_history{};
 				int obj_idx = i;
-				int current_object_idx = get_object_info_idx(object_history_vector, currentViewIn.global_ground_truth().moving_object(obj_idx).id().value());
-				update_object_history_vector(current_object_history, currentViewIn, obj_idx, true);
+                                int current_object_idx = get_object_info_idx(object_history_vector, current_view_in.global_ground_truth().moving_object(obj_idx).id().value());
+                                UpdateObjectHistoryVector(current_object_history, current_view_in, obj_idx, true);
 
 
 				//Calculate the Moving Objects in Sensor coordinates (erstmal zur mounting posistion) !! Sp�ter eventuell zur Hinterachse Auto 
@@ -1023,8 +1085,8 @@ double time = current_communication_point + communication_step_size;
 				
 				if ((distance <= camera_range) && abs(angle_to_mov_obj) < camera_FOV) {
 					if (masked[i + 1] == 0) {// (abs(trans_x/distance) >0.766025)){//0.766025)) {
-						osi3::DetectedMovingObject *obj = currentOut.mutable_moving_object()->Add();
-						currentOut.mutable_moving_object_header()->set_data_qualifier(osi3::DetectedEntityHeader_DataQualifier_DATA_QUALIFIER_AVAILABLE);
+						osi3::DetectedMovingObject *obj = current_out.mutable_moving_object()->Add();
+						current_out.mutable_moving_object_header()->set_data_qualifier(osi3::DetectedEntityHeader_DataQualifier_DATA_QUALIFIER_AVAILABLE);
 
 						int max = 10;
 						int min = 0;
@@ -1042,7 +1104,7 @@ double time = current_communication_point + communication_step_size;
 						obj->mutable_header()->set_existence_probability(existence_prob / 100);
 						obj->mutable_header()->set_age(current_object_history.age);
 						obj->mutable_header()->set_measurement_state(osi3::DetectedItemHeader_MeasurementState_MEASUREMENT_STATE_MEASURED);
-						obj->mutable_header()->add_sensor_id()->CopyFrom(currentViewIn.sensor_id());
+                                                obj->mutable_header()->add_sensor_id()->CopyFrom(current_view_in.sensor_id());
 
 						//Position in Sensor Koordinaten 
 						//Input are the Coordinates in the Sensor-Environment 
@@ -1139,8 +1201,34 @@ double time = current_communication_point + communication_step_size;
 
 		//Stationary objects
 
-		for_each(currentViewIn.global_ground_truth().stationary_object().begin(), currentViewIn.global_ground_truth().stationary_object().end(),
-			[this, &i, &currentViewIn, &currentOut, masked, ego_id, ego_World_x, ego_World_y, ego_World_z, &origin_World_x, &origin_World_y, &origin_World_z, &mpos_x, &mpos_y, &mpos_z, ego_yaw, ego_pitch, ego_roll, actual_range, &sens_World_x, &sens_World_y, &sens_World_z, &sensSV_x, &sensSV_y, &sensSV_z](const osi3::StationaryObject& stobj) {
+		for_each(
+                    current_view_in.global_ground_truth().stationary_object().begin(),
+                    current_view_in.global_ground_truth().stationary_object().end(),
+                    [this,
+                     &i,
+                     &current_view_in,
+                     &current_out,
+                     masked,
+                     ego_id,
+                     ego_World_x,
+                     ego_World_y,
+                     ego_World_z,
+                     &origin_World_x,
+                     &origin_World_y,
+                     &origin_World_z,
+                     &mpos_x,
+                     &mpos_y,
+                     &mpos_z,
+                     ego_yaw,
+                     ego_pitch,
+                     ego_roll,
+                     actual_range,
+                     &sens_World_x,
+                     &sens_World_y,
+                     &sens_World_z,
+                     &sensSV_x,
+                     &sensSV_y,
+                     &sensSV_z](const osi3::StationaryObject& stobj) {
 
 
 			double xxKoordinate;	double yyKoordinate; double zzKoordinate;  //Coordinates of the moving object in sensor coordinate system (movin object center of bounding box to mounting position sensor) 
@@ -1154,7 +1242,9 @@ double time = current_communication_point + communication_step_size;
 			double stobjOrientationRoll = stobj.base().orientation().roll();
 
 
-			double rr1 = 0, rr2 = 0, rr3 = 0;
+			double rr1 = 0;
+                        double rr2 = 0;
+                        double rr3 = 0;
 			EulerWinkel(ego_yaw, ego_pitch, ego_roll, stobjOrientationYaw, stobjOrientationPitch, stobjOrientationRoll, rr1, rr2, rr3);
                         NormalLog("DEBUG", "Detected object Orientierung zum Vehicle  %f,%f,%f", rr1, rr2, rr3);
 			CalKoordNew(trans_x, trans_y, trans_z, ego_yaw, ego_pitch, ego_roll, xxKoordinate, yyKoordinate, zzKoordinate);
@@ -1175,8 +1265,8 @@ double time = current_communication_point + communication_step_size;
 			//Define detection range //
 			//abs wegen negativen werten 
 			if ((distance <= camera_range) && abs(angle_to_stat_obj) < camera_FOV && !masked[i]) {// (abs(trans_x/distance) >0.766025)){//0.766025)) {
-				osi3::DetectedStationaryObject *obj = currentOut.mutable_stationary_object()->Add();
-				currentOut.mutable_stationary_object_header()->set_data_qualifier(osi3::DetectedEntityHeader_DataQualifier_DATA_QUALIFIER_AVAILABLE);
+				osi3::DetectedStationaryObject *obj = current_out.mutable_stationary_object()->Add();
+				current_out.mutable_stationary_object_header()->set_data_qualifier(osi3::DetectedEntityHeader_DataQualifier_DATA_QUALIFIER_AVAILABLE);
 
 				int max = 10;
 				int min = 0;
@@ -1192,7 +1282,7 @@ double time = current_communication_point + communication_step_size;
 				obj->mutable_header()->set_existence_probability(existence_prob / 100);
 			
 				obj->mutable_header()->set_measurement_state(osi3::DetectedItemHeader_MeasurementState_MEASUREMENT_STATE_MEASURED);
-				obj->mutable_header()->add_sensor_id()->CopyFrom(currentViewIn.sensor_id());
+                                obj->mutable_header()->add_sensor_id()->CopyFrom(current_view_in.sensor_id());
 
 				//Position in Sensor Koordinaten 
 				//Input are the Coordinates in the Sensor-Environment 
@@ -1259,8 +1349,34 @@ double time = current_communication_point + communication_step_size;
 		int itl = 0;
 
 		//Traffic Lights 
-		for_each(currentViewIn.global_ground_truth().traffic_light().begin(), currentViewIn.global_ground_truth().traffic_light().end(),
-			[this, &itl, &currentViewIn, &currentOut, masked, ego_id, ego_World_x, ego_World_y, ego_World_z, &origin_World_x, &origin_World_y, &origin_World_z, &mpos_x, &mpos_y, &mpos_z, ego_yaw, ego_pitch, ego_roll, actual_range, &sens_World_x, &sens_World_y, &sens_World_z, &sensSV_x, &sensSV_y, &sensSV_z](const osi3::TrafficLight& trafficlight) {
+		for_each(
+                    current_view_in.global_ground_truth().traffic_light().begin(),
+                    current_view_in.global_ground_truth().traffic_light().end(),
+                    [this,
+                     &itl,
+                     &current_view_in,
+                     &current_out,
+                     masked,
+                     ego_id,
+                     ego_World_x,
+                     ego_World_y,
+                     ego_World_z,
+                     &origin_World_x,
+                     &origin_World_y,
+                     &origin_World_z,
+                     &mpos_x,
+                     &mpos_y,
+                     &mpos_z,
+                     ego_yaw,
+                     ego_pitch,
+                     ego_roll,
+                     actual_range,
+                     &sens_World_x,
+                     &sens_World_y,
+                     &sens_World_z,
+                     &sensSV_x,
+                     &sensSV_y,
+                     &sensSV_z](const osi3::TrafficLight& trafficlight) {
 
 
 			
@@ -1278,7 +1394,9 @@ double time = current_communication_point + communication_step_size;
 			double trafficlightOrientationRoll = trafficlight.base().orientation().roll();
 
 
-			double rr1 = 0, rr2 = 0, rr3 = 0;
+			double rr1 = 0;
+                        double rr2 = 0;
+                        double rr3 = 0;
 			EulerWinkel(ego_yaw, ego_pitch, ego_roll, trafficlightOrientationYaw, trafficlightOrientationPitch, trafficlightOrientationRoll, rr1, rr2, rr3);
                         NormalLog("DEBUG", "Detected object Orientierung zum Vehicle  %f,%f,%f", rr1, rr2, rr3);
                         NormalLog("OSI",
@@ -1303,8 +1421,8 @@ double time = current_communication_point + communication_step_size;
 			//Define detection range //
 			
 			if ((distance <= camera_range) && abs(angle_to_traffic_light) < camera_FOV) {// (abs(trans_x/distance) >0.766025)){//0.766025)) {
-				osi3::DetectedTrafficLight *obj = currentOut.mutable_traffic_light()->Add();
-				currentOut.mutable_traffic_light_header()->set_data_qualifier(osi3::DetectedEntityHeader_DataQualifier_DATA_QUALIFIER_AVAILABLE);
+				osi3::DetectedTrafficLight *obj = current_out.mutable_traffic_light()->Add();
+				current_out.mutable_traffic_light_header()->set_data_qualifier(osi3::DetectedEntityHeader_DataQualifier_DATA_QUALIFIER_AVAILABLE);
 
 				int max = 10;
 				int min = 0;
@@ -1322,7 +1440,7 @@ double time = current_communication_point + communication_step_size;
                                 NormalLog("OSI", "TrafficLight Existence Probability: %f", existence_prob / 100);
 				//obj->mutable_header()->set_age(current_object_history.age);
 				obj->mutable_header()->set_measurement_state(osi3::DetectedItemHeader_MeasurementState_MEASUREMENT_STATE_MEASURED);
-				obj->mutable_header()->add_sensor_id()->CopyFrom(currentViewIn.sensor_id());
+                                obj->mutable_header()->add_sensor_id()->CopyFrom(current_view_in.sensor_id());
 
 				//Position in Sensor Koordinaten 
 				//Input are the Coordinates in the Sensor-Environment 
@@ -1398,8 +1516,34 @@ double time = current_communication_point + communication_step_size;
 
 
 		int its = 0;
-		for_each(currentViewIn.global_ground_truth().traffic_sign().begin(), currentViewIn.global_ground_truth().traffic_sign().end(),
-			[this, &its, &currentViewIn, &currentOut, masked, ego_id, ego_World_x, ego_World_y, ego_World_z, &origin_World_x, &origin_World_y, &origin_World_z, &mpos_x, &mpos_y, &mpos_z, ego_yaw, ego_pitch, ego_roll, actual_range, &sens_World_x, &sens_World_y, &sens_World_z, &sensSV_x, &sensSV_y, &sensSV_z](const osi3::TrafficSign& tsobj) {
+                for_each(
+                    current_view_in.global_ground_truth().traffic_sign().begin(),
+                    current_view_in.global_ground_truth().traffic_sign().end(),
+                    [this,
+                     &its,
+                     &current_view_in,
+                     &current_out,
+                     masked,
+                     ego_id,
+                     ego_World_x,
+                     ego_World_y,
+                     ego_World_z,
+                     &origin_World_x,
+                     &origin_World_y,
+                     &origin_World_z,
+                     &mpos_x,
+                     &mpos_y,
+                     &mpos_z,
+                     ego_yaw,
+                     ego_pitch,
+                     ego_roll,
+                     actual_range,
+                     &sens_World_x,
+                     &sens_World_y,
+                     &sens_World_z,
+                     &sensSV_x,
+                     &sensSV_y,
+                     &sensSV_z](const osi3::TrafficSign& tsobj) {
                         NormalLog("OSI", "TrafficSign with ID %llu ", tsobj.id().value());
 			//Calculate the traffic light  in Sensor coordinates (erstmal zur mounting posistion) !! Sp�ter eventuell zur Hinterachse Auto 
 			double xxxKoordinate;	double yyyKoordinate; double zzzKoordinate;  //Coordinates of the moving object in sensor coordinate system (movin object center of bounding box to mounting position sensor) 
@@ -1418,7 +1562,9 @@ double time = current_communication_point + communication_step_size;
 			double tsobjMOrientationRoll = tsobj.main_sign().base().orientation().roll();
 
 
-			double rr1 = 0, rr2 = 0, rr3 = 0;
+			double rr1 = 0;
+                        double rr2 = 0;
+                        double rr3 = 0;
 			EulerWinkel(ego_yaw, ego_pitch, ego_roll, tsobjMOrientationYaw, tsobjMOrientationPitch, tsobjMOrientationRoll, rr1, rr2, rr3);
                         NormalLog("DEBUG", "Detected object Orientierung zum Vehicle  %f,%f,%f", rr1, rr2, rr3);
 
@@ -1439,8 +1585,8 @@ double time = current_communication_point + communication_step_size;
 			double angle_to_traffic_sign = CalculateAngle(transTS_x, transTS_y, transTS_z, g1, g2, g3);
 
 			if ((distance <= camera_range) && abs(angle_to_traffic_sign) < camera_FOV) {// (abs(trans_x/distance) >0.766025)){//0.766025)) {
-				osi3::DetectedTrafficSign *obj = currentOut.mutable_traffic_sign()->Add();
-				currentOut.mutable_traffic_sign_header()->set_data_qualifier(osi3::DetectedEntityHeader_DataQualifier_DATA_QUALIFIER_AVAILABLE);
+				osi3::DetectedTrafficSign *obj = current_out.mutable_traffic_sign()->Add();
+				current_out.mutable_traffic_sign_header()->set_data_qualifier(osi3::DetectedEntityHeader_DataQualifier_DATA_QUALIFIER_AVAILABLE);
 
 				int max = 10;
 				int min = 0;
@@ -1453,7 +1599,7 @@ double time = current_communication_point + communication_step_size;
 				obj->mutable_header()->set_existence_probability(existence_prob / 100);
 				//obj->mutable_header()->set_age(current_object_history.age);
 				obj->mutable_header()->set_measurement_state(osi3::DetectedItemHeader_MeasurementState_MEASUREMENT_STATE_MEASURED);
-				obj->mutable_header()->add_sensor_id()->CopyFrom(currentViewIn.sensor_id());
+                                obj->mutable_header()->add_sensor_id()->CopyFrom(current_view_in.sensor_id());
 
 				//Position in Sensor Koordinaten 
 				//Input are the Coordinates in the Sensor-Environment 
@@ -1485,9 +1631,9 @@ double time = current_communication_point + communication_step_size;
         //SetFmiSensorDataOut(current_out);
         //SetFmiValid(1);
         //SetFmiCount(current_out.moving_object_size());
-        SetFmiSensorDataOut(currentOut);
+        SetFmiSensorDataOut(current_out);
         SetFmiValid(1);
-        SetFmiCount(currentOut.moving_object_size());
+        SetFmiCount(current_out.moving_object_size());
     }
     else
     {
