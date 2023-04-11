@@ -47,7 +47,7 @@
 #include <string>
 
 using namespace std;
-std::vector<ObjectInfo> object_history_vector;
+const std::vector<ObjectInfo> g_object_history_vector;
 
 #ifdef PRIVATE_LOG_PATH
 ofstream COSMPCameraSensor::private_log_file;
@@ -231,12 +231,12 @@ fmi2Status OSMPCameraSensor::DoInit()
     return fmi2OK;
 }
 
-fmi2Status OSMPCameraSensor::DoStart(fmi2Boolean tolerance_defined, fmi2Real tolerance, fmi2Real start_time, fmi2Boolean stop_time_defined, fmi2Real stop_time)
+static fmi2Status OSMPCameraSensor::DoStart(fmi2Boolean tolerance_defined, fmi2Real tolerance, fmi2Real start_time, fmi2Boolean stop_time_defined, fmi2Real stop_time)
 {
     return fmi2OK;
 }
 
-fmi2Status OSMPCameraSensor::DoEnterInitializationMode()
+static fmi2Status OSMPCameraSensor::DoEnterInitializationMode()
 {
     return fmi2OK;
 }
@@ -519,23 +519,23 @@ double GetAbsVelocity(const osi3::Vector3d& velocity_3d) {
 void UpdateObjectHistoryVector(ObjectInfo& current_object_history, const osi3::SensorView& input_sensor_view, int obj_idx, bool moving) {
 	int current_object_idx=0;
 	if (moving) {
-            current_object_idx = GetObjectInfoIdx(object_history_vector, input_sensor_view.global_ground_truth().moving_object(obj_idx).id().value());
+            current_object_idx = GetObjectInfoIdx(g_object_history_vector, input_sensor_view.global_ground_truth().moving_object(obj_idx).id().value());
 	}
 	else {
-            current_object_idx = GetObjectInfoIdx(object_history_vector, input_sensor_view.global_ground_truth().stationary_object(obj_idx).id().value());
+            current_object_idx = GetObjectInfoIdx(g_object_history_vector, input_sensor_view.global_ground_truth().stationary_object(obj_idx).id().value());
 	}
 	if (current_object_idx != -1) {
-		object_history_vector.at(current_object_idx).age++;
+		g_object_history_vector.at(current_object_idx).age++;
 		if (moving) {
                     if (GetAbsVelocity(input_sensor_view.global_ground_truth().moving_object(obj_idx).base().velocity()) > 0.01)
                     {
-				object_history_vector.at(current_object_idx).movement_state = 1;
+				g_object_history_vector.at(current_object_idx).movement_state = 1;
 			}
-			else if (object_history_vector.at(current_object_idx).movement_state == 1) {
-				object_history_vector.at(current_object_idx).movement_state = 2;
+			else if (g_object_history_vector.at(current_object_idx).movement_state == 1) {
+				g_object_history_vector.at(current_object_idx).movement_state = 2;
 			}
 		}
-		current_object_history = object_history_vector.at(current_object_idx);
+		current_object_history = g_object_history_vector.at(current_object_idx);
 	}
 	else {
 		current_object_history.id = current_object_idx;
@@ -552,7 +552,7 @@ void UpdateObjectHistoryVector(ObjectInfo& current_object_history, const osi3::S
 		else {
 			current_object_history.movement_state = 0;
 		}
-		object_history_vector.push_back(current_object_history);
+		g_object_history_vector.push_back(current_object_history);
 	}
 }
 
@@ -1045,7 +1045,7 @@ double time = current_communication_point + communication_step_size;
 				//Age
 				ObjectInfo current_object_history{};
 				int obj_idx = i;
-                                int current_object_idx = GetObjectInfoIdx(object_history_vector, current_view_in.global_ground_truth().moving_object(obj_idx).id().value());
+                                int current_object_idx = GetObjectInfoIdx(g_object_history_vector, current_view_in.global_ground_truth().moving_object(obj_idx).id().value());
                                 UpdateObjectHistoryVector(current_object_history, current_view_in, obj_idx, true);
 
 
