@@ -1127,7 +1127,7 @@ double time = current_communication_point + communication_step_size;
 						double existence_prob = value15 - abs(distance * value11) + value11 * randomnumber;
                                                 if (existence_prob > value15)
                                                 {
-                                                    existence_prob = value15
+                                                    existence_prob = value15;
 						}
                                                 NormalLog("DEBUG", "Randomnumber is %f", randomnumber);
 						double randomPos = randomnumber / value15;
@@ -1994,8 +1994,7 @@ fmi2Status OSMPCameraSensor::SetString(const fmi2ValueReference vr[], size_t nvr
     {
         if (vr[i] < FMI_STRING_VARS)
         {
-            int tes1=value[i]
-            string_vars_[vr[i]] = test1;
+            string_vars_[vr[i]] = value[i];
         }
         else
         {
