@@ -1024,9 +1024,9 @@ fmi2Status OSMPCameraSensor::DoCalc(fmi2Real current_communication_point, fmi2Re
                 double occ = 0;  // occlusion of target vehicle[i]
 
                 // bool masked = 0;
-                size_t occ_ind = 0;   // index of occluding car
+                int occ_ind = 0;   // index of occluding car
                 double loc = 0.0;  // length of occluding car
-                for (size_t j = 1; j < nof_mov_obj; ++j)
+                for (int j = 1; j < nof_mov_obj; ++j)
                 {  // assume j=0 =always EGO tbconfirmed! type size_t of j was auto but caused compiler warning					// if ((j!=i) && (distance[j]<distance[i]) &&
                    // (phi_min[j]<phi_min[i]) && (phi_max[j]<phi_max[i])) masked = 1;
                     if ((j != i) && (dist_m[j] < dist_m[i]))
