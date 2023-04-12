@@ -555,6 +555,7 @@ double GetAbsVelocity(const osi3::Vector3d& velocity_3d)
 void UpdateObjectHistoryVector(ObjectInfo& current_object_history, const osi3::SensorView& input_sensor_view, int obj_idx, bool moving)
 {
     int current_object_idx = 0;
+    const double value_velocity_min = 0.01;
     if (moving)
     {
         current_object_idx = GetObjectInfoIdx(g_object_history_vector, input_sensor_view.global_ground_truth().moving_object(obj_idx).id().value());
@@ -568,7 +569,7 @@ void UpdateObjectHistoryVector(ObjectInfo& current_object_history, const osi3::S
         g_object_history_vector.at(current_object_idx).age++;
         if (moving)
         {
-            if (GetAbsVelocity(input_sensor_view.global_ground_truth().moving_object(obj_idx).base().velocity()) > 0.01)
+            if (GetAbsVelocity(input_sensor_view.global_ground_truth().moving_object(obj_idx).base().velocity()) > value_velocity_min)
             {
                 g_object_history_vector.at(current_object_idx).movement_state = 1;
             }
@@ -583,9 +584,10 @@ void UpdateObjectHistoryVector(ObjectInfo& current_object_history, const osi3::S
     {
         current_object_history.id = current_object_idx;
         current_object_history.age = 1;
+       
         if (moving)
         {
-            if (GetAbsVelocity(input_sensor_view.global_ground_truth().moving_object(obj_idx).base().velocity()) > 0.01)
+            if (GetAbsVelocity(input_sensor_view.global_ground_truth().moving_object(obj_idx).base().velocity()) > value_velocity_min)
             {
                 current_object_history.movement_state = 1;
             }
@@ -738,7 +740,7 @@ fmi2Status OSMPCameraSensor::DoCalc(fmi2Real current_communication_point, fmi2Re
                   &sens_sv_x,
                   &sens_sv_y,
                   &sens_sv_z](const osi3::MovingObject& obj) {
-                     NormalLog("OSI", "MovingObject with ID %llu is EgoVehicle: %d", obj.id().value(), obj.id().value() == ego_id.value());
+                    // NormalLog("OSI", "MovingObject with ID %llu is EgoVehicle: %d", obj.id().value(), obj.id().value() == ego_id.value());
                      if (obj.id().value() == ego_id.value())
                      {
                          NormalLog("OSI", "Found EgoVehicle with ID: %llu", obj.id().value());
@@ -1022,7 +1024,7 @@ fmi2Status OSMPCameraSensor::DoCalc(fmi2Real current_communication_point, fmi2Re
                 double occ = 0;  // occlusion of target vehicle[i]
 
                 // bool masked = 0;
-                int occ_ind = 0;   // index of occluding car
+                size_t occ_ind = 0;   // index of occluding car
                 double loc = 0.0;  // length of occluding car
                 for (size_t j = 1; j < nof_mov_obj; ++j)
                 {  // assume j=0 =always EGO tbconfirmed! type size_t of j was auto but caused compiler warning					// if ((j!=i) && (distance[j]<distance[i]) &&
@@ -1359,7 +1361,7 @@ fmi2Status OSMPCameraSensor::DoCalc(fmi2Real current_communication_point, fmi2Re
 
                      // Define detection range //
                      // abs wegen negativen werten
-                     if ((distance <= camera_range) && abs(angle_to_stat_obj) < camera_FOV && !masked[i])
+                     if ((distance <= camera_range) && abs(angle_to_stat_obj) < camera_FOV && masked[i]==0)
                      {  // (abs(trans_x/distance) >0.766025)){//0.766025)) {
                          osi3::DetectedStationaryObject* obj = current_out.mutable_stationary_object()->Add();
                          current_out.mutable_stationary_object_header()->set_data_qualifier(osi3::DetectedEntityHeader_DataQualifier_DATA_QUALIFIER_AVAILABLE);
@@ -1524,7 +1526,7 @@ fmi2Status OSMPCameraSensor::DoCalc(fmi2Real current_communication_point, fmi2Re
                     }
 
                     obj->mutable_header()->add_ground_truth_id()->CopyFrom(trafficlight.id());
-                    NormalLog("OSI", "TrafficLight ID: %f", trafficlight.id());
+                   // NormalLog("OSI", "TrafficLight ID: %f", trafficlight.id());
                     obj->mutable_header()->mutable_tracking_id()->set_value(itl);
                     obj->mutable_header()->set_existence_probability(existence_prob / value30);
                     NormalLog("OSI", "TrafficLight Existence Probability: %f", existence_prob / value30);
@@ -1557,8 +1559,8 @@ fmi2Status OSMPCameraSensor::DoCalc(fmi2Real current_communication_point, fmi2Re
                     NormalLog("DEBUG", "Detected traffic light color %d", candidate->classification().color());
                     NormalLog("DEBUG", "Detected traffic light mode %d", candidate->classification().mode());
                     NormalLog("DEBUG", "Detected traffic light icon %d", candidate->classification().icon());
-                    NormalLog("DEBUG", "Detected traffic light assigned lane id %d", candidate->classification().assigned_lane_id());
-                    NormalLog("DEBUG", "Detected traffic classification %d", trafficlight.classification());
+                   // NormalLog("DEBUG", "Detected traffic light assigned lane id %d", candidate->classification().assigned_lane_id());
+                   // NormalLog("DEBUG", "Detected traffic classification %d", trafficlight.classification());
 
                     NormalLog("DEBUG", "Detected traffic light %d minimal distance to Ego/Sensor %f", itl, distance);
                     NormalLog("DEBUG", "Detected traffic light %d angle to Ego/Sensor %f", itl, angle_to_traffic_light);
