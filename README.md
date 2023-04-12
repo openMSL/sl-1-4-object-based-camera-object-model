@@ -43,12 +43,8 @@ The detection of moving objects, stationary objects, traffic signs and traffic l
 
 ## Parameterization
 
-Each parameter should have a short description as shown in the following example.
-
-| Parameter                      | Description                                                         |
-| ------------------------------ | ------------------------------------------------------------------- |
-| `FOV`        					 | horizontal field of view definition  							   |
-| `Range`    					 | View distance of the sensor                              		   |
+- FOV: describes the horizontal Field of View of the Camera System 
+- Range: deschribes the view distance of the sensor 
 
 ## Interface
 
