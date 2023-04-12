@@ -632,10 +632,10 @@ fmi2Status OSMPCameraSensor::DoCalc(fmi2Real current_communication_point, fmi2Re
         size_t nof_traf_lights_obj = current_view_in.global_ground_truth().traffic_light().size();  // number of traffic lights
         size_t nof_traf_sign_obj = current_view_in.global_ground_truth().traffic_sign().size();     // number of traffic signs
 
-        NormalLog("OSI", "Number of moving objects: %llu", nof_mov_obj);
-        NormalLog("OSI", "Number of stationary objects: %llu", nof_stat_obj);
-        NormalLog("OSI", "Number of traffic lights: %llu", nof_traf_lights_obj);
-        NormalLog("OSI", "Number of traffic signs: %llu", nof_traf_sign_obj);
+        //NormalLog("OSI", "Number of moving objects: %llu", nof_mov_obj);
+        //NormalLog("OSI", "Number of stationary objects: %llu", nof_stat_obj);
+        //NormalLog("OSI", "Number of traffic lights: %llu", nof_traf_lights_obj);
+        //NormalLog("OSI", "Number of traffic signs: %llu", nof_traf_sign_obj);
 
         // Center of the bounding box in environment coordinates
         // Position and Orientation
