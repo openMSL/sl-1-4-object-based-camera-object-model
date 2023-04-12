@@ -43,8 +43,8 @@ The detection of moving objects, stationary objects, traffic signs and traffic l
 
 ## Parameterization
 
-- FOV: describes the horizontal Field of View of the Camera System 
-- Range: deschribes the view distance of the sensor 
+- FOV: describes the horizontal Field of View of the Camera System
+- Range: deschribes the view distance of the sensor
 
 ## Interface
 
