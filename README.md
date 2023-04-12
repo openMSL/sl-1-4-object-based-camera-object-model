@@ -9,7 +9,7 @@ To use the CI pipeline after copying this template, you just have to change the 
 [![Credibility Assessment Level 2](../../actions/workflows/cl2.yml/badge.svg)](https://github.com/openMSL/sl-1-5-sensor-model-testing/blob/main/doc/test_architecture.md#cl-2-qualitative-verification)
 
 This model is a parameterizable object based video perception sensor and tracking model using the interface OSI.
-The model was developed in the project SetLevel by Bosch. The model should simulate some basic video typical effects in a phenomenological way. 
+The model was developed in the project SetLevel by Bosch. The model should simulate some basic video typical effects in a phenomenological way.
 The "object based camera object model" is based on object lists and all modeling is performed on object level.
 The model output are object lists for OSI SenorData moving and stationary objects.
 The outer layer of the model is the OSI Sensor Model Packaging (OSMP).
@@ -56,24 +56,24 @@ Each parameter should have a short description as shown in the following example
 
 ### Input: Required Fields in OSI3::SensorView
 
-* `sensor_view.mounting_position`
-* `sensor_view.global_ground_truth.timestamp`
-* `sensor_view.global_ground_truth.host_vehicle_id`
-* `sensor_view.global_ground_truth.stationary_object.id`
-* `sensor_view.global_ground_truth.stationary_object.base.position`
-* `sensor_view.global_ground_truth.stationary_object.base.orientation`
-* `sensor_view.global_ground_truth.stationary_object.base.dimension`
+- `sensor_view.mounting_position`
+- `sensor_view.global_ground_truth.timestamp`
+- `sensor_view.global_ground_truth.host_vehicle_id`
+- `sensor_view.global_ground_truth.stationary_object.id`
+- `sensor_view.global_ground_truth.stationary_object.base.position`
+- `sensor_view.global_ground_truth.stationary_object.base.orientation`
+- `sensor_view.global_ground_truth.stationary_object.base.dimension`
 
 ### Output: Fields in OSI3::SensorData Filled by the Sensor Model
 
-* `sensor_data.timestamp`
-* `sensor_data.moving_object.header.ground_truth_id`
-* `sensor_data.moving_object.header.tracking_id`
-* `sensor_data.moving_object.header.existence_probability`
-* `sensor_data.moving_object.header.measurement_state`
-* `sensor_data.moving_object.header.sensor_id`
-* `sensor_data.moving_object.base.position`
-* `sensor_data.moving_object.base.dimension`
+- `sensor_data.timestamp`
+- `sensor_data.moving_object.header.ground_truth_id`
+- `sensor_data.moving_object.header.tracking_id`
+- `sensor_data.moving_object.header.existence_probability`
+- `sensor_data.moving_object.header.measurement_state`
+- `sensor_data.moving_object.header.sensor_id`
+- `sensor_data.moving_object.base.position`
+- `sensor_data.moving_object.base.dimension`
 
 ## Build Instructions
 
@@ -99,16 +99,16 @@ The following is an example for building a model as an FMU in Ubuntu.
 
 3. Take FMU from `FMU_INSTALL_DIR`
 
-Configuration for Windows:
+### Configuration for Windows
 
 - Windows 10
 - Visual Studio 2019
-- CMake 3.10.2 or higher 
+- CMake 3.10.2 or higher
 - OSI 3.2.0
-- Protobuf 3.11.4 or higher (tested with Protobuf 21.x) 
+- Protobuf 3.11.4 or higher (tested with Protobuf 21.x)
 
-1. Build protobuf for your special Visual Studio Version 
-2. Build sensor model with linker to build protobuf version 
+1. Build protobuf for your special Visual Studio Version
+2. Build sensor model with linker to build protobuf version
 Settings:
 OSI, Protobuf and the Modul have to be build with the same configuration:
 Debug/Release-Build
@@ -138,5 +138,3 @@ promoted by the German Federal Ministry for Economic Affairs and Energy based on
 | <a href="https://setlevel.de"><img src="https://setlevel.de/assets/logo-setlevel.svg" width="100" /></a> | <a href="https://pegasus-family.de"><img src="https://setlevel.de/assets/logo-pegasus-family.svg" width="100" /></a> | <a href="https://www.bmwi.de/Redaktion/DE/Textsammlungen/Technologie/fahrzeug-und-systemtechnologien.html"><img src="https://setlevel.de/assets/logo-bmwi-en.svg" width="100" /></a> |
 
 ## References
-
-
