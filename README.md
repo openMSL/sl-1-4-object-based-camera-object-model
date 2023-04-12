@@ -10,7 +10,8 @@ To use the CI pipeline after copying this template, you just have to change the 
 
 This model is a parameterizable object based video perception sensor and tracking model using the interface OSI.
 The model was developed in the project SetLevel by Bosch. The model should simulate some basic video typical effects in a phenomenological way.
-The "object based camera object model" is based on object lists and all modeling is performed on object level. The model output are object lists for OSI SenorData moving and stationary objects. The outer layer of the model is the OSI Sensor Model Packaging (OSMP).
+The "object based camera object model" is based on object lists and all modeling is performed on object level. The model output are object lists for OSI SenorData moving and stationary objects.
+The outer layer of the model is the OSI Sensor Model Packaging (OSMP).
 It specifies ways in which models  using the Open Simulation Interface (OSI) are to be packaged for their use in simulation environments using FMI 2.0.
 For more detailed information see the official documentation.
 <img src="doc/img/Detection_Example_Video.png" width="800" />
@@ -46,8 +47,8 @@ Each parameter should have a short description as shown in the following example
 
 | Parameter                      | Description                                                         |
 | ------------------------------ | ------------------------------------------------------------------- |
-| `FOV`        					 | horizontal field of view definition    |
-| `Range`    					 | View distance of the sensor                             |
+| `FOV`        					 | horizontal field of view definition  							   |
+| `Range`    					 | View distance of the sensor                              		   |
 
 ## Interface
 
