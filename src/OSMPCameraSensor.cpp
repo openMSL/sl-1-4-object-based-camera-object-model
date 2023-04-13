@@ -629,10 +629,10 @@ fmi2Status OSMPCameraSensor::DoCalc(fmi2Real current_communication_point, fmi2Re
         }
         const osi3::SensorView& current_view_in = current_in.sensor_view(0);
 #endif
-        size_t nof_mov_obj = current_view_in.global_ground_truth().moving_object().size();          // number of vehicles (including ego vehicle)
-        size_t nof_stat_obj = current_view_in.global_ground_truth().stationary_object().size();     // number of vehicles (including ego vehicle)
-        size_t nof_traf_lights_obj = current_view_in.global_ground_truth().traffic_light().size();  // number of traffic lights
-        size_t nof_traf_sign_obj = current_view_in.global_ground_truth().traffic_sign().size();     // number of traffic signs
+       // size_t nof_mov_obj = current_view_in.global_ground_truth().moving_object().size();          // number of vehicles (including ego vehicle)
+       // size_t nof_stat_obj = current_view_in.global_ground_truth().stationary_object().size();     // number of vehicles (including ego vehicle)
+       // size_t nof_traf_lights_obj = current_view_in.global_ground_truth().traffic_light().size();  // number of traffic lights
+        //size_t nof_traf_sign_obj = current_view_in.global_ground_truth().traffic_sign().size();     // number of traffic signs
 
         //NormalLog("OSI", "Number of moving objects: %llu", nof_mov_obj);
         //NormalLog("OSI", "Number of stationary objects: %llu", nof_stat_obj);
