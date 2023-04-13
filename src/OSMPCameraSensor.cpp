@@ -584,7 +584,7 @@ void UpdateObjectHistoryVector(ObjectInfo& current_object_history, const osi3::S
     {
         current_object_history.id = current_object_idx;
         current_object_history.age = 1;
-       
+
         if (moving)
         {
             if (GetAbsVelocity(input_sensor_view.global_ground_truth().moving_object(obj_idx).base().velocity()) > value_velocity_min)
@@ -634,10 +634,10 @@ fmi2Status OSMPCameraSensor::DoCalc(fmi2Real current_communication_point, fmi2Re
        // size_t nof_traf_lights_obj = current_view_in.global_ground_truth().traffic_light().size();  // number of traffic lights
         //size_t nof_traf_sign_obj = current_view_in.global_ground_truth().traffic_sign().size();     // number of traffic signs
 
-        //NormalLog("OSI", "Number of moving objects: %llu", nof_mov_obj);
-        //NormalLog("OSI", "Number of stationary objects: %llu", nof_stat_obj);
-        //NormalLog("OSI", "Number of traffic lights: %llu", nof_traf_lights_obj);
-        //NormalLog("OSI", "Number of traffic signs: %llu", nof_traf_sign_obj);
+        // NormalLog("OSI", "Number of moving objects: %llu", nof_mov_obj);
+        // NormalLog("OSI", "Number of stationary objects: %llu", nof_stat_obj);
+        // NormalLog("OSI", "Number of traffic lights: %llu", nof_traf_lights_obj);
+        // NormalLog("OSI", "Number of traffic signs: %llu", nof_traf_sign_obj);
 
         // Center of the bounding box in environment coordinates
         // Position and Orientation
@@ -740,7 +740,7 @@ fmi2Status OSMPCameraSensor::DoCalc(fmi2Real current_communication_point, fmi2Re
                   &sens_sv_x,
                   &sens_sv_y,
                   &sens_sv_z](const osi3::MovingObject& obj) {
-                    // NormalLog("OSI", "MovingObject with ID %llu is EgoVehicle: %d", obj.id().value(), obj.id().value() == ego_id.value());
+                     // NormalLog("OSI", "MovingObject with ID %llu is EgoVehicle: %d", obj.id().value(), obj.id().value() == ego_id.value());
                      if (obj.id().value() == ego_id.value())
                      {
                          NormalLog("OSI", "Found EgoVehicle with ID: %llu", obj.id().value());
@@ -1027,8 +1027,8 @@ fmi2Status OSMPCameraSensor::DoCalc(fmi2Real current_communication_point, fmi2Re
                 int occ_ind = 0;   // index of occluding car
                 double loc = 0.0;  // length of occluding car
                 for (int j = 1; j < nof_mov_obj; ++j)
-                {  // assume j=0 =always EGO tbconfirmed! type size_t of j was auto but caused compiler warning					// if ((j!=i) && (distance[j]<distance[i]) &&
-                   // (phi_min[j]<phi_min[i]) && (phi_max[j]<phi_max[i])) masked = 1;
+                {  // assume j=0 =always EGO tbconfirmed! type size_t of j was auto but caused compiler warning					// if ((j!=i) && (distance[j]<distance[i])
+                   // && (phi_min[j]<phi_min[i]) && (phi_max[j]<phi_max[i])) masked = 1;
                     if ((j != i) && (dist_m[j] < dist_m[i]))
                     {  // 2do: rear cars should be excluded; may cause false values						// normal_log("DEBUG","i %d, j %d, distance[j]
                        // %.2f,distance[i] %.2f, phi_min[j] %.2f, phi_min[i] %.2f, phi_max[j] %.2f, phi_max[i] %.2f, masked %d, nof_obj
@@ -1361,7 +1361,7 @@ fmi2Status OSMPCameraSensor::DoCalc(fmi2Real current_communication_point, fmi2Re
 
                      // Define detection range //
                      // abs wegen negativen werten
-                     if ((distance <= camera_range) && abs(angle_to_stat_obj) < camera_FOV && masked[i]==0)
+                     if ((distance <= camera_range) && abs(angle_to_stat_obj) < camera_FOV && masked[i] == 0)
                      {  // (abs(trans_x/distance) >0.766025)){//0.766025)) {
                          osi3::DetectedStationaryObject* obj = current_out.mutable_stationary_object()->Add();
                          current_out.mutable_stationary_object_header()->set_data_qualifier(osi3::DetectedEntityHeader_DataQualifier_DATA_QUALIFIER_AVAILABLE);
@@ -1526,7 +1526,7 @@ fmi2Status OSMPCameraSensor::DoCalc(fmi2Real current_communication_point, fmi2Re
                     }
 
                     obj->mutable_header()->add_ground_truth_id()->CopyFrom(trafficlight.id());
-                   // NormalLog("OSI", "TrafficLight ID: %f", trafficlight.id());
+                    // NormalLog("OSI", "TrafficLight ID: %f", trafficlight.id());
                     obj->mutable_header()->mutable_tracking_id()->set_value(itl);
                     obj->mutable_header()->set_existence_probability(existence_prob / value30);
                     NormalLog("OSI", "TrafficLight Existence Probability: %f", existence_prob / value30);
@@ -1559,8 +1559,8 @@ fmi2Status OSMPCameraSensor::DoCalc(fmi2Real current_communication_point, fmi2Re
                     NormalLog("DEBUG", "Detected traffic light color %d", candidate->classification().color());
                     NormalLog("DEBUG", "Detected traffic light mode %d", candidate->classification().mode());
                     NormalLog("DEBUG", "Detected traffic light icon %d", candidate->classification().icon());
-                   // NormalLog("DEBUG", "Detected traffic light assigned lane id %d", candidate->classification().assigned_lane_id());
-                   // NormalLog("DEBUG", "Detected traffic classification %d", trafficlight.classification());
+                    // NormalLog("DEBUG", "Detected traffic light assigned lane id %d", candidate->classification().assigned_lane_id());
+                    // NormalLog("DEBUG", "Detected traffic classification %d", trafficlight.classification());
 
                     NormalLog("DEBUG", "Detected traffic light %d minimal distance to Ego/Sensor %f", itl, distance);
                     NormalLog("DEBUG", "Detected traffic light %d angle to Ego/Sensor %f", itl, angle_to_traffic_light);
@@ -1723,7 +1723,8 @@ fmi2Status OSMPCameraSensor::DoCalc(fmi2Real current_communication_point, fmi2Re
                                    tsobj.main_sign().base().orientation().pitch(),
                                    tsobj.main_sign().base().orientation().roll());
                          // normal_log("OSI", "Output Object %d[%llu] Probability %f Detected  traffic sign position in sensor coord: %f,%f,%f \n", its, tsobj.id().value(),
-                         // obj->header().existence_probability(), obj->main_sign.base().position().x(), obj->main_sign.base().position().y(), obj->main_sign.base().position().z());
+                         // obj->header().existence_probability(), obj->main_sign.base().position().x(), obj->main_sign.base().position().y(),
+                         // obj->main_sign.base().position().z());
                          its++;
                      }
                  });
