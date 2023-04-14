@@ -629,10 +629,7 @@ fmi2Status OSMPCameraSensor::DoCalc(fmi2Real current_communication_point, fmi2Re
         }
         const osi3::SensorView& current_view_in = current_in.sensor_view(0);
 #endif
-       size_t nof_mov_obj = current_view_in.global_ground_truth().moving_object().size();          // number of vehicles (including ego vehicle)
-       // size_t nof_stat_obj = current_view_in.global_ground_truth().stationary_object().size();     // number of vehicles (including ego vehicle)
-       // size_t nof_traf_lights_obj = current_view_in.global_ground_truth().traffic_light().size();  // number of traffic lights
-        //size_t nof_traf_sign_obj = current_view_in.global_ground_truth().traffic_sign().size();     // number of traffic signs
+        size_t nof_mov_obj = current_view_in.global_ground_truth().moving_object().size(); // number of vehicles (including ego vehicle)
 
         // NormalLog("OSI", "Number of moving objects: %llu", nof_mov_obj);
         // NormalLog("OSI", "Number of stationary objects: %llu", nof_stat_obj);
@@ -1031,8 +1028,8 @@ fmi2Status OSMPCameraSensor::DoCalc(fmi2Real current_communication_point, fmi2Re
                    // && (phi_min[j]<phi_min[i]) && (phi_max[j]<phi_max[i])) masked = 1;
                     if ((j != i) && (dist_m[j] < dist_m[i]))
                     {  // 2do: rear cars should be excluded; may cause false values						// normal_log("DEBUG","i %d, j %d, distance[j]
-                       // %.2f,distance[i] %.2f, phi_min[j] %.2f, phi_min[i] %.2f, phi_max[j] %.2f, phi_max[i] %.2f, masked %d, nof_obj
-                       // %d",i,j,distance[j],distance[i],phi_min[j],phi_min[i],phi_max[j],phi_max[i],masked[i],nof_obj);
+                        // %.2f,distance[i] %.2f, phi_min[j] %.2f, phi_min[i] %.2f, phi_max[j] %.2f, phi_max[i] %.2f, masked %d, nof_obj
+                        // %d",i,j,distance[j],distance[i],phi_min[j],phi_min[i],phi_max[j],phi_max[i],masked[i],nof_obj);
                         if ((phi_max[j] < phi_min[i]) || (phi_min[j] > phi_max[i]))
                         {  //		normal_log("OSI", "Vehicle %d not occluded by vehicle %d", i, j);
                         }
@@ -1046,7 +1043,7 @@ fmi2Status OSMPCameraSensor::DoCalc(fmi2Real current_communication_point, fmi2Re
                             if (occ_temp > occ)
                             {
                                 occ = occ_temp;                                                                            // Take the maximum occlusion.
-                             //   loc = current_view_in.global_ground_truth().moving_object(j).base().dimension().length();  // length of occluding car
+                                // loc = current_view_in.global_ground_truth().moving_object(j).base().dimension().length();  // length of occluding car
                                 //			normal_log("DEBUG", "Vehicle %d occluded by vehicle %d with length %.2f", i, j, loc);
                                 occ_ind = j;
                             }
@@ -1068,7 +1065,7 @@ fmi2Status OSMPCameraSensor::DoCalc(fmi2Real current_communication_point, fmi2Re
                 else
                 {
                     masked[i] = 1;
-                   // vis = 0;
+                    // vis = 0;
                 }
                 //		normal_log("OSI", "Vehicle i %d and masked %d and vis %.2f", i, masked[i], vis);
             }
