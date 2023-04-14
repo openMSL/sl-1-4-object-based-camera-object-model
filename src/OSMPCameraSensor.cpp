@@ -1011,8 +1011,8 @@ fmi2Status OSMPCameraSensor::DoCalc(fmi2Real current_communication_point, fmi2Re
                 int occ_ind = 0;   // index of occluding car
                 double loc = 0.0;  // length of occluding car
                 for (int j = 1; j < nof_mov_obj; ++j)
-                {  // assume j=0 =always EGO tbconfirmed! type size_t of j was auto but caused compiler warning					// if ((j!=i) && (distance[j]<distance[i])
-                   // && (phi_min[j]<phi_min[i]) && (phi_max[j]<phi_max[i])) masked = 1;
+                { // assume j=0 =always EGO tbconfirmed! type size_t of j was auto but caused compiler warning
+                    // && (phi_min[j]<phi_min[i]) && (phi_max[j]<phi_max[i])) masked = 1;
                     if ((j != i) && (dist_m[j] < dist_m[i]))
                     {  // 2do: rear cars should be excluded; may cause false values						// normal_log("DEBUG","i %d, j %d, distance[j]
                         // %.2f,distance[i] %.2f, phi_min[j] %.2f, phi_min[i] %.2f, phi_max[j] %.2f, phi_max[i] %.2f, masked %d, nof_obj
@@ -1029,7 +1029,7 @@ fmi2Status OSMPCameraSensor::DoCalc(fmi2Real current_communication_point, fmi2Re
                             double occ_temp = (phi_max_ij - phi_min_ij) / (phi_max[i] - phi_min[i]);
                             if (occ_temp > occ)
                             {
-                                occ = occ_temp;                                                                            // Take the maximum occlusion.
+                                occ = occ_temp; // Take the maximum occlusion.
                                 // loc = current_view_in.global_ground_truth().moving_object(j).base().dimension().length();  // length of occluding car
                                 //			normal_log("DEBUG", "Vehicle %d occluded by vehicle %d with length %.2f", i, j, loc);
                                 occ_ind = j;
