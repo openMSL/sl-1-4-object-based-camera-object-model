@@ -533,7 +533,7 @@ double CalculateAngle(double r1, double r2, double r3, double g1, double g2, dou
     return angle;
 }
 
-int GetObjectInfoIdx(std::vector<ObjectInfo> search_vector, int search_id)
+int GetObjectInfoIdx(std::vector<ObjectInfo> search_vector, uint64_t search_id)
 {
     int idx = 0;
     for (auto it = search_vector.begin(); it < search_vector.end(); it++)

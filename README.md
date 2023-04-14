@@ -11,7 +11,6 @@ The outer layer of the model is the OSI Sensor Model Packaging (OSMP).
 It specifies ways in which models  using the Open Simulation Interface (OSI) are to be packaged for their use in simulation environments using FMI 2.0.
 For more detailed information see the official documentation.
 <img src="doc/img/OSMPCameraSensor_Demo.gif" width="800" />
-<img src="doc/img/Detection_Example_Video.png" width="800" />
 
 ## Modeling Approach
 
