@@ -1046,7 +1046,7 @@ fmi2Status OSMPCameraSensor::DoCalc(fmi2Real current_communication_point, fmi2Re
                             if (occ_temp > occ)
                             {
                                 occ = occ_temp;                                                                            // Take the maximum occlusion.
-                                loc = current_view_in.global_ground_truth().moving_object(j).base().dimension().length();  // length of occluding car
+                             //   loc = current_view_in.global_ground_truth().moving_object(j).base().dimension().length();  // length of occluding car
                                 //			normal_log("DEBUG", "Vehicle %d occluded by vehicle %d with length %.2f", i, j, loc);
                                 occ_ind = j;
                             }
@@ -1068,7 +1068,7 @@ fmi2Status OSMPCameraSensor::DoCalc(fmi2Real current_communication_point, fmi2Re
                 else
                 {
                     masked[i] = 1;
-                    vis = 0;
+                   // vis = 0;
                 }
                 //		normal_log("OSI", "Vehicle i %d and masked %d and vis %.2f", i, masked[i], vis);
             }
