@@ -611,24 +611,11 @@ fmi2Status OSMPCameraSensor::DoCalc(fmi2Real current_communication_point, fmi2Re
     osi3::SensorData current_out;
     double time = current_communication_point + communication_step_size;
     NormalLog("OSI", "Calculating Camera Sensor at %f for %f (step size %f)", current_communication_point, time, communication_step_size);
-#ifndef COMPILE_VTD_2_2
     // OSI standard..
     osi3::SensorView current_in;
     if (GetFmiSensorViewIn(current_in))
     {
         osi3::SensorView& current_view_in = current_in;
-#else
-    // VTD v2.2 receives SensorData..
-    osi3::SensorData current_in;
-    if (get_fmi_sensor_data_in(current_in))
-    {
-        if (!current_in.sensor_view_size())
-        {
-            normal_log("OSI", "No valid input for SensorData->SensorView.");
-            return fmi2Fatal;
-        }
-        const osi3::SensorView& current_view_in = current_in.sensor_view(0);
-#endif
         size_t nof_mov_obj = current_view_in.global_ground_truth().moving_object().size(); // number of vehicles (including ego vehicle)
 
         // NormalLog("OSI", "Number of moving objects: %llu", nof_mov_obj);
@@ -1047,7 +1034,7 @@ fmi2Status OSMPCameraSensor::DoCalc(fmi2Real current_communication_point, fmi2Re
                                 //			normal_log("DEBUG", "Vehicle %d occluded by vehicle %d with length %.2f", i, j, loc);
                                 occ_ind = j;
                             }
-                            //			normal_log("OSI", "Vehicle %d occluded (%.2f %%) by vehicle %d", i, occ*100., j);	// moved after mitigation
+                            // normal_log("OSI", "Vehicle %d occluded (%.2f %%) by vehicle %d", i, occ*100., j);	// moved after mitigation
                         }
                     }
                 }
@@ -1055,7 +1042,7 @@ fmi2Status OSMPCameraSensor::DoCalc(fmi2Real current_communication_point, fmi2Re
                 if (occ_ind > 0)
                 {  // only if any car is occluded
                     vis = 0;
-                    //		normal_log("OSI", "Vehicle %d mitigated occlusion: %.2f %%", i, 100 - vis * 100);
+                    // normal_log("OSI", "Vehicle %d mitigated occlusion: %.2f %%", i, 100 - vis * 100);
                 }
 
                 if (vis == 1.0)
