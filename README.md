@@ -14,17 +14,6 @@ For more detailed information see the official documentation.
 
 ## Modeling Approach
 
-The actual logic of the model is packed in a so called strategy.
-The apply function of the strategy is called by the do_calc function of the OSMPFramework.
-The strategy itself is structured into four modules as shown in the image below.
-<img src="doc/img/2020-11-25_08h21_52.png" width="800" />
-
-The first module in the figure above brings the received ground truth stationary and moving objects
-(potentially also traffic signs and traffic lights from sensor_view.global_ground_truth) into a common format.
-This enables iterations over all objects regardless of classification.
-Then they are transformed to the sensor coordinate system for the following calculations.
-In the last module, the tracked objects are transformed to the virtual sensor coordinate system (here: vehicle coordinate system) and the fields in the sensor data requested by the HADf are filled.
-
 ### Modeling of Specific Effects
 
 It includes typical sensor artifacts like
