@@ -2,135 +2,30 @@
 // Copyright 2016 -- 2018 PMSF IT Consulting Pierre R. Mai
 // Copyright 2023 BMW AG
 // SPDX-License-Identifier: MPL-2.0
+// The MPL-2.0 is only an example here. You can choose any other open source license accepted by OpenMSL, or any other license if this template is used elsewhere.
 //
 
-#ifndef FMU_SHARED_OBJECT
-#define FMI2_FUNCTION_PREFIX OSMPCameraSensor_
-#endif
-#include "fmi2Functions.h"
+#pragma once
 
-/*
- * Logging Control
- *
- * Logging is controlled via three definitions:
- *
- * - If PRIVATE_LOG_PATH is defined it gives the name of a file
- *   that is to be used as a private log file.
- * - If PUBLIC_LOGGING is defined then we will (also) log to
- *   the FMI logging facility where appropriate.
- * - If VERBOSE_FMI_LOGGING is defined then logging of basic
- *   FMI calls is enabled, which can get very verbose.
- */
-
-/*
- * Variable Definitions
- *
- * Define FMI_*_LAST_IDX to the zero-based index of the last variable
- * of the given type (0 if no variables of the type exist).  This
- * ensures proper space allocation, initialisation and handling of
- * the given variables in the template code.  Optionally you can
- * define FMI_TYPENAME_VARNAME_IDX definitions (e.g. FMI_REAL_MYVAR_IDX)
- * to refer to individual variables inside your code, or for example
- * FMI_REAL_MYARRAY_OFFSET and FMI_REAL_MYARRAY_SIZE definitions for
- * array variables.
- */
-
-/* Boolean Variables */
-#define FMI_BOOLEAN_VALID_IDX 0
-#define FMI_BOOLEAN_LAST_IDX FMI_BOOLEAN_VALID_IDX
-#define FMI_BOOLEAN_VARS (FMI_BOOLEAN_LAST_IDX + 1)
-
-/* Integer Variables */
-#define FMI_INTEGER_SENSORVIEW_IN_BASELO_IDX 0
-#define FMI_INTEGER_SENSORVIEW_IN_BASEHI_IDX 1
-#define FMI_INTEGER_SENSORVIEW_IN_SIZE_IDX 2
-#define FMI_INTEGER_SENSORDATA_OUT_BASELO_IDX 3
-#define FMI_INTEGER_SENSORDATA_OUT_BASEHI_IDX 4
-#define FMI_INTEGER_SENSORDATA_OUT_SIZE_IDX 5
-#define FMI_INTEGER_SENSORVIEW_CONFIG_REQUEST_BASELO_IDX 6
-#define FMI_INTEGER_SENSORVIEW_CONFIG_REQUEST_BASEHI_IDX 7
-#define FMI_INTEGER_SENSORVIEW_CONFIG_REQUEST_SIZE_IDX 8
-#define FMI_INTEGER_SENSORVIEW_CONFIG_BASELO_IDX 9
-#define FMI_INTEGER_SENSORVIEW_CONFIG_BASEHI_IDX 10
-#define FMI_INTEGER_SENSORVIEW_CONFIG_SIZE_IDX 11
-#define FMI_INTEGER_COUNT_IDX 12
-#define FMI_INTEGER_LAST_IDX FMI_INTEGER_COUNT_IDX
-#define FMI_INTEGER_VARS (FMI_INTEGER_LAST_IDX + 1)
-
-/* Real Variables */
-#define FMI_REAL_NOMINAL_RANGE_IDX 0
-#define FMI_REAL_LAST_IDX FMI_REAL_NOMINAL_RANGE_IDX
-#define FMI_REAL_VARS (FMI_REAL_LAST_IDX + 1)
-
-/* String Variables */
-#define FMI_STRING_LAST_IDX 0
-#define FMI_STRING_VARS (FMI_STRING_LAST_IDX + 1)
-
-#include <cstdarg>
-#include <fstream>
-#include <iostream>
-#include <set>
-#include <string>
-
-#undef min
-#undef max
 #include "osi_sensordata.pb.h"
-#include "osi_sensorview.pb.h"
-
-using namespace std;
 struct ObjectInfo
 {
     int id;
     int age;
     int movement_state;  // 0:stationary, 1:moving, 2:stopped
 };
-/* FMU Class */
 class OSMPCameraSensor
 {
   public:
-    /* FMI2 Interface mapped to C++ */
-    OSMPCameraSensor(fmi2String theinstance_name,
-                     fmi2Type thefmu_type,
-                     fmi2String thefmu_guid,
-                     fmi2String thefmu_resource_location,
-                     const fmi2CallbackFunctions* thefunctions,
-                     fmi2Boolean thevisible,
-                     fmi2Boolean thelogging_on);
-    fmi2Status SetDebugLogging(fmi2Boolean thelogging_on, size_t n_categories, const fmi2String categories[]);
-    static fmi2Component Instantiate(fmi2String instance_name,
-                                     fmi2Type fmu_type,
-                                     fmi2String fmu_guid,
-                                     fmi2String fmu_resource_location,
-                                     const fmi2CallbackFunctions* functions,
-                                     fmi2Boolean visible,
-                                     fmi2Boolean logging_on);
-    fmi2Status SetupExperiment(fmi2Boolean tolerance_defined, fmi2Real tolerance, fmi2Real start_time, fmi2Boolean stop_time_defined, fmi2Real stop_time);
-    fmi2Status EnterInitializationMode();
-    fmi2Status ExitInitializationMode();
-    fmi2Status DoStep(fmi2Real current_communication_point, fmi2Real communication_step_size, fmi2Boolean no_set_fmu_state_prior_to_current_pointfmi_2_component);
-    fmi2Status Terminate();
-    fmi2Status Reset();
-    void FreeInstance();
-    fmi2Status GetReal(const fmi2ValueReference vr[], size_t nvr, fmi2Real value[]);
-    fmi2Status GetInteger(const fmi2ValueReference vr[], size_t nvr, fmi2Integer value[]);
-    fmi2Status GetBoolean(const fmi2ValueReference vr[], size_t nvr, fmi2Boolean value[]);
-    fmi2Status GetString(const fmi2ValueReference vr[], size_t nvr, fmi2String value[]);
-    fmi2Status SetReal(const fmi2ValueReference vr[], size_t nvr, const fmi2Real value[]);
-    fmi2Status SetInteger(const fmi2ValueReference vr[], size_t nvr, const fmi2Integer value[]);
-    fmi2Status SetBoolean(const fmi2ValueReference vr[], size_t nvr, const fmi2Boolean value[]);
-    fmi2Status SetString(const fmi2ValueReference vr[], size_t nvr, const fmi2String value[]);
+    void Init(double nominal_range_in);
+    osi3::SensorData Step(osi3::SensorView current_in, double time);
 
     static void RotatePoint(double x, double y, double z, double yaw, double pitch, double roll, double& rx, double& ry, double& rz);
 
-  protected:
-    /* Internal Implementation */
-    fmi2Status DoInit();
-    fmi2Status DoStart(fmi2Boolean tolerance_defined, fmi2Real tolerance, fmi2Real start_time, fmi2Boolean stop_time_defined, fmi2Real stop_time);
-    fmi2Status DoEnterInitializationMode();
-    fmi2Status DoExitInitializationMode();
-    fmi2Status DoCalc(fmi2Real current_communication_point, fmi2Real communication_step_size, fmi2Boolean no_set_fmu_state_prior_to_current_pointfmi_2_component);
-    fmi2Status DoTerm();
-    void DoFree();
+  private:
+    double nominal_range_;
+
+    static void TransposeRotationMatrix(double matrix_in[3][3], double matrix_trans[3][3]);
 
     /* Private File-based Logging just for Debugging */
 #ifdef PRIVATE_LOG_PATH
@@ -207,61 +102,4 @@ class OSMPCameraSensor
         va_end(ap);
 #endif
     }
-
-  private:
-    /* Members */
-    string instance_name_;
-    fmi2Type fmu_type_;
-    string fmu_guid_;
-    string fmu_resource_location_;
-    bool visible_;
-    bool logging_on_;
-    set<string> logging_categories_;
-    fmi2CallbackFunctions functions_;
-    fmi2Boolean boolean_vars_[FMI_BOOLEAN_VARS];
-    fmi2Integer integer_vars_[FMI_INTEGER_VARS];
-    fmi2Real real_vars_[FMI_REAL_VARS];
-    string string_vars_[FMI_STRING_VARS];
-    bool simulation_started_;
-    string* current_output_buffer_;
-    string* last_output_buffer_;
-    string* current_config_request_buffer_;
-    string* last_config_request_buffer_;
-
-    /* Simple Accessors */
-    fmi2Boolean FmiValid()
-    {
-        return boolean_vars_[FMI_BOOLEAN_VALID_IDX];
-    }
-    void SetFmiValid(fmi2Boolean value)
-    {
-        boolean_vars_[FMI_BOOLEAN_VALID_IDX] = value;
-    }
-    fmi2Integer FmiCount()
-    {
-        return integer_vars_[FMI_INTEGER_COUNT_IDX];
-    }
-    void SetFmiCount(fmi2Integer value)
-    {
-        integer_vars_[FMI_INTEGER_COUNT_IDX] = value;
-    }
-    fmi2Real FmiNominalRange()
-    {
-        return real_vars_[FMI_REAL_NOMINAL_RANGE_IDX];
-    }
-    void SetFmiNominalRange(fmi2Real value)
-    {
-        real_vars_[FMI_REAL_NOMINAL_RANGE_IDX] = value;
-    }
-
-    /* Protocol Buffer Accessors */
-    bool GetFmiSensorViewConfig(osi3::SensorViewConfiguration& data);
-    void SetFmiSensorViewConfigRequest(const osi3::SensorViewConfiguration& data);
-    void ResetFmiSensorViewConfigRequest();
-    bool GetFmiSensorViewIn(osi3::SensorView& data);
-    void SetFmiSensorDataOut(const osi3::SensorData& data);
-    void ResetFmiSensorDataOut();
-
-    /* Refreshing of Calculated Parameters */
-    void RefreshFmiSensorViewConfigRequest();
 };
