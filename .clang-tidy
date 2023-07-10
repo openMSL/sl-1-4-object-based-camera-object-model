@@ -12,7 +12,7 @@ CheckOptions:
   - key:             readability-identifier-naming.ClassCase
     value:           CamelCase
   - key:             readability-identifier-naming.ClassConstantCase
-    value:           lower_case
+    value:           CamelCase
   - key:             readability-identifier-naming.ClassConstantPrefix
     value:           ''
   - key:             readability-identifier-naming.ClassConstantSuffix
@@ -24,7 +24,7 @@ CheckOptions:
   - key:             readability-identifier-naming.ClassMemberSuffix
     value:           ''
   - key:             readability-identifier-naming.ClassMethodCase
-    value:           lower_case
+    value:           CamelCase
   - key:             readability-identifier-naming.ClassMethodPrefix
     value:           ''
   - key:             readability-identifier-naming.ClassMethodSuffix
@@ -52,13 +52,13 @@ CheckOptions:
   - key:             readability-identifier-naming.ConstantSuffix
     value:           ''
   - key:             readability-identifier-naming.ConstexprFunctionCase
-    value:           lower_case
+    value:           CamelCase
   - key:             readability-identifier-naming.ConstexprFunctionPrefix
     value:           ''
   - key:             readability-identifier-naming.ConstexprFunctionSuffix
     value:           ''
   - key:             readability-identifier-naming.ConstexprMethodCase
-    value:           lower_case
+    value:           CamelCase
   - key:             readability-identifier-naming.ConstexprMethodPrefix
     value:           ''
   - key:             readability-identifier-naming.ConstexprMethodSuffix
@@ -82,7 +82,7 @@ CheckOptions:
   - key:             readability-identifier-naming.EnumSuffix
     value:           ''
   - key:             readability-identifier-naming.FunctionCase
-    value:           lower_case
+    value:           CamelCase
   - key:             readability-identifier-naming.FunctionPrefix
     value:           ''
   - key:             readability-identifier-naming.FunctionSuffix
@@ -94,7 +94,7 @@ CheckOptions:
   - key:             readability-identifier-naming.GlobalConstantSuffix
     value:           ''
   - key:             readability-identifier-naming.GlobalFunctionCase
-    value:           lower_case
+    value:           CamelCase
   - key:             readability-identifier-naming.GlobalFunctionPrefix
     value:           ''
   - key:             readability-identifier-naming.GlobalFunctionSuffix
@@ -132,7 +132,7 @@ CheckOptions:
   - key:             readability-identifier-naming.MemberSuffix
     value:           ''
   - key:             readability-identifier-naming.MethodCase
-    value:           lower_case
+    value:           CamelCase
   - key:             readability-identifier-naming.MethodPrefix
     value:           ''
   - key:             readability-identifier-naming.MethodSuffix
@@ -174,7 +174,7 @@ CheckOptions:
   - key:             readability-identifier-naming.ProtectedMemberSuffix
     value:           ''
   - key:             readability-identifier-naming.ProtectedMethodCase
-    value:           lower_case
+    value:           CamelCase
   - key:             readability-identifier-naming.ProtectedMethodPrefix
     value:           ''
   - key:             readability-identifier-naming.ProtectedMethodSuffix
@@ -210,7 +210,7 @@ CheckOptions:
   - key:             readability-identifier-naming.StructSuffix
     value:           ''
   - key:             readability-identifier-naming.TemplateParameterCase
-    value:           lower_case
+    value:           CamelCase
   - key:             readability-identifier-naming.TemplateParameterPrefix
     value:           ''
   - key:             readability-identifier-naming.TemplateParameterSuffix
@@ -222,7 +222,7 @@ CheckOptions:
   - key:             readability-identifier-naming.TemplateTemplateParameterSuffix
     value:           ''
   - key:             readability-identifier-naming.TypeTemplateParameterCase
-    value:           lower_case
+    value:           CamelCase
   - key:             readability-identifier-naming.TypeTemplateParameterPrefix
     value:           ''
   - key:             readability-identifier-naming.TypeTemplateParameterSuffix
@@ -252,7 +252,7 @@ CheckOptions:
   - key:             readability-identifier-naming.VariableSuffix
     value:           ''
   - key:             readability-identifier-naming.VirtualMethodCase
-    value:           lower_case
+    value:           CamelCase
   - key:             readability-identifier-naming.VirtualMethodPrefix
     value:           ''
   - key:             readability-identifier-naming.VirtualMethodSuffix
