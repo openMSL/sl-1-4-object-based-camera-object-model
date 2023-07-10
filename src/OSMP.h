@@ -74,8 +74,8 @@
 
 #undef min
 #undef max
-#include "OSMPCameraSensor.h"
 
+#include "OSMPCameraSensor.h"
 #include "osi_sensordata.pb.h"
 #include "osi_sensorview.pb.h"
 

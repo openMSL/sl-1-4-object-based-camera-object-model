@@ -19,11 +19,8 @@
 
 using namespace std;
 
-std::vector<ObjectInfo> g_object_history_vector;
-
-//****** Arcus tangens function taking into account the sign of numerator and denominator ****** /
-
-double ArcTan(double num, double denom)
+// Arcus tangens function taking into account the sign of numerator and denominator
+double OSMPCameraSensor::ArcTan(double num, double denom)
 {
     double result = atan(num / denom);
     if (denom < 0)
@@ -39,7 +36,7 @@ double ArcTan(double num, double denom)
     return result;
 }
 
-void EulerWinkel(double egoyaw, double egopitch, double egoroll, double objectyaw, double objectpitch, double objectroll, double &rr1, double &rr2, double &rr3)
+void OSMPCameraSensor::EulerAngle(double egoyaw, double egopitch, double egoroll, double objectyaw, double objectpitch, double objectroll, double &rr1, double &rr2, double &rr3)
 {
     double matrixobject[3][3];
     double matrixego[3][3];
@@ -106,58 +103,8 @@ void EulerWinkel(double egoyaw, double egopitch, double egoroll, double objectya
     rr3 = ArcTan(mr[1][2] / cos(rr1), mr[2][2] / cos(rr1));
 }
 
-void TransposeRotationMatrix(double matrix_in[3][3], double matrix_trans[3][3])
-{
-    for (int i = 0; i < 3; i++)
-    {
-        for (int j = 0; j < 3; j++)
-        {
-            matrix_trans[j][i] = matrix_in[i][j];
-        }
-    }
-}
-
-void OSMPCameraSensor::RotatePoint(double x, double y, double z, double yaw, double pitch, double roll, double &rx, double &ry, double &rz)
-{
-    double matrix[3][3];
-    double cos_yaw = cos(yaw);
-    double cos_pitch = cos(pitch);
-    double cos_roll = cos(roll);
-    double sin_yaw = sin(yaw);
-    double sin_pitch = sin(pitch);
-    double sin_roll = sin(roll);
-
-    matrix[0][0] = cos_yaw * cos_pitch;
-    matrix[0][1] = cos_yaw * sin_pitch * sin_roll - sin_yaw * cos_roll;
-    matrix[0][2] = cos_yaw * sin_pitch * cos_roll + sin_yaw * sin_roll;
-    matrix[1][0] = sin_yaw * cos_pitch;
-    matrix[1][1] = sin_yaw * sin_pitch * sin_roll + cos_yaw * cos_roll;
-    matrix[1][2] = sin_yaw * sin_pitch * cos_roll - cos_yaw * sin_roll;
-    matrix[2][0] = -sin_pitch;
-    matrix[2][1] = cos_pitch * sin_roll;
-    matrix[2][2] = cos_pitch * cos_roll;
-
-    double matrix_trans[3][3];
-    TransposeRotationMatrix(matrix, matrix_trans);
-
-    rx = matrix_trans[0][0] * x + matrix_trans[0][1] * y + matrix_trans[0][2] * z;
-    ry = matrix_trans[1][0] * x + matrix_trans[1][1] * y + matrix_trans[1][2] * z;
-    rz = matrix_trans[2][0] * x + matrix_trans[2][1] * y + matrix_trans[2][2] * z;
-}
-
-void OSMPCameraSensor::TransposeRotationMatrix(double matrix_in[3][3], double matrix_trans[3][3])
-{
-    for (int i = 0; i < 3; i++)
-    {
-        for (int j = 0; j < 3; j++)
-        {
-            matrix_trans[j][i] = matrix_in[i][j];
-        }
-    }
-}
-
-/****** Rotation from environment to object coordinate system (yaw, pitch, roll = orientation of car in environment system) ******/
-void Rot2veh(double x, double y, double z, double yaw, double pitch, double roll, double &rx, double &ry, double &rz)
+// Rotation from environment to object coordinate system (yaw, pitch, roll = orientation of car in environment system)
+void OSMPCameraSensor::Rot2veh(double x, double y, double z, double yaw, double pitch, double roll, double &rx, double &ry, double &rz)
 {
     double matrix[3][3];
     double cos_yaw = cos(yaw);      // psi		yaw
@@ -182,9 +129,8 @@ void Rot2veh(double x, double y, double z, double yaw, double pitch, double roll
     rz = matrix[2][0] * x + matrix[2][1] * y + matrix[2][2] * z;
 }
 
-/****** Rotation from object to environment coordinate system (yaw, pitch, roll = orientation of car in environment system) ******/
-void Rot2env(double x, double y, double z, double yaw, double pitch, double roll, double &rx, double &ry, double &rz)  // Koordinatentransformation vom koerperfesten ins raumfeste
-// Koordinatensystem
+// Rotation from object to environment coordinate system (yaw, pitch, roll = orientation of car in environment system)
+void OSMPCameraSensor::Rot2env(double x, double y, double z, double yaw, double pitch, double roll, double &rx, double &ry, double &rz)
 {
     double matrix[3][3];
     double cos_yaw = cos(yaw);
@@ -211,14 +157,14 @@ void Rot2env(double x, double y, double z, double yaw, double pitch, double roll
 
 // Function to find
 // cross product of two vector array.
-void CrossProduct(const double vect_a[], const double vect_b[], double cross_p[])
+void OSMPCameraSensor::CrossProduct(const double vect_a[], const double vect_b[], double cross_p[])
 {
 
     cross_p[0] = vect_a[1] * vect_b[2] - vect_a[2] * vect_b[1];
     cross_p[1] = vect_a[2] * vect_b[0] - vect_a[0] * vect_b[2];
     cross_p[2] = vect_a[0] * vect_b[1] - vect_a[1] * vect_b[0];
 }
-void CalculateKoordinate(double a1, double a2, double a3, double d1, double d2, double d3, double b1, double b2, double b3, double &koord)
+void OSMPCameraSensor::CalculateCoordinate(double a1, double a2, double a3, double d1, double d2, double d3, double b1, double b2, double b3, double &coord)
 {
     double t = -1 / (a1 * a1 + a2 * a2 + a3 * a3) * (d1 * a1 + d2 * a2 + d3 * a3);
     double ff[3];
@@ -236,17 +182,17 @@ void CalculateKoordinate(double a1, double a2, double a3, double d1, double d2, 
     double koordinate = 0.0;
     const int value1 = 90;
     const int value2 = 180;
-    if (beta > value1 / value2 * PI)
+    if (beta > (float) value1 / (float) value2 * PI)
     {
         koordinate = -abs(lz);
     } else
     {
         koordinate = abs(lz);
     }
-    koord = koordinate;
+    coord = koordinate;
 }
 
-void CalKoordNew(double trans_x, double trans_y, double trans_z, double ego_yaw, double ego_pitch, double ego_roll, double &xn, double &yn, double &zn)
+void OSMPCameraSensor::CalCoordNew(double trans_x, double trans_y, double trans_z, double ego_yaw, double ego_pitch, double ego_roll, double &xn, double &yn, double &zn)
 {
 
     double rvxx = 0;
@@ -278,15 +224,15 @@ void CalKoordNew(double trans_x, double trans_y, double trans_z, double ego_yaw,
     double znn = 0;
     double ynn = 0;
     double xnn = 0;
-    CalculateKoordinate(vectexy[0], vectexy[1], vectexy[2], d[0], d[1], d[2], vectrvz[0], vectrvz[1], vectrvz[2], znn);
-    CalculateKoordinate(vectexz[0], vectexz[1], vectexz[2], d[0], d[1], d[2], vectrvy[0], vectrvy[1], vectrvy[2], ynn);
-    CalculateKoordinate(vecteyz[0], vecteyz[1], vecteyz[2], d[0], d[1], d[2], vectrvx[0], vectrvx[1], vectrvx[2], xnn);
+    CalculateCoordinate(vectexy[0], vectexy[1], vectexy[2], d[0], d[1], d[2], vectrvz[0], vectrvz[1], vectrvz[2], znn);
+    CalculateCoordinate(vectexz[0], vectexz[1], vectexz[2], d[0], d[1], d[2], vectrvy[0], vectrvy[1], vectrvy[2], ynn);
+    CalculateCoordinate(vecteyz[0], vecteyz[1], vecteyz[2], d[0], d[1], d[2], vectrvx[0], vectrvx[1], vectrvx[2], xnn);
     zn = znn;
     yn = ynn;
     xn = xnn;
 }
 
-double CalculateAngle(double r1, double r2, double r3, double g1, double g2, double g3)
+double OSMPCameraSensor::CalculateAngle(double r1, double r2, double r3, double g1, double g2, double g3)
 {
     const int value3 = 180;
     double nenner1 = g1 * r1 + g2 * r2 + g3 * r3;
@@ -295,7 +241,7 @@ double CalculateAngle(double r1, double r2, double r3, double g1, double g2, dou
     return angle;
 }
 
-int GetObjectInfoIdx(std::vector<ObjectInfo> search_vector, uint64_t search_id)
+int OSMPCameraSensor::GetObjectInfoIdx(std::vector<ObjectInfo> search_vector, uint64_t search_id)
 {
     int idx = 0;
     for (auto it = search_vector.begin(); it < search_vector.end(); it++)
@@ -309,36 +255,36 @@ int GetObjectInfoIdx(std::vector<ObjectInfo> search_vector, uint64_t search_id)
     return -1;
 }
 
-double GetAbsVelocity(const osi3::Vector3d &velocity_3d)
+double OSMPCameraSensor::GetAbsVelocity(const osi3::Vector3d &velocity_3d)
 {
     return sqrt(pow(velocity_3d.x(), 2) + pow(velocity_3d.y(), 2) + pow(velocity_3d.z(), 2));
 }
 
-void UpdateObjectHistoryVector(ObjectInfo &current_object_history, const osi3::SensorView &input_sensor_view, int obj_idx, bool moving)
+void OSMPCameraSensor::UpdateObjectHistoryVector(ObjectInfo &current_object_history, const osi3::SensorView &input_sensor_view, int obj_idx, bool moving)
 {
     int current_object_idx = 0;
     const double value_velocity_min = 0.01;
     if (moving)
     {
-        current_object_idx = GetObjectInfoIdx(g_object_history_vector, input_sensor_view.global_ground_truth().moving_object(obj_idx).id().value());
+        current_object_idx = GetObjectInfoIdx(object_history_vector_, input_sensor_view.global_ground_truth().moving_object(obj_idx).id().value());
     } else
     {
-        current_object_idx = GetObjectInfoIdx(g_object_history_vector, input_sensor_view.global_ground_truth().stationary_object(obj_idx).id().value());
+        current_object_idx = GetObjectInfoIdx(object_history_vector_, input_sensor_view.global_ground_truth().stationary_object(obj_idx).id().value());
     }
     if (current_object_idx != -1)
     {
-        g_object_history_vector.at(current_object_idx).age++;
+        object_history_vector_.at(current_object_idx).age++;
         if (moving)
         {
             if (GetAbsVelocity(input_sensor_view.global_ground_truth().moving_object(obj_idx).base().velocity()) > value_velocity_min)
             {
-                g_object_history_vector.at(current_object_idx).movement_state = 1;
-            } else if (g_object_history_vector.at(current_object_idx).movement_state == 1)
+                object_history_vector_.at(current_object_idx).movement_state = 1;
+            } else if (object_history_vector_.at(current_object_idx).movement_state == 1)
             {
-                g_object_history_vector.at(current_object_idx).movement_state = 2;
+                object_history_vector_.at(current_object_idx).movement_state = 2;
             }
         }
-        current_object_history = g_object_history_vector.at(current_object_idx);
+        current_object_history = object_history_vector_.at(current_object_idx);
     } else
     {
         current_object_history.id = current_object_idx;
@@ -357,7 +303,7 @@ void UpdateObjectHistoryVector(ObjectInfo &current_object_history, const osi3::S
         {
             current_object_history.movement_state = 0;
         }
-        g_object_history_vector.push_back(current_object_history);
+        object_history_vector_.push_back(current_object_history);
     }
 }
 
@@ -853,7 +799,7 @@ osi3::SensorData OSMPCameraSensor::Step(osi3::SensorView current_in, double time
                 // Age
                 ObjectInfo current_object_history{};
                 int obj_idx = i;
-                int current_object_idx = GetObjectInfoIdx(g_object_history_vector, current_view_in.global_ground_truth().moving_object(obj_idx).id().value());
+                int current_object_idx = GetObjectInfoIdx(object_history_vector_, current_view_in.global_ground_truth().moving_object(obj_idx).id().value());
                 UpdateObjectHistoryVector(current_object_history, current_view_in, obj_idx, true);
 
                 // Calculate the Moving Objects in Sensor coordinates (erstmal zur mounting posistion) !! Sp?ter eventuell zur Hinterachse Auto
@@ -875,7 +821,7 @@ osi3::SensorData OSMPCameraSensor::Step(osi3::SensorView current_in, double time
                 double rr1 = 0;
                 double rr2 = 0;
                 double rr3 = 0;
-                EulerWinkel(ego_yaw, ego_pitch, ego_roll, veh_orientation_yaw, veh_orientation_pitch, veh_orientation_roll, rr1, rr2, rr3);
+                EulerAngle(ego_yaw, ego_pitch, ego_roll, veh_orientation_yaw, veh_orientation_pitch, veh_orientation_roll, rr1, rr2, rr3);
                 NormalLog("DEBUG", "Detected object Orientierung zum Vehicle  %f,%f,%f", rr1, rr2, rr3);
 
                 Rot2veh(trans_x, trans_y, trans_z, ego_yaw, ego_pitch, ego_roll, xxkoordinate, yykoordinate, zzkoordinate);
@@ -918,15 +864,15 @@ osi3::SensorData OSMPCameraSensor::Step(osi3::SensorView current_in, double time
                         const int min = 0;
                         const int value15 = 100;
                         const double value11 = 0.2;
-                        double randomnumber = (rand() % (max - min)) + min;
+                        double random_number = (rand() % (max - min)) + min;
 
-                        double existence_prob = value15 - abs(distance * value11) + value11 * randomnumber;
+                        double existence_prob = value15 - abs(distance * value11) + value11 * random_number;
                         if (existence_prob > value15)
                         {
                             existence_prob = value15;
                         }
-                        NormalLog("DEBUG", "Randomnumber is %f", randomnumber);
-                        double random_pos = randomnumber / value15;
+                        NormalLog("DEBUG", "Randomnumber is %f", random_number);
+                        double random_pos = random_number / value15;
                         NormalLog("DEBUG", "Random number is %f", random_pos);
                         obj->mutable_header()->add_ground_truth_id()->CopyFrom(veh.id());
                         obj->mutable_header()->mutable_tracking_id()->set_value(i);
@@ -1059,9 +1005,9 @@ osi3::SensorData OSMPCameraSensor::Step(osi3::SensorView current_in, double time
                  double rr1 = 0;
                  double rr2 = 0;
                  double rr3 = 0;
-                 EulerWinkel(ego_yaw, ego_pitch, ego_roll, stobj_orientation_yaw, stobj_orientation_pitch, stobj_orientation_roll, rr1, rr2, rr3);
+                 EulerAngle(ego_yaw, ego_pitch, ego_roll, stobj_orientation_yaw, stobj_orientation_pitch, stobj_orientation_roll, rr1, rr2, rr3);
                  NormalLog("DEBUG", "Detected object Orientierung zum Vehicle  %f,%f,%f", rr1, rr2, rr3);
-                 CalKoordNew(trans_x, trans_y, trans_z, ego_yaw, ego_pitch, ego_roll, xxkoordinate, yykoordinate, zzkoordinate);
+                 CalCoordNew(trans_x, trans_y, trans_z, ego_yaw, ego_pitch, ego_roll, xxkoordinate, yykoordinate, zzkoordinate);
                  NormalLog("OSI", "Stationary Object in Sensor-Coordinates: %f,%f,%f", xxkoordinate, yykoordinate, zzkoordinate);
 
                  double distance = sqrt(trans_x * trans_x + trans_y * trans_y + trans_z * trans_z);
@@ -1200,11 +1146,11 @@ osi3::SensorData OSMPCameraSensor::Step(osi3::SensorView current_in, double time
                  double rr1 = 0;
                  double rr2 = 0;
                  double rr3 = 0;
-                 EulerWinkel(ego_yaw, ego_pitch, ego_roll, trafficlightorientationyaw, trafficlightorientationpitch, trafficlightorientationroll, rr1, rr2, rr3);
+                 EulerAngle(ego_yaw, ego_pitch, ego_roll, trafficlightorientationyaw, trafficlightorientationpitch, trafficlightorientationroll, rr1, rr2, rr3);
                  NormalLog("DEBUG", "Detected object Orientierung zum Vehicle  %f,%f,%f", rr1, rr2, rr3);
                  NormalLog(
                      "OSI", "Ground Truth Traffic Sign  %f, %f,%f ", trafficlight.base().position().x(), trafficlight.base().position().y(), trafficlight.base().position().z());
-                 CalKoordNew(trans_x, trans_y, trans_z, ego_yaw, ego_pitch, ego_roll, xxkoordinate, yykoordinate, zzkoordinate);
+                 CalCoordNew(trans_x, trans_y, trans_z, ego_yaw, ego_pitch, ego_roll, xxkoordinate, yykoordinate, zzkoordinate);
                  NormalLog("OSI", "TrafficLight in Sensor-Coordinates: %f,%f,%f", xxkoordinate, yykoordinate, zzkoordinate);
 
                  double distance = sqrt(trans_x * trans_x + trans_y * trans_y + trans_z * trans_z);
@@ -1358,14 +1304,14 @@ osi3::SensorData OSMPCameraSensor::Step(osi3::SensorView current_in, double time
                  double rr1 = 0;
                  double rr2 = 0;
                  double rr3 = 0;
-                 EulerWinkel(ego_yaw, ego_pitch, ego_roll, tsobjmorientationyaw, tsobjmorientationpitch, tsobjmorientationroll, rr1, rr2, rr3);
+                 EulerAngle(ego_yaw, ego_pitch, ego_roll, tsobjmorientationyaw, tsobjmorientationpitch, tsobjmorientationroll, rr1, rr2, rr3);
                  NormalLog("DEBUG", "Detected object Orientierung zum Vehicle  %f,%f,%f", rr1, rr2, rr3);
 
                  NormalLog("OSI", "TrafficSign position x %f", tsobj.main_sign().base().position().x() - sens_world_x);
                  NormalLog("OSI", "TrafficSign position y %f", tsobj.main_sign().base().position().y() - sens_world_y);
                  NormalLog("OSI", "TrafficSign position z %f", tsobj.main_sign().base().position().z() - sens_world_z);
 
-                 CalKoordNew(trans_ts_x, trans_ts_y, trans_ts_z, ego_yaw, ego_pitch, ego_roll, xxxkoordinate, yyykoordinate, zzzkoordinate);
+                 CalCoordNew(trans_ts_x, trans_ts_y, trans_ts_z, ego_yaw, ego_pitch, ego_roll, xxxkoordinate, yyykoordinate, zzzkoordinate);
 
                  NormalLog("OSI", "TrafficSign in Sensor-Coordinates: %f,%f,%f", xxxkoordinate, yyykoordinate, zzzkoordinate);
 
@@ -1384,10 +1330,10 @@ osi3::SensorData OSMPCameraSensor::Step(osi3::SensorView current_in, double time
 
                      const int max = 10;
                      const int min = 0;
-                     int randomnumber = (rand() % (max - min)) + min;
+                     int random_number = (rand() % (max - min)) + min;
                      const int value40 = 100;
                      const double value41 = 0.2;
-                     double existence_prob = value40 - abs(distance * value41) + value41 * randomnumber;
+                     double existence_prob = value40 - abs(distance * value41) + value41 * random_number;
                      if (existence_prob > value40)
                      {
                          existence_prob = value40;
