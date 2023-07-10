@@ -426,7 +426,7 @@ osi3::SensorData OSMPCameraSensor::Step(osi3::SensorView current_in, double time
     std::vector<int> masked(nof_mov_obj);  
 
     // Sensor mounting position and orientation (in host vehicle frame with reference to the bbcenter_rear)
-    // Todo Mounting Position über CameraSensorViewConfig
+    // Todo Mounting Position via CameraSensorViewConfig
     double mpos_x = current_view_in.mounting_position().position().x();
     double mpos_y = current_view_in.mounting_position().position().y();
     double mpos_z = current_view_in.mounting_position().position().z();
