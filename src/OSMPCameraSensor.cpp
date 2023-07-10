@@ -19,7 +19,7 @@
 
 using namespace std;
 
-std::vector < ObjectInfo> g_object_history_vector;
+std::vector<ObjectInfo> g_object_history_vector;
 
 //****** Arcus tangens function taking into account the sign of numerator and denominator ****** /
 
@@ -31,8 +31,7 @@ double ArcTan(double num, double denom)
         if (num > 0)
         {
             result += PI;
-        }
-        else
+        } else
         {
             result -= PI;
         }
@@ -40,8 +39,7 @@ double ArcTan(double num, double denom)
     return result;
 }
 
-
-void EulerWinkel(double egoyaw, double egopitch, double egoroll, double objectyaw, double objectpitch, double objectroll, double& rr1, double& rr2, double& rr3)
+void EulerWinkel(double egoyaw, double egopitch, double egoroll, double objectyaw, double objectpitch, double objectroll, double &rr1, double &rr2, double &rr3)
 {
     double matrixobject[3][3];
     double matrixego[3][3];
@@ -108,7 +106,6 @@ void EulerWinkel(double egoyaw, double egopitch, double egoroll, double objectya
     rr3 = ArcTan(mr[1][2] / cos(rr1), mr[2][2] / cos(rr1));
 }
 
-
 void TransposeRotationMatrix(double matrix_in[3][3], double matrix_trans[3][3])
 {
     for (int i = 0; i < 3; i++)
@@ -120,7 +117,7 @@ void TransposeRotationMatrix(double matrix_in[3][3], double matrix_trans[3][3])
     }
 }
 
-void OSMPCameraSensor::RotatePoint(double x, double y, double z, double yaw, double pitch, double roll, double& rx, double& ry, double& rz)
+void OSMPCameraSensor::RotatePoint(double x, double y, double z, double yaw, double pitch, double roll, double &rx, double &ry, double &rz)
 {
     double matrix[3][3];
     double cos_yaw = cos(yaw);
@@ -160,7 +157,7 @@ void OSMPCameraSensor::TransposeRotationMatrix(double matrix_in[3][3], double ma
 }
 
 /****** Rotation from environment to object coordinate system (yaw, pitch, roll = orientation of car in environment system) ******/
-void Rot2veh(double x, double y, double z, double yaw, double pitch, double roll, double& rx, double& ry, double& rz)
+void Rot2veh(double x, double y, double z, double yaw, double pitch, double roll, double &rx, double &ry, double &rz)
 {
     double matrix[3][3];
     double cos_yaw = cos(yaw);      // psi		yaw
@@ -186,8 +183,8 @@ void Rot2veh(double x, double y, double z, double yaw, double pitch, double roll
 }
 
 /****** Rotation from object to environment coordinate system (yaw, pitch, roll = orientation of car in environment system) ******/
-void Rot2env(double x, double y, double z, double yaw, double pitch, double roll, double& rx, double& ry, double& rz)  // Koordinatentransformation vom koerperfesten ins raumfeste
-                                                                                                                       // Koordinatensystem
+void Rot2env(double x, double y, double z, double yaw, double pitch, double roll, double &rx, double &ry, double &rz)  // Koordinatentransformation vom koerperfesten ins raumfeste
+// Koordinatensystem
 {
     double matrix[3][3];
     double cos_yaw = cos(yaw);
@@ -214,15 +211,14 @@ void Rot2env(double x, double y, double z, double yaw, double pitch, double roll
 
 // Function to find
 // cross product of two vector array.
-void CrossProduct(double vect_a[], double vect_b[], double cross_p[])
-
+void CrossProduct(const double vect_a[], const double vect_b[], double cross_p[])
 {
 
     cross_p[0] = vect_a[1] * vect_b[2] - vect_a[2] * vect_b[1];
     cross_p[1] = vect_a[2] * vect_b[0] - vect_a[0] * vect_b[2];
     cross_p[2] = vect_a[0] * vect_b[1] - vect_a[1] * vect_b[0];
 }
-void CalculateKoordinate(double a1, double a2, double a3, double d1, double d2, double d3, double b1, double b2, double b3, double& koord)
+void CalculateKoordinate(double a1, double a2, double a3, double d1, double d2, double d3, double b1, double b2, double b3, double &koord)
 {
     double t = -1 / (a1 * a1 + a2 * a2 + a3 * a3) * (d1 * a1 + d2 * a2 + d3 * a3);
     double ff[3];
@@ -243,15 +239,14 @@ void CalculateKoordinate(double a1, double a2, double a3, double d1, double d2, 
     if (beta > value1 / value2 * PI)
     {
         koordinate = -abs(lz);
-    }
-    else
+    } else
     {
         koordinate = abs(lz);
     }
     koord = koordinate;
 }
 
-void CalKoordNew(double trans_x, double trans_y, double trans_z, double ego_yaw, double ego_pitch, double ego_roll, double& xn, double& yn, double& zn)
+void CalKoordNew(double trans_x, double trans_y, double trans_z, double ego_yaw, double ego_pitch, double ego_roll, double &xn, double &yn, double &zn)
 {
 
     double rvxx = 0;
@@ -300,7 +295,6 @@ double CalculateAngle(double r1, double r2, double r3, double g1, double g2, dou
     return angle;
 }
 
-
 int GetObjectInfoIdx(std::vector<ObjectInfo> search_vector, uint64_t search_id)
 {
     int idx = 0;
@@ -315,20 +309,19 @@ int GetObjectInfoIdx(std::vector<ObjectInfo> search_vector, uint64_t search_id)
     return -1;
 }
 
-double GetAbsVelocity(const osi3::Vector3d& velocity_3d)
+double GetAbsVelocity(const osi3::Vector3d &velocity_3d)
 {
     return sqrt(pow(velocity_3d.x(), 2) + pow(velocity_3d.y(), 2) + pow(velocity_3d.z(), 2));
 }
 
-void UpdateObjectHistoryVector(ObjectInfo& current_object_history, const osi3::SensorView& input_sensor_view, int obj_idx, bool moving)
+void UpdateObjectHistoryVector(ObjectInfo &current_object_history, const osi3::SensorView &input_sensor_view, int obj_idx, bool moving)
 {
     int current_object_idx = 0;
     const double value_velocity_min = 0.01;
     if (moving)
     {
         current_object_idx = GetObjectInfoIdx(g_object_history_vector, input_sensor_view.global_ground_truth().moving_object(obj_idx).id().value());
-    }
-    else
+    } else
     {
         current_object_idx = GetObjectInfoIdx(g_object_history_vector, input_sensor_view.global_ground_truth().stationary_object(obj_idx).id().value());
     }
@@ -340,15 +333,13 @@ void UpdateObjectHistoryVector(ObjectInfo& current_object_history, const osi3::S
             if (GetAbsVelocity(input_sensor_view.global_ground_truth().moving_object(obj_idx).base().velocity()) > value_velocity_min)
             {
                 g_object_history_vector.at(current_object_idx).movement_state = 1;
-            }
-            else if (g_object_history_vector.at(current_object_idx).movement_state == 1)
+            } else if (g_object_history_vector.at(current_object_idx).movement_state == 1)
             {
                 g_object_history_vector.at(current_object_idx).movement_state = 2;
             }
         }
         current_object_history = g_object_history_vector.at(current_object_idx);
-    }
-    else
+    } else
     {
         current_object_history.id = current_object_idx;
         current_object_history.age = 1;
@@ -358,13 +349,11 @@ void UpdateObjectHistoryVector(ObjectInfo& current_object_history, const osi3::S
             if (GetAbsVelocity(input_sensor_view.global_ground_truth().moving_object(obj_idx).base().velocity()) > value_velocity_min)
             {
                 current_object_history.movement_state = 1;
-            }
-            else
+            } else
             {
                 current_object_history.movement_state = 0;
             }
-        }
-        else
+        } else
         {
             current_object_history.movement_state = 0;
         }
@@ -381,7 +370,7 @@ osi3::SensorData OSMPCameraSensor::Step(osi3::SensorView current_in, double time
 {
     osi3::SensorData current_out;
 
-    osi3::SensorView& current_view_in = current_in;
+    osi3::SensorView &current_view_in = current_in;
     size_t nof_mov_obj = current_view_in.global_ground_truth().moving_object().size();  // number of vehicles (including ego vehicle)
     // NormalLog("OSI", "Number of moving objects: %llu", nof_mov_obj);
     // NormalLog("OSI", "Number of stationary objects: %llu", nof_stat_obj);
@@ -402,7 +391,7 @@ osi3::SensorData OSMPCameraSensor::Step(osi3::SensorView current_in, double time
     // Position of the host vehicle Ursprung in host vehicle coordinates
     double origin_host_x = 0;
     double origin_host_y = 0;
-    double origin_host_z = 0;  
+    double origin_host_z = 0;
     // Position of the host vehicle Ursprung in environment coordinates                          
     double origin_world_x = 0;
     double origin_world_y = 0;
@@ -423,7 +412,7 @@ osi3::SensorData OSMPCameraSensor::Step(osi3::SensorView current_in, double time
     double sens_sv_y = 0;
     double sens_sv_z = 0;
     // define vector with length nof_obj and initialize it to 0
-    std::vector<int> masked(nof_mov_obj);  
+    std::vector<int> masked(nof_mov_obj);
 
     // Sensor mounting position and orientation (in host vehicle frame with reference to the bbcenter_rear)
     // Todo Mounting Position via CameraSensorViewConfig
@@ -452,43 +441,44 @@ osi3::SensorData OSMPCameraSensor::Step(osi3::SensorView current_in, double time
     for_each(current_view_in.global_ground_truth().moving_object().begin(),
              current_view_in.global_ground_truth().moving_object().end(),
              [this,
-              ego_id,
-              &bbctr_host_x,
-              &bbctr_host_y,
-              &bbctr_host_z,
-              &ego_world_x,
-              &ego_world_y,
-              &ego_world_z,
-              &ego_yaw,
-              &ego_pitch,
-              &ego_roll,
-              &ego_vel_x,
-              &ego_vel_y,
-              &ego_vel_z,
-              &origin_world_x,
-              &origin_world_y,
-              &origin_world_z,
-              &origin_rot_x,
-              &origin_rot_y,
-              &origin_rot_z,
-              &origin_host_x,
-              &origin_host_y,
-              &origin_host_z,
-              &mpos_x,
-              &mpos_y,
-              &mpos_z,
-              &mpos_rot_x,
-              &mpos_rot_y,
-              &mpos_rot_z,
-              &mpos_yaw,
-              &mpos_pitch,
-              &mpos_roll,
-              &sens_world_x,
-              &sens_world_y,
-              &sens_world_z,
-              &sens_sv_x,
-              &sens_sv_y,
-              &sens_sv_z](const osi3::MovingObject& obj) {
+                 ego_id,
+                 &bbctr_host_x,
+                 &bbctr_host_y,
+                 &bbctr_host_z,
+                 &ego_world_x,
+                 &ego_world_y,
+                 &ego_world_z,
+                 &ego_yaw,
+                 &ego_pitch,
+                 &ego_roll,
+                 &ego_vel_x,
+                 &ego_vel_y,
+                 &ego_vel_z,
+                 &origin_world_x,
+                 &origin_world_y,
+                 &origin_world_z,
+                 &origin_rot_x,
+                 &origin_rot_y,
+                 &origin_rot_z,
+                 &origin_host_x,
+                 &origin_host_y,
+                 &origin_host_z,
+                 &mpos_x,
+                 &mpos_y,
+                 &mpos_z,
+                 &mpos_rot_x,
+                 &mpos_rot_y,
+                 &mpos_rot_z,
+                 &mpos_yaw,
+                 &mpos_pitch,
+                 &mpos_roll,
+                 &sens_world_x,
+                 &sens_world_y,
+                 &sens_world_z,
+                 &sens_sv_x,
+                 &sens_sv_y,
+                 &sens_sv_z](const osi3::MovingObject &obj)
+             {
                  // NormalLog("OSI", "MovingObject with ID %llu is EgoVehicle: %d", obj.id().value(), obj.id().value() == ego_id.value());
                  if (obj.id().value() == ego_id.value())
                  {
@@ -520,7 +510,7 @@ osi3::SensorData OSMPCameraSensor::Step(osi3::SensorView current_in, double time
                      // Position of the ego origin in world coordinates after rotation
                      NormalLog("OSI", "Current EGO bbcenter to rear vector: %f,%f,%f", bbctr_host_x, bbctr_host_y, bbctr_host_z);
                      Rot2env(bbctr_host_x, bbctr_host_y, bbctr_host_z, ego_yaw, ego_pitch, ego_roll, origin_rot_x, origin_rot_y, origin_rot_z);  // rotate into coordinate
-                                                                                                                                                 // system of environment
+                     // system of environment
                      origin_world_x = origin_rot_x + ego_world_x;
                      origin_world_y = origin_rot_y + ego_world_y;
                      origin_world_z = origin_rot_z + ego_world_z;
@@ -575,13 +565,13 @@ osi3::SensorData OSMPCameraSensor::Step(osi3::SensorView current_in, double time
     current_out.Clear();
     current_out.mutable_version()->CopyFrom(osi3::InterfaceVersion::descriptor()->file()->options().GetExtension(osi3::current_interface_version));
     /* Adjust Timestamps and Ids */
-    current_out.mutable_timestamp()->set_seconds((long long int)floor(time));
-    current_out.mutable_timestamp()->set_nanos((int)((time - floor(time)) * nano_seconds));
+    current_out.mutable_timestamp()->set_seconds((long long int) floor(time));
+    current_out.mutable_timestamp()->set_nanos((int) ((time - floor(time)) * nano_seconds));
     /* Copy of SensorView */
     current_out.add_sensor_view()->CopyFrom(current_view_in);
-    
+
     const double value5 = 1.1;
-   // double actual_range = FmiNominalRange() * value5;
+    // double actual_range = FmiNominalRange() * value5;
     /* Calculate vehicle FoV and distance to EGO (needed for occlusion) for all vehicles */
 
     std::vector<double> distance(nof_mov_obj);  // define vector with length nof_obj and initialize it to 0
@@ -606,7 +596,7 @@ osi3::SensorData OSMPCameraSensor::Step(osi3::SensorView current_in, double time
 
     for (auto v_i = current_view_in.global_ground_truth().moving_object().begin(); v_i != current_view_in.global_ground_truth().moving_object().end(); ++v_i)
     {
-        const osi3::MovingObject& veh = *v_i;
+        const osi3::MovingObject &veh = *v_i;
         auto const i = v_i - current_view_in.global_ground_truth().moving_object().begin();
         if (veh.id().value() != ego_id.value())
         {
@@ -625,7 +615,7 @@ osi3::SensorData OSMPCameraSensor::Step(osi3::SensorView current_in, double time
 
             // rotatePoint(veh_x, veh_y, veh_z, ego_yaw, ego_pitch, ego_roll, veh_rel_x, veh_rel_y, veh_rel_z); //rotate into coordinate system of ego vehicle
             Rot2veh(veh_x, veh_y, veh_z, veh_yaw, veh_pitch, veh_roll, veh_rel_x, veh_rel_y, veh_rel_z);  // rotate into coordinate system of vehicle    -------------!!!! MF
-                                                                                                          // nicht notwendig
+            // nicht notwendig
             // rot2env(veh_rel_x, veh_rel_y, veh_rel_z, veh_yaw, veh_pitch, veh_roll, veh_rel2_x, veh_rel2_y, veh_rel2_z); //only for DEBUG!!!
             // normal_log("DEBUG","Vehicle %d coordinates in own coord sys: %.2f,%.2f,%.2f", i,veh_rel_x,veh_rel_y,veh_rel_z);
             double veh_width = veh.base().dimension().width();
@@ -744,8 +734,7 @@ osi3::SensorData OSMPCameraSensor::Step(osi3::SensorView current_in, double time
             Rot2veh(trans_x, trans_y, trans_z, ego_yaw, ego_pitch, ego_roll, rel_x, rel_y, rel_z);  // rotate into coordinate system of ego vehicle
             // distance[i] = sqrt(rel_x * rel_x + rel_y*rel_y + rel_z*rel_z); //same as with trans?
             phi[i] = ArcTan(rel_y, rel_x);  // Azimuth of closest corner (was: center of bounding box)
-        }
-        else
+        } else
         {
             // normal_log("OSI", "Ignoring EGO Vehicle from occlusion.");
         }
@@ -753,7 +742,7 @@ osi3::SensorData OSMPCameraSensor::Step(osi3::SensorView current_in, double time
 
     for (auto v_i = current_view_in.global_ground_truth().moving_object().begin(); v_i != current_view_in.global_ground_truth().moving_object().end(); ++v_i)
     {
-        const osi3::MovingObject& veh = *v_i;
+        const osi3::MovingObject &veh = *v_i;
         // osi3::DetectedObject *obj = current_out.mutable_object()->Add();
         size_t const i = v_i - current_view_in.global_ground_truth().moving_object().begin();
         // auto const i = v_i - current_view_in.global_ground_truth().moving_object().begin();
@@ -781,8 +770,7 @@ osi3::SensorData OSMPCameraSensor::Step(osi3::SensorView current_in, double time
                     // %d",i,j,distance[j],distance[i],phi_min[j],phi_min[i],phi_max[j],phi_max[i],masked[i],nof_obj);
                     if ((phi_max[j] < phi_min[i]) || (phi_min[j] > phi_max[i]))
                     {  //		normal_log("OSI", "Vehicle %d not occluded by vehicle %d", i, j);
-                    }
-                    else
+                    } else
                     {
                         double phi_min_list[] = {phi_min[i], phi_min[j]};  // surely there is a simpler command as there are only 2 elements
                         double phi_max_list[] = {phi_max[i], phi_max[j]};  // surely there is a simpler command as there are only 2 elements
@@ -810,15 +798,13 @@ osi3::SensorData OSMPCameraSensor::Step(osi3::SensorView current_in, double time
             if (vis == 1.0)
             {
                 masked[i] = 0;
-            }
-            else
+            } else
             {
                 masked[i] = 1;
                 // vis = 0;
             }
             //		normal_log("OSI", "Vehicle i %d and masked %d and vis %.2f", i, masked[i], vis);
-        }
-        else
+        } else
         {
             // normal_log("OSI", "Ignoring EGO Vehicle %d at relative Position: %.2f,%.2f,%.2f (%.2f,%.2f,%.2f)", i, veh.base().position().x() - sens_World_x,
             // veh.base().position().y() - sens_World_y, veh.base().position().z() - sens_World_z, veh.base().position().x(), veh.base().position().y(),
@@ -834,29 +820,30 @@ osi3::SensorData OSMPCameraSensor::Step(osi3::SensorView current_in, double time
         current_view_in.global_ground_truth().moving_object().begin(),
         current_view_in.global_ground_truth().moving_object().end(),
         [this,
-         &i,
-         &current_view_in,
-         &current_out,
-         &masked,
-         ego_id,
-         ego_world_x,
-         ego_world_y,
-         ego_world_z,
-         ego_vel_x,
-         ego_vel_y,
-         ego_vel_z,
-         &origin_world_x,
-         &origin_world_y,
-         &origin_world_z,
-         ego_yaw,
-         ego_pitch,
-         ego_roll,
-         &sens_world_x,
-         &sens_world_y,
-         &sens_world_z,
-         &sens_sv_x,
-         &sens_sv_y,
-         &sens_sv_z](const osi3::MovingObject& veh) {
+            &i,
+            &current_view_in,
+            &current_out,
+            &masked,
+            ego_id,
+            ego_world_x,
+            ego_world_y,
+            ego_world_z,
+            ego_vel_x,
+            ego_vel_y,
+            ego_vel_z,
+            &origin_world_x,
+            &origin_world_y,
+            &origin_world_z,
+            ego_yaw,
+            ego_pitch,
+            ego_roll,
+            &sens_world_x,
+            &sens_world_y,
+            &sens_world_z,
+            &sens_sv_x,
+            &sens_sv_y,
+            &sens_sv_z](const osi3::MovingObject &veh)
+        {
             if (veh.id().value() != ego_id.value())
             {
 
@@ -924,7 +911,7 @@ osi3::SensorData OSMPCameraSensor::Step(osi3::SensorView current_in, double time
                 {
                     if (masked[i + 1] == 0)
                     {  // (abs(trans_x/distance) >0.766025)){//0.766025)) {
-                        osi3::DetectedMovingObject* obj = current_out.mutable_moving_object()->Add();
+                        osi3::DetectedMovingObject *obj = current_out.mutable_moving_object()->Add();
                         current_out.mutable_moving_object_header()->set_data_qualifier(osi3::DetectedEntityHeader_DataQualifier_DATA_QUALIFIER_AVAILABLE);
 
                         const int max = 10;
@@ -944,7 +931,7 @@ osi3::SensorData OSMPCameraSensor::Step(osi3::SensorView current_in, double time
                         obj->mutable_header()->add_ground_truth_id()->CopyFrom(veh.id());
                         obj->mutable_header()->mutable_tracking_id()->set_value(i);
                         obj->mutable_header()->set_existence_probability(existence_prob / value15);
-                     //   obj->mutable_header()->set_age(current_object_history.age);
+                        //   obj->mutable_header()->set_age(current_object_history.age);
                         obj->mutable_header()->set_measurement_state(osi3::DetectedItemHeader_MeasurementState_MEASUREMENT_STATE_MEASURED);
                         obj->mutable_header()->add_sensor_id()->CopyFrom(current_view_in.sensor_id());
 
@@ -966,7 +953,7 @@ osi3::SensorData OSMPCameraSensor::Step(osi3::SensorView current_in, double time
                         obj->mutable_base()->mutable_dimension()->set_width(veh.base().dimension().width());
                         obj->mutable_base()->mutable_dimension()->set_height(veh.base().dimension().height());
 
-                        osi3::DetectedMovingObject::CandidateMovingObject* candidate = obj->add_candidate();
+                        osi3::DetectedMovingObject::CandidateMovingObject *candidate = obj->add_candidate();
                         candidate->set_type(veh.type());
                         candidate->mutable_vehicle_classification()->CopyFrom(veh.vehicle_classification());
                         candidate->set_probability(1);
@@ -997,8 +984,7 @@ osi3::SensorData OSMPCameraSensor::Step(osi3::SensorView current_in, double time
                                   obj->base().position().y(),
                                   obj->base().position().z());
                     }
-                }
-                else
+                } else
                 {
                     NormalLog("OSI",
                               "Ignoring Vehicle %d[%llu] Outside Sensor Scope Relative Position - ego and GT Position: %f,%f,%f (%f,%f,%f)",
@@ -1015,8 +1001,7 @@ osi3::SensorData OSMPCameraSensor::Step(osi3::SensorView current_in, double time
                     // i, veh.id().value(), trans_x, trans_y, trans_z, rel_x, rel_y, rel_z, distance,winkel);
                 }
                 i++;
-            }
-            else
+            } else
             {
                 NormalLog("OSI",
                           "Ignoring EGO Vehicle %d[%llu] Relative Position: %f,%f,%f (%f,%f,%f)",
@@ -1039,26 +1024,27 @@ osi3::SensorData OSMPCameraSensor::Step(osi3::SensorView current_in, double time
     for_each(current_view_in.global_ground_truth().stationary_object().begin(),
              current_view_in.global_ground_truth().stationary_object().end(),
              [this,
-              &i,
-              &current_view_in,
-              &current_out,
-              masked,
-              ego_id,
-              ego_world_x,
-              ego_world_y,
-              ego_world_z,
-              &origin_world_x,
-              &origin_world_y,
-              &origin_world_z,
-              ego_yaw,
-              ego_pitch,
-              ego_roll,
-              &sens_world_x,
-              &sens_world_y,
-              &sens_world_z,
-              &sens_sv_x,
-              &sens_sv_y,
-              &sens_sv_z](const osi3::StationaryObject& stobj) {
+                 &i,
+                 &current_view_in,
+                 &current_out,
+                 masked,
+                 ego_id,
+                 ego_world_x,
+                 ego_world_y,
+                 ego_world_z,
+                 &origin_world_x,
+                 &origin_world_y,
+                 &origin_world_z,
+                 ego_yaw,
+                 ego_pitch,
+                 ego_roll,
+                 &sens_world_x,
+                 &sens_world_y,
+                 &sens_world_z,
+                 &sens_sv_x,
+                 &sens_sv_y,
+                 &sens_sv_z](const osi3::StationaryObject &stobj)
+             {
                  double xxkoordinate = 0.0;
                  double yykoordinate = 0.0;
                  double zzkoordinate = 0.0;  // Coordinates of the moving object in sensor coordinate system (movin object center of bounding box to mounting position sensor)
@@ -1091,7 +1077,7 @@ osi3::SensorData OSMPCameraSensor::Step(osi3::SensorView current_in, double time
                  // abs wegen negativen werten
                  if ((distance <= camera_range) && abs(angle_to_stat_obj) < camera_FOV && masked[i] == 0)
                  {  // (abs(trans_x/distance) >0.766025)){//0.766025)) {
-                     osi3::DetectedStationaryObject* obj = current_out.mutable_stationary_object()->Add();
+                     osi3::DetectedStationaryObject *obj = current_out.mutable_stationary_object()->Add();
                      current_out.mutable_stationary_object_header()->set_data_qualifier(osi3::DetectedEntityHeader_DataQualifier_DATA_QUALIFIER_AVAILABLE);
 
                      const int max = 10;
@@ -1125,7 +1111,7 @@ osi3::SensorData OSMPCameraSensor::Step(osi3::SensorView current_in, double time
                      obj->mutable_base()->mutable_dimension()->set_width(stobj.base().dimension().width());
                      obj->mutable_base()->mutable_dimension()->set_height(stobj.base().dimension().height());
 
-                     osi3::DetectedStationaryObject::CandidateStationaryObject* candidate = obj->add_candidate();
+                     osi3::DetectedStationaryObject::CandidateStationaryObject *candidate = obj->add_candidate();
 
                      candidate->mutable_classification()->CopyFrom(stobj.classification());
                      candidate->set_probability(1);
@@ -1152,8 +1138,7 @@ osi3::SensorData OSMPCameraSensor::Step(osi3::SensorView current_in, double time
                                obj->base().position().y(),
                                obj->base().position().z());
                      i++;
-                 }
-                 else
+                 } else
                  {
                      NormalLog("OSI",
                                "Ignoring stationary objects %d[%llu] Outside Sensor Scope Relative Position - ego and GT Position: %f,%f,%f (%f,%f,%f)",
@@ -1176,26 +1161,27 @@ osi3::SensorData OSMPCameraSensor::Step(osi3::SensorView current_in, double time
     for_each(current_view_in.global_ground_truth().traffic_light().begin(),
              current_view_in.global_ground_truth().traffic_light().end(),
              [this,
-              &itl,
-              &current_view_in,
-              &current_out,
-              masked,
-              ego_id,
-              ego_world_x,
-              ego_world_y,
-              ego_world_z,
-              &origin_world_x,
-              &origin_world_y,
-              &origin_world_z,
-              ego_yaw,
-              ego_pitch,
-              ego_roll,
-              &sens_world_x,
-              &sens_world_y,
-              &sens_world_z,
-              &sens_sv_x,
-              &sens_sv_y,
-              &sens_sv_z](const osi3::TrafficLight& trafficlight) {
+                 &itl,
+                 &current_view_in,
+                 &current_out,
+                 masked,
+                 ego_id,
+                 ego_world_x,
+                 ego_world_y,
+                 ego_world_z,
+                 &origin_world_x,
+                 &origin_world_y,
+                 &origin_world_z,
+                 ego_yaw,
+                 ego_pitch,
+                 ego_roll,
+                 &sens_world_x,
+                 &sens_world_y,
+                 &sens_world_z,
+                 &sens_sv_x,
+                 &sens_sv_y,
+                 &sens_sv_z](const osi3::TrafficLight &trafficlight)
+             {
                  // Calculate the traffic light  in Sensor coordinates (erstmal zur mounting posistion) !! Sp?ter eventuell zur Hinterachse Auto
                  double xxkoordinate = 0.0;
                  double yykoordinate = 0.0;
@@ -1234,7 +1220,7 @@ osi3::SensorData OSMPCameraSensor::Step(osi3::SensorView current_in, double time
 
                  if ((distance <= camera_range) && abs(angle_to_traffic_light) < camera_FOV)
                  {  // (abs(trans_x/distance) >0.766025)){//0.766025)) {
-                     osi3::DetectedTrafficLight* obj = current_out.mutable_traffic_light()->Add();
+                     osi3::DetectedTrafficLight *obj = current_out.mutable_traffic_light()->Add();
                      current_out.mutable_traffic_light_header()->set_data_qualifier(osi3::DetectedEntityHeader_DataQualifier_DATA_QUALIFIER_AVAILABLE);
 
                      const int max = 10;
@@ -1270,7 +1256,7 @@ osi3::SensorData OSMPCameraSensor::Step(osi3::SensorView current_in, double time
                      obj->mutable_base()->mutable_dimension()->set_width(trafficlight.base().dimension().width());
                      obj->mutable_base()->mutable_dimension()->set_height(trafficlight.base().dimension().height());
 
-                     osi3::DetectedTrafficLight::CandidateTrafficLight* candidate = obj->add_candidate();
+                     osi3::DetectedTrafficLight::CandidateTrafficLight *candidate = obj->add_candidate();
                      // candidate->set_type(stobj.type());
                      candidate->mutable_classification()->CopyFrom(trafficlight.classification());
                      candidate->mutable_classification()->set_color(trafficlight.classification().color());
@@ -1308,8 +1294,7 @@ osi3::SensorData OSMPCameraSensor::Step(osi3::SensorView current_in, double time
                                obj->base().position().z());
 
                      itl++;
-                 }
-                 else
+                 } else
                  {
                      NormalLog("OSI",
                                "Ignoring traffic light %d[%llu] Outside Sensor Scope Relative Position - ego and GT Position: %f,%f,%f (%f,%f,%f)",
@@ -1330,26 +1315,27 @@ osi3::SensorData OSMPCameraSensor::Step(osi3::SensorView current_in, double time
     for_each(current_view_in.global_ground_truth().traffic_sign().begin(),
              current_view_in.global_ground_truth().traffic_sign().end(),
              [this,
-              &its,
-              &current_view_in,
-              &current_out,
-              masked,
-              ego_id,
-              ego_world_x,
-              ego_world_y,
-              ego_world_z,
-              &origin_world_x,
-              &origin_world_y,
-              &origin_world_z,
-              ego_yaw,
-              ego_pitch,
-              ego_roll,
-              &sens_world_x,
-              &sens_world_y,
-              &sens_world_z,
-              &sens_sv_x,
-              &sens_sv_y,
-              &sens_sv_z](const osi3::TrafficSign& tsobj) {
+                 &its,
+                 &current_view_in,
+                 &current_out,
+                 masked,
+                 ego_id,
+                 ego_world_x,
+                 ego_world_y,
+                 ego_world_z,
+                 &origin_world_x,
+                 &origin_world_y,
+                 &origin_world_z,
+                 ego_yaw,
+                 ego_pitch,
+                 ego_roll,
+                 &sens_world_x,
+                 &sens_world_y,
+                 &sens_world_z,
+                 &sens_sv_x,
+                 &sens_sv_y,
+                 &sens_sv_z](const osi3::TrafficSign &tsobj)
+             {
                  NormalLog("OSI", "TrafficSign with ID %llu ", tsobj.id().value());
                  // Calculate the traffic light  in Sensor coordinates (erstmal zur mounting posistion) !! Sp?ter eventuell zur Hinterachse Auto
                  double xxxkoordinate = 0.0;
@@ -1393,7 +1379,7 @@ osi3::SensorData OSMPCameraSensor::Step(osi3::SensorView current_in, double time
 
                  if ((distance <= camera_range) && abs(angle_to_traffic_sign) < camera_FOV)
                  {  // (abs(trans_x/distance) >0.766025)){//0.766025)) {
-                     osi3::DetectedTrafficSign* obj = current_out.mutable_traffic_sign()->Add();
+                     osi3::DetectedTrafficSign *obj = current_out.mutable_traffic_sign()->Add();
                      current_out.mutable_traffic_sign_header()->set_data_qualifier(osi3::DetectedEntityHeader_DataQualifier_DATA_QUALIFIER_AVAILABLE);
 
                      const int max = 10;
