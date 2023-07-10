@@ -1,6 +1,7 @@
 //
 // Copyright 2016 -- 2018 PMSF IT Consulting Pierre R. Mai
 // Copyright 2023 BMW AG
+// Copyright (C) 2019-2023 Robert Bosch GmbH 
 // SPDX-License-Identifier: MPL-2.0
 // The MPL-2.0 is only an example here. You can choose any other open source license accepted by OpenMSL, or any other license if this template is used elsewhere.
 //
