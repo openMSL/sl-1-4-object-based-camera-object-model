@@ -54,7 +54,7 @@ ofstream COSMPCameraSensor::private_log_file;
  * ProtocolBuffer Accessors
  */
 
-void *DecodeIntegerToPointer(fmi2Integer hi, fmi2Integer lo)
+void* DecodeIntegerToPointer(fmi2Integer hi, fmi2Integer lo)
 {
 #if PTRDIFF_MAX == INT64_MAX
     union Addrconv
@@ -68,7 +68,7 @@ void *DecodeIntegerToPointer(fmi2Integer hi, fmi2Integer lo)
     } myaddr;
     myaddr.base.lo = lo;
     myaddr.base.hi = hi;
-    return reinterpret_cast<void *>(myaddr.address);
+    return reinterpret_cast<void*>(myaddr.address);
 #elif PTRDIFF_MAX == INT32_MAX
     return reinterpret_cast<void*>(lo);
 #else
@@ -76,7 +76,7 @@ void *DecodeIntegerToPointer(fmi2Integer hi, fmi2Integer lo)
 #endif
 }
 
-void EncodePointerToInteger(const void *ptr, fmi2Integer &hi, fmi2Integer &lo)
+void EncodePointerToInteger(const void* ptr, fmi2Integer& hi, fmi2Integer& lo)
 {
 #if PTRDIFF_MAX == INT64_MAX
     union Addrconv
@@ -99,11 +99,11 @@ void EncodePointerToInteger(const void *ptr, fmi2Integer &hi, fmi2Integer &lo)
 #endif
 }
 
-bool OSMP::GetFmiSensorViewConfig(osi3::SensorViewConfiguration &data)
+bool OSMP::GetFmiSensorViewConfig(osi3::SensorViewConfiguration& data)
 {
     if (integer_vars_[FMI_INTEGER_SENSORVIEW_CONFIG_SIZE_IDX] > 0)
     {
-        void *buffer = DecodeIntegerToPointer(integer_vars_[FMI_INTEGER_SENSORVIEW_CONFIG_BASEHI_IDX], integer_vars_[FMI_INTEGER_SENSORVIEW_CONFIG_BASELO_IDX]);
+        void* buffer = DecodeIntegerToPointer(integer_vars_[FMI_INTEGER_SENSORVIEW_CONFIG_BASEHI_IDX], integer_vars_[FMI_INTEGER_SENSORVIEW_CONFIG_BASELO_IDX]);
         NormalLog(
             "OSMP", "Got %08X %08X, reading from %p ...", integer_vars_[FMI_INTEGER_SENSORVIEW_CONFIG_BASEHI_IDX], integer_vars_[FMI_INTEGER_SENSORVIEW_CONFIG_BASELO_IDX], buffer);
         data.ParseFromArray(buffer, integer_vars_[FMI_INTEGER_SENSORVIEW_CONFIG_SIZE_IDX]);
@@ -112,12 +112,12 @@ bool OSMP::GetFmiSensorViewConfig(osi3::SensorViewConfiguration &data)
     return false;
 }
 
-void OSMP::SetFmiSensorViewConfigRequest(const osi3::SensorViewConfiguration &data)
+void OSMP::SetFmiSensorViewConfigRequest(const osi3::SensorViewConfiguration& data)
 {
     data.SerializeToString(current_config_request_buffer_);
     EncodePointerToInteger(
         current_config_request_buffer_->data(), integer_vars_[FMI_INTEGER_SENSORVIEW_CONFIG_REQUEST_BASEHI_IDX], integer_vars_[FMI_INTEGER_SENSORVIEW_CONFIG_REQUEST_BASELO_IDX]);
-    integer_vars_[FMI_INTEGER_SENSORVIEW_CONFIG_REQUEST_SIZE_IDX] = (fmi2Integer) current_config_request_buffer_->length();
+    integer_vars_[FMI_INTEGER_SENSORVIEW_CONFIG_REQUEST_SIZE_IDX] = (fmi2Integer)current_config_request_buffer_->length();
     NormalLog("OSMP",
               "Providing %08X %08X, writing from %p ...",
               integer_vars_[FMI_INTEGER_SENSORVIEW_CONFIG_REQUEST_BASEHI_IDX],
@@ -133,11 +133,11 @@ void OSMP::ResetFmiSensorViewConfigRequest()
     integer_vars_[FMI_INTEGER_SENSORVIEW_CONFIG_REQUEST_BASELO_IDX] = 0;
 }
 
-bool OSMP::GetFmiSensorViewIn(osi3::SensorView &data)
+bool OSMP::GetFmiSensorViewIn(osi3::SensorView& data)
 {
     if (integer_vars_[FMI_INTEGER_SENSORVIEW_IN_SIZE_IDX] > 0)
     {
-        void *buffer = DecodeIntegerToPointer(integer_vars_[FMI_INTEGER_SENSORVIEW_IN_BASEHI_IDX], integer_vars_[FMI_INTEGER_SENSORVIEW_IN_BASELO_IDX]);
+        void* buffer = DecodeIntegerToPointer(integer_vars_[FMI_INTEGER_SENSORVIEW_IN_BASEHI_IDX], integer_vars_[FMI_INTEGER_SENSORVIEW_IN_BASELO_IDX]);
         NormalLog("OSMP", "Got %08X %08X, reading from %p ...", integer_vars_[FMI_INTEGER_SENSORVIEW_IN_BASEHI_IDX], integer_vars_[FMI_INTEGER_SENSORVIEW_IN_BASELO_IDX], buffer);
         data.ParseFromArray(buffer, integer_vars_[FMI_INTEGER_SENSORVIEW_IN_SIZE_IDX]);
         return true;
@@ -145,11 +145,11 @@ bool OSMP::GetFmiSensorViewIn(osi3::SensorView &data)
     return false;
 }
 
-void OSMP::SetFmiSensorDataOut(const osi3::SensorData &data)
+void OSMP::SetFmiSensorDataOut(const osi3::SensorData& data)
 {
     data.SerializeToString(current_output_buffer_);
     EncodePointerToInteger(current_output_buffer_->data(), integer_vars_[FMI_INTEGER_SENSORDATA_OUT_BASEHI_IDX], integer_vars_[FMI_INTEGER_SENSORDATA_OUT_BASELO_IDX]);
-    integer_vars_[FMI_INTEGER_SENSORDATA_OUT_SIZE_IDX] = (fmi2Integer) current_output_buffer_->length();
+    integer_vars_[FMI_INTEGER_SENSORDATA_OUT_SIZE_IDX] = (fmi2Integer)current_output_buffer_->length();
     NormalLog("OSMP",
               "Providing %08X %08X, writing from %p ...",
               integer_vars_[FMI_INTEGER_SENSORDATA_OUT_BASEHI_IDX],
@@ -171,7 +171,8 @@ void OSMP::RefreshFmiSensorViewConfigRequest()
     if (GetFmiSensorViewConfig(config))
     {
         SetFmiSensorViewConfigRequest(config);
-    } else
+    }
+    else
     {
         config.Clear();
         config.mutable_version()->CopyFrom(osi3::InterfaceVersion::descriptor()->file()->options().GetExtension(osi3::current_interface_version));
@@ -184,7 +185,7 @@ void OSMP::RefreshFmiSensorViewConfigRequest()
         config.mutable_update_cycle_time()->set_seconds(0);
         config.mutable_update_cycle_time()->set_nanos(update_nanos);
         config.mutable_update_cycle_offset()->Clear();
-        osi3::GenericSensorViewConfiguration *generic = config.add_generic_sensor_view_configuration();
+        osi3::GenericSensorViewConfiguration* generic = config.add_generic_sensor_view_configuration();
         generic->set_field_of_view_horizontal(field_of_view);
         generic->set_field_of_view_vertical(field_of_view);
         SetFmiSensorViewConfigRequest(config);
@@ -199,25 +200,25 @@ fmi2Status OSMP::DoInit()
 {
 
     /* Booleans */
-    for (int &boolean_var : boolean_vars_)
+    for (int& boolean_var : boolean_vars_)
     {
         boolean_var = fmi2False;
     }
 
     /* Integers */
-    for (int &integer_var : integer_vars_)
+    for (int& integer_var : integer_vars_)
     {
         integer_var = 0;
     }
 
     /* Reals */
-    for (double &real_var : real_vars_)
+    for (double& real_var : real_vars_)
     {
         real_var = 0.0;
     }
 
     /* Strings */
-    for (auto &string_var : string_vars_)
+    for (auto& string_var : string_vars_)
     {
         string_var = "";
     }
@@ -243,7 +244,8 @@ fmi2Status OSMP::DoExitInitializationMode()
     if (!GetFmiSensorViewConfig(config))
     {
         NormalLog("OSI", "Received no valid SensorViewConfiguration from Simulation Environment, assuming everything checks out.");
-    } else
+    }
+    else
     {
         NormalLog("OSI", "Received SensorViewConfiguration for Sensor Id %llu", config.sensor_id().value());
         NormalLog("OSI", "SVC Ground Truth FoV Horizontal %f, FoV Vertical %f, Range %f", config.field_of_view_horizontal(), config.field_of_view_vertical(), config.range());
@@ -280,7 +282,8 @@ fmi2Status OSMP::DoCalc(fmi2Real current_communication_point, fmi2Real communica
         SetFmiSensorDataOut(current_out);
         SetFmiValid(1);
         SetFmiCount(current_out.moving_object_size());
-    } else
+    }
+    else
     {
         /* We have no valid input, so no valid output */
         NormalLog("OSI", "No valid input, therefore providing no valid output.");
@@ -306,7 +309,7 @@ OSMP::OSMP(fmi2String theinstance_name,
            fmi2Type thefmu_type,
            fmi2String thefmu_guid,
            fmi2String thefmu_resource_location,
-           const fmi2CallbackFunctions *thefunctions,
+           const fmi2CallbackFunctions* thefunctions,
            fmi2Boolean thevisible,
            fmi2Boolean thelogging_on)
     : instance_name_(theinstance_name),
@@ -340,15 +343,18 @@ fmi2Status OSMP::SetDebugLogging(fmi2Boolean thelogging_on, size_t n_categories,
             if (0 == strcmp(categories[i], "FMI"))
             {
                 logging_categories_.insert("FMI");
-            } else if (0 == strcmp(categories[i], "OSMP"))
+            }
+            else if (0 == strcmp(categories[i], "OSMP"))
             {
                 logging_categories_.insert("OSMP");
-            } else if (0 == strcmp(categories[i], "OSI"))
+            }
+            else if (0 == strcmp(categories[i], "OSI"))
             {
                 logging_categories_.insert("OSI");
             }
         }
-    } else
+    }
+    else
     {
         logging_categories_.clear();
         logging_categories_.insert("FMI");
@@ -362,11 +368,11 @@ fmi2Component OSMP::Instantiate(fmi2String instance_name,
                                 fmi2Type fmu_type,
                                 fmi2String fmu_guid,
                                 fmi2String fmu_resource_location,
-                                const fmi2CallbackFunctions *functions,
+                                const fmi2CallbackFunctions* functions,
                                 fmi2Boolean visible,
                                 fmi2Boolean logging_on)
 {
-    auto *myc = new OSMP(instance_name, fmu_type, fmu_guid, fmu_resource_location, functions, visible, logging_on);
+    auto* myc = new OSMP(instance_name, fmu_type, fmu_guid, fmu_resource_location, functions, visible, logging_on);
 
     if (myc == nullptr)
     {
@@ -403,7 +409,7 @@ fmi2Component OSMP::Instantiate(fmi2String instance_name,
                         visible,
                         logging_on,
                         myc);
-    return (fmi2Component) myc;
+    return (fmi2Component)myc;
 }
 
 fmi2Status OSMP::SetupExperiment(fmi2Boolean tolerance_defined, fmi2Real tolerance, fmi2Real start_time, fmi2Boolean stop_time_defined, fmi2Real stop_time)
@@ -460,7 +466,8 @@ fmi2Status OSMP::GetReal(const fmi2ValueReference vr[], size_t nvr, fmi2Real val
         if (vr[i] < FMI_REAL_VARS)
         {
             value[i] = real_vars_[vr[i]];
-        } else
+        }
+        else
         {
             return fmi2Error;
         }
@@ -477,13 +484,14 @@ fmi2Status OSMP::GetInteger(const fmi2ValueReference vr[], size_t nvr, fmi2Integ
         if (vr[i] < FMI_INTEGER_VARS)
         {
             if (need_refresh && (vr[i] == FMI_INTEGER_SENSORVIEW_CONFIG_REQUEST_BASEHI_IDX || vr[i] == FMI_INTEGER_SENSORVIEW_CONFIG_REQUEST_BASELO_IDX ||
-                vr[i] == FMI_INTEGER_SENSORVIEW_CONFIG_REQUEST_SIZE_IDX))
+                                 vr[i] == FMI_INTEGER_SENSORVIEW_CONFIG_REQUEST_SIZE_IDX))
             {
                 RefreshFmiSensorViewConfigRequest();
                 need_refresh = false;
             }
             value[i] = integer_vars_[vr[i]];
-        } else
+        }
+        else
         {
             return fmi2Error;
         }
@@ -499,7 +507,8 @@ fmi2Status OSMP::GetBoolean(const fmi2ValueReference vr[], size_t nvr, fmi2Boole
         if (vr[i] < FMI_BOOLEAN_VARS)
         {
             value[i] = boolean_vars_[vr[i]];
-        } else
+        }
+        else
         {
             return fmi2Error;
         }
@@ -515,7 +524,8 @@ fmi2Status OSMP::GetString(const fmi2ValueReference vr[], size_t nvr, fmi2String
         if (vr[i] < FMI_STRING_VARS)
         {
             value[i] = string_vars_[vr[i]].c_str();
-        } else
+        }
+        else
         {
             return fmi2Error;
         }
@@ -531,7 +541,8 @@ fmi2Status OSMP::SetReal(const fmi2ValueReference vr[], size_t nvr, const fmi2Re
         if (vr[i] < FMI_REAL_VARS)
         {
             real_vars_[vr[i]] = value[i];
-        } else
+        }
+        else
         {
             return fmi2Error;
         }
@@ -547,7 +558,8 @@ fmi2Status OSMP::SetInteger(const fmi2ValueReference vr[], size_t nvr, const fmi
         if (vr[i] < FMI_INTEGER_VARS)
         {
             integer_vars_[vr[i]] = value[i];
-        } else
+        }
+        else
         {
             return fmi2Error;
         }
@@ -563,7 +575,8 @@ fmi2Status OSMP::SetBoolean(const fmi2ValueReference vr[], size_t nvr, const fmi
         if (vr[i] < FMI_BOOLEAN_VARS)
         {
             boolean_vars_[vr[i]] = value[i];
-        } else
+        }
+        else
         {
             return fmi2Error;
         }
@@ -579,7 +592,8 @@ fmi2Status OSMP::SetString(const fmi2ValueReference vr[], size_t nvr, const fmi2
         if (vr[i] < FMI_STRING_VARS)
         {
             string_vars_[vr[i]] = value[i];
-        } else
+        }
+        else
         {
             return fmi2Error;
         }
@@ -593,19 +607,19 @@ fmi2Status OSMP::SetString(const fmi2ValueReference vr[], size_t nvr, const fmi2
 
 extern "C" {
 
-FMI2_Export const char *fmi2GetTypesPlatform()
+FMI2_Export const char* fmi2GetTypesPlatform()
 {
     return fmi2TypesPlatform;
 }
 
-FMI2_Export const char *fmi2GetVersion()
+FMI2_Export const char* fmi2GetVersion()
 {
     return fmi2Version;
 }
 
 FMI2_Export fmi2Status fmi2SetDebugLogging(fmi2Component c, fmi2Boolean logging_on, size_t n_categories, const fmi2String categories[])
 {
-    auto *myc = (OSMP *) c;
+    auto* myc = (OSMP*)c;
     return myc->SetDebugLogging(logging_on, n_categories, categories);
 }
 
@@ -616,7 +630,7 @@ FMI2_Export fmi2Component fmi2Instantiate(fmi2String instance_name,
                                           fmi2Type fmu_type,
                                           fmi2String fmu_guid,
                                           fmi2String fmu_resource_location,
-                                          const fmi2CallbackFunctions *functions,
+                                          const fmi2CallbackFunctions* functions,
                                           fmi2Boolean visible,
                                           fmi2Boolean logging_on)
 {
@@ -626,19 +640,19 @@ FMI2_Export fmi2Component fmi2Instantiate(fmi2String instance_name,
 FMI2_Export fmi2Status
 fmi2SetupExperiment(fmi2Component c, fmi2Boolean tolerance_defined, fmi2Real tolerance, fmi2Real start_time, fmi2Boolean stop_time_defined, fmi2Real stop_time)
 {
-    auto *myc = (OSMP *) c;
+    auto* myc = (OSMP*)c;
     return myc->SetupExperiment(tolerance_defined, tolerance, start_time, stop_time_defined, stop_time);
 }
 
 FMI2_Export fmi2Status fmi2EnterInitializationMode(fmi2Component c)
 {
-    auto *myc = (OSMP *) c;
+    auto* myc = (OSMP*)c;
     return myc->EnterInitializationMode();
 }
 
 FMI2_Export fmi2Status fmi2ExitInitializationMode(fmi2Component c)
 {
-    auto *myc = (OSMP *) c;
+    auto* myc = (OSMP*)c;
     return myc->ExitInitializationMode();
 }
 
@@ -647,25 +661,25 @@ FMI2_Export fmi2Status fmi2DoStep(fmi2Component c,
                                   fmi2Real communication_step_size,
                                   fmi2Boolean no_set_fmu_state_prior_to_current_pointfmi2_component)
 {
-    auto *myc = (OSMP *) c;
+    auto* myc = (OSMP*)c;
     return myc->DoStep(current_communication_point, communication_step_size, no_set_fmu_state_prior_to_current_pointfmi2_component);
 }
 
 FMI2_Export fmi2Status fmi2Terminate(fmi2Component c)
 {
-    auto *myc = (OSMP *) c;
+    auto* myc = (OSMP*)c;
     return myc->Terminate();
 }
 
 FMI2_Export fmi2Status fmi2Reset(fmi2Component c)
 {
-    auto *myc = (OSMP *) c;
+    auto* myc = (OSMP*)c;
     return myc->Reset();
 }
 
 FMI2_Export void fmi2FreeInstance(fmi2Component c)
 {
-    auto *myc = (OSMP *) c;
+    auto* myc = (OSMP*)c;
     myc->FreeInstance();
     delete myc;
 }
@@ -675,56 +689,56 @@ FMI2_Export void fmi2FreeInstance(fmi2Component c)
  */
 FMI2_Export fmi2Status fmi2GetReal(fmi2Component c, const fmi2ValueReference vr[], size_t nvr, fmi2Real value[])
 {
-    auto *myc = (OSMP *) c;
+    auto* myc = (OSMP*)c;
     return myc->GetReal(vr, nvr, value);
 }
 
 FMI2_Export fmi2Status fmi2GetInteger(fmi2Component c, const fmi2ValueReference vr[], size_t nvr, fmi2Integer value[])
 {
-    auto *myc = (OSMP *) c;
+    auto* myc = (OSMP*)c;
     return myc->GetInteger(vr, nvr, value);
 }
 
 FMI2_Export fmi2Status fmi2GetBoolean(fmi2Component c, const fmi2ValueReference vr[], size_t nvr, fmi2Boolean value[])
 {
-    auto *myc = (OSMP *) c;
+    auto* myc = (OSMP*)c;
     return myc->GetBoolean(vr, nvr, value);
 }
 
 FMI2_Export fmi2Status fmi2GetString(fmi2Component c, const fmi2ValueReference vr[], size_t nvr, fmi2String value[])
 {
-    auto *myc = (OSMP *) c;
+    auto* myc = (OSMP*)c;
     return myc->GetString(vr, nvr, value);
 }
 
 FMI2_Export fmi2Status fmi2SetReal(fmi2Component c, const fmi2ValueReference vr[], size_t nvr, const fmi2Real value[])
 {
-    auto *myc = (OSMP *) c;
+    auto* myc = (OSMP*)c;
     return myc->SetReal(vr, nvr, value);
 }
 
 FMI2_Export fmi2Status fmi2SetInteger(fmi2Component c, const fmi2ValueReference vr[], size_t nvr, const fmi2Integer value[])
 {
-    auto *myc = (OSMP *) c;
+    auto* myc = (OSMP*)c;
     return myc->SetInteger(vr, nvr, value);
 }
 
 FMI2_Export fmi2Status fmi2SetBoolean(fmi2Component c, const fmi2ValueReference vr[], size_t nvr, const fmi2Boolean value[])
 {
-    auto *myc = (OSMP *) c;
+    auto* myc = (OSMP*)c;
     return myc->SetBoolean(vr, nvr, value);
 }
 
 FMI2_Export fmi2Status fmi2SetString(fmi2Component c, const fmi2ValueReference vr[], size_t nvr, const fmi2String value[])
 {
-    auto *myc = (OSMP *) c;
+    auto* myc = (OSMP*)c;
     return myc->SetString(vr, nvr, value);
 }
 
 /*
  * Unsupported Features (FMUState, Derivatives, Async DoStep, Status Enquiries)
  */
-FMI2_Export fmi2Status fmi2GetFMUstate(fmi2Component c, fmi2FMUstate *fmu_state)
+FMI2_Export fmi2Status fmi2GetFMUstate(fmi2Component c, fmi2FMUstate* fmu_state)
 {
     return fmi2Error;
 }
@@ -734,12 +748,12 @@ FMI2_Export fmi2Status fmi2SetFMUstate(fmi2Component c, fmi2FMUstate fmu_state)
     return fmi2Error;
 }
 
-FMI2_Export fmi2Status fmi2FreeFMUstate(fmi2Component c, fmi2FMUstate *fmu_state)
+FMI2_Export fmi2Status fmi2FreeFMUstate(fmi2Component c, fmi2FMUstate* fmu_state)
 {
     return fmi2Error;
 }
 
-FMI2_Export fmi2Status fmi2SerializedFMUstateSize(fmi2Component c, fmi2FMUstate fmu_state, size_t *size)
+FMI2_Export fmi2Status fmi2SerializedFMUstateSize(fmi2Component c, fmi2FMUstate fmu_state, size_t* size)
 {
     return fmi2Error;
 }
@@ -749,7 +763,7 @@ FMI2_Export fmi2Status fmi2SerializeFMUstate(fmi2Component c, fmi2FMUstate fmu_s
     return fmi2Error;
 }
 
-FMI2_Export fmi2Status fmi2DeSerializeFMUstate(fmi2Component c, const fmi2Byte serialized_state[], size_t size, fmi2FMUstate *fmu_state)
+FMI2_Export fmi2Status fmi2DeSerializeFMUstate(fmi2Component c, const fmi2Byte serialized_state[], size_t size, fmi2FMUstate* fmu_state)
 {
     return fmi2Error;
 }
@@ -780,27 +794,27 @@ FMI2_Export fmi2Status fmi2CancelStep(fmi2Component c)
     return fmi2OK;
 }
 
-FMI2_Export fmi2Status fmi2GetStatus(fmi2Component c, const fmi2StatusKind s, fmi2Status *value)
+FMI2_Export fmi2Status fmi2GetStatus(fmi2Component c, const fmi2StatusKind s, fmi2Status* value)
 {
     return fmi2Discard;
 }
 
-FMI2_Export fmi2Status fmi2GetRealStatus(fmi2Component c, const fmi2StatusKind s, fmi2Real *value)
+FMI2_Export fmi2Status fmi2GetRealStatus(fmi2Component c, const fmi2StatusKind s, fmi2Real* value)
 {
     return fmi2Discard;
 }
 
-FMI2_Export fmi2Status fmi2GetIntegerStatus(fmi2Component c, const fmi2StatusKind s, fmi2Integer *value)
+FMI2_Export fmi2Status fmi2GetIntegerStatus(fmi2Component c, const fmi2StatusKind s, fmi2Integer* value)
 {
     return fmi2Discard;
 }
 
-FMI2_Export fmi2Status fmi2GetBooleanStatus(fmi2Component c, const fmi2StatusKind s, fmi2Boolean *value)
+FMI2_Export fmi2Status fmi2GetBooleanStatus(fmi2Component c, const fmi2StatusKind s, fmi2Boolean* value)
 {
     return fmi2Discard;
 }
 
-FMI2_Export fmi2Status fmi2GetStringStatus(fmi2Component c, const fmi2StatusKind s, fmi2String *value)
+FMI2_Export fmi2Status fmi2GetStringStatus(fmi2Component c, const fmi2StatusKind s, fmi2String* value)
 {
     return fmi2Discard;
 }

@@ -84,13 +84,13 @@ using namespace std;
 /* FMU Class */
 class OSMP
 {
- public:
+  public:
     /* FMI2 Interface mapped to C++ */
     OSMP(fmi2String theinstance_name,
          fmi2Type thefmu_type,
          fmi2String thefmu_guid,
          fmi2String thefmu_resource_location,
-         const fmi2CallbackFunctions *thefunctions,
+         const fmi2CallbackFunctions* thefunctions,
          fmi2Boolean thevisible,
          fmi2Boolean thelogging_on);
     fmi2Status SetDebugLogging(fmi2Boolean thelogging_on, size_t n_categories, const fmi2String categories[]);
@@ -98,7 +98,7 @@ class OSMP
                                      fmi2Type fmu_type,
                                      fmi2String fmu_guid,
                                      fmi2String fmu_resource_location,
-                                     const fmi2CallbackFunctions *functions,
+                                     const fmi2CallbackFunctions* functions,
                                      fmi2Boolean visible,
                                      fmi2Boolean logging_on);
     fmi2Status SetupExperiment(fmi2Boolean tolerance_defined, fmi2Real tolerance, fmi2Real start_time, fmi2Boolean stop_time_defined, fmi2Real stop_time);
@@ -117,7 +117,7 @@ class OSMP
     fmi2Status SetBoolean(const fmi2ValueReference vr[], size_t nvr, const fmi2Boolean value[]);
     fmi2Status SetString(const fmi2ValueReference vr[], size_t nvr, const fmi2String value[]);
 
- protected:
+  protected:
     /* Internal Implementation */
     fmi2Status DoInit();
     fmi2Status DoStart(fmi2Boolean tolerance_defined, fmi2Real tolerance, fmi2Real start_time, fmi2Boolean stop_time_defined, fmi2Real stop_time);
@@ -132,7 +132,7 @@ class OSMP
     static ofstream private_log_file;
 #endif
 
-    static void FmiVerboseLogGlobal(const char *format, ...)
+    static void FmiVerboseLogGlobal(const char* format, ...)
     {
 #ifdef VERBOSE_FMI_LOGGING
 #ifdef PRIVATE_LOG_PATH
@@ -156,7 +156,7 @@ class OSMP
 #endif
     }
 
-    void InternalLog(const char *category, const char *format, va_list arg)
+    void InternalLog(const char* category, const char* format, va_list arg)
     {
 #if defined(PRIVATE_LOG_PATH) || defined(PUBLIC_LOGGING)
         char buffer[1024];
@@ -182,7 +182,7 @@ class OSMP
 #endif
     }
 
-    void FmiVerboseLog(const char *format, ...)
+    void FmiVerboseLog(const char* format, ...)
     {
 #if defined(VERBOSE_FMI_LOGGING) && (defined(PRIVATE_LOG_PATH) || defined(PUBLIC_LOGGING))
         va_list ap;
@@ -193,7 +193,7 @@ class OSMP
     }
 
     /* Normal Logging */
-    void NormalLog(const char *category, const char *format, ...)
+    void NormalLog(const char* category, const char* format, ...)
     {
 #if defined(PRIVATE_LOG_PATH) || defined(PUBLIC_LOGGING)
         va_list ap;
@@ -203,7 +203,7 @@ class OSMP
 #endif
     }
 
- private:
+  private:
     /* Members */
     string instance_name_;
     fmi2Type fmu_type_;
@@ -218,10 +218,10 @@ class OSMP
     fmi2Real real_vars_[FMI_REAL_VARS];
     string string_vars_[FMI_STRING_VARS];
     bool simulation_started_;
-    string *current_output_buffer_;
-    string *last_output_buffer_;
-    string *current_config_request_buffer_;
-    string *last_config_request_buffer_;
+    string* current_output_buffer_;
+    string* last_output_buffer_;
+    string* current_config_request_buffer_;
+    string* last_config_request_buffer_;
 
     OSMPCameraSensor my_sensor_model_;
 
@@ -252,11 +252,11 @@ class OSMP
     }
 
     /* Protocol Buffer Accessors */
-    bool GetFmiSensorViewConfig(osi3::SensorViewConfiguration &data);
-    void SetFmiSensorViewConfigRequest(const osi3::SensorViewConfiguration &data);
+    bool GetFmiSensorViewConfig(osi3::SensorViewConfiguration& data);
+    void SetFmiSensorViewConfigRequest(const osi3::SensorViewConfiguration& data);
     void ResetFmiSensorViewConfigRequest();
-    bool GetFmiSensorViewIn(osi3::SensorView &data);
-    void SetFmiSensorDataOut(const osi3::SensorData &data);
+    bool GetFmiSensorViewIn(osi3::SensorView& data);
+    void SetFmiSensorDataOut(const osi3::SensorData& data);
     void ResetFmiSensorDataOut();
 
     /* Refreshing of Calculated Parameters */

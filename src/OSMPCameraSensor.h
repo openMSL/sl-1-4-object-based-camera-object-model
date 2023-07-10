@@ -16,24 +16,24 @@ struct ObjectInfo
 };
 class OSMPCameraSensor
 {
- public:
+  public:
     void Init(double nominal_range_in);
     osi3::SensorData Step(osi3::SensorView current_in, double time);
 
- private:
+  private:
     double nominal_range_;
     std::vector<ObjectInfo> object_history_vector_;
 
-    void UpdateObjectHistoryVector(ObjectInfo &current_object_history, const osi3::SensorView &input_sensor_view, int obj_idx, bool moving);
-    static double GetAbsVelocity(const osi3::Vector3d &velocity_3d);
+    void UpdateObjectHistoryVector(ObjectInfo& current_object_history, const osi3::SensorView& input_sensor_view, int obj_idx, bool moving);
+    static double GetAbsVelocity(const osi3::Vector3d& velocity_3d);
     static int GetObjectInfoIdx(std::vector<ObjectInfo> search_vector, uint64_t search_id);
     static double CalculateAngle(double r1, double r2, double r3, double g1, double g2, double g3);
-    static void CalCoordNew(double trans_x, double trans_y, double trans_z, double ego_yaw, double ego_pitch, double ego_roll, double &xn, double &yn, double &zn);
-    static void CalculateCoordinate(double a1, double a2, double a3, double d1, double d2, double d3, double b1, double b2, double b3, double &coord);
-    static void CrossProduct(const double *vect_a, const double *vect_b, double *cross_p);
-    static void Rot2env(double x, double y, double z, double yaw, double pitch, double roll, double &rx, double &ry, double &rz);
-    static void Rot2veh(double x, double y, double z, double yaw, double pitch, double roll, double &rx, double &ry, double &rz);
-    static void EulerAngle(double egoyaw, double egopitch, double egoroll, double objectyaw, double objectpitch, double objectroll, double &rr1, double &rr2, double &rr3);
+    static void CalCoordNew(double trans_x, double trans_y, double trans_z, double ego_yaw, double ego_pitch, double ego_roll, double& xn, double& yn, double& zn);
+    static void CalculateCoordinate(double a1, double a2, double a3, double d1, double d2, double d3, double b1, double b2, double b3, double& coord);
+    static void CrossProduct(const double* vect_a, const double* vect_b, double* cross_p);
+    static void Rot2env(double x, double y, double z, double yaw, double pitch, double roll, double& rx, double& ry, double& rz);
+    static void Rot2veh(double x, double y, double z, double yaw, double pitch, double roll, double& rx, double& ry, double& rz);
+    static void EulerAngle(double egoyaw, double egopitch, double egoroll, double objectyaw, double objectpitch, double objectroll, double& rr1, double& rr2, double& rr3);
     static double ArcTan(double num, double denom);
 
     /* Private File-based Logging just for Debugging */
@@ -41,7 +41,7 @@ class OSMPCameraSensor
     static ofstream private_log_file;
 #endif
 
-    static void FmiVerboseLogGlobal(const char *format, ...)
+    static void FmiVerboseLogGlobal(const char* format, ...)
     {
 #ifdef VERBOSE_FMI_LOGGING
 #ifdef PRIVATE_LOG_PATH
@@ -65,7 +65,7 @@ class OSMPCameraSensor
 #endif
     }
 
-    void InternalLog(const char *category, const char *format, va_list arg)
+    void InternalLog(const char* category, const char* format, va_list arg)
     {
 #if defined(PRIVATE_LOG_PATH) || defined(PUBLIC_LOGGING)
         char buffer[1024];
@@ -91,7 +91,7 @@ class OSMPCameraSensor
 #endif
     }
 
-    void FmiVerboseLog(const char *format, ...)
+    void FmiVerboseLog(const char* format, ...)
     {
 #if defined(VERBOSE_FMI_LOGGING) && (defined(PRIVATE_LOG_PATH) || defined(PUBLIC_LOGGING))
         va_list ap;
@@ -102,7 +102,7 @@ class OSMPCameraSensor
     }
 
     /* Normal Logging */
-    void NormalLog(const char *category, const char *format, ...)
+    void NormalLog(const char* category, const char* format, ...)
     {
 #if defined(PRIVATE_LOG_PATH) || defined(PUBLIC_LOGGING)
         va_list ap;
