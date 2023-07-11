@@ -3,14 +3,14 @@
   fmiVersion="2.0"
   modelName="OSMP Camera Sensor FMU"
   guid="@FMUGUID@"
-  description="Demonstration C++ Sensor FMU for OSI Sensor Model Packaging"
-  author="PMSF"
+  description="Camera Model"
+  author="Robert Bosch GmbH"
   version="2.0"
   generationTool="PMSF Manual FMU Framework"
   generationDateAndTime="@FMUTIMESTAMP@"
   variableNamingConvention="structured">
   <CoSimulation
-    modelIdentifier="OSMPCameraSensor"
+    modelIdentifier="sl-1-4-object-based-camera-object-model"
     canHandleVariableCommunicationStepSize="true"
     canNotUseMemoryManagementFunctions="true">
     <SourceFiles>
