@@ -1,8 +1,6 @@
 # SL 1-4 Object Based Camera Object Model
 
-[![Credibility Assessment Level 0](../../actions/workflows/cl0.yml/badge.svg)](https://github.com/openMSL/sl-1-5-sensor-model-testing/blob/main/doc/test_architecture.md#cl-0-license-check)
-[![Credibility Assessment Level 1](../../actions/workflows/cl1.yml/badge.svg)](https://github.com/openMSL/sl-1-5-sensor-model-testing/blob/main/doc/test_architecture.md#cl-1-code-verification)
-[![Credibility Assessment Level 2](../../actions/workflows/cl2.yml/badge.svg)](https://github.com/openMSL/sl-1-5-sensor-model-testing/blob/main/doc/test_architecture.md#cl-2-qualitative-verification)
+[![Credibility Assessment](../../actions/workflows/credibility_assessment.yml/badge.svg)](https://github.com/openMSL/sl-1-4-object-based-camera-object-model/actions/workflows/credibility_assessment.yml)
 
 This model is a parameterizable object based video perception sensor and tracking model using the interface OSI.
 The model was developed in the project SetLevel by Bosch. The model should simulate some basic video typical effects in a phenomenological way.
