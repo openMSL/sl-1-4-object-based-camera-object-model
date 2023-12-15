@@ -8,7 +8,8 @@ The "object based camera object model" is based on object lists and all modeling
 The outer layer of the model is the OSI Sensor Model Packaging (OSMP).
 It specifies ways in which models  using the Open Simulation Interface (OSI) are to be packaged for their use in simulation environments using FMI 2.0.
 For more detailed information see the official documentation.
-<img src="doc/img/OSMPCameraSensor_Demo.gif" width="800" />
+
+<img src="doc/img/OSMPCameraSensor_Demo.gif" alt="Camera Sensor Demo" width="800" />
 
 ## Modeling Approach
 
@@ -110,8 +111,8 @@ This work received funding from the research project
 "[SET Level](https://setlevel.de/)" of the [PEGASUS](https://pegasus-family.de) project family,
 promoted by the German Federal Ministry for Economic Affairs and Energy based on a decision of the German Bundestag.
 
-| SET Level                                                                                                | PEGASUS Family                                                                                                       | BMWi                                                                                                                                                                                 |
-|----------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| <a href="https://setlevel.de"><img src="https://setlevel.de/assets/logo-setlevel.svg" width="100" /></a> | <a href="https://pegasus-family.de"><img src="https://setlevel.de/assets/logo-pegasus-family.svg" width="100" /></a> | <a href="https://www.bmwi.de/Redaktion/DE/Textsammlungen/Technologie/fahrzeug-und-systemtechnologien.html"><img src="https://setlevel.de/assets/logo-bmwi-en.svg" width="100" /></a> |
+| SET Level                                                                                                               | PEGASUS Family                                                                                                                     | BMWi                                                                                                                                                                                            |
+|-------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| <a href="https://setlevel.de"><img src="https://setlevel.de/assets/logo-setlevel.svg" alt="SETLevel" width="100" /></a> | <a href="https://pegasus-family.de"><img src="https://setlevel.de/assets/logo-pegasus-family.svg" alt="Pegasus" width="100" /></a> | <a href="https://www.bmwi.de/Redaktion/DE/Textsammlungen/Technologie/fahrzeug-und-systemtechnologien.html"><img src="https://setlevel.de/assets/logo-bmwi-en.svg" alt="BMWi" width="100" /></a> |
 
 ## References
